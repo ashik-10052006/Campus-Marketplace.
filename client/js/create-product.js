@@ -3,14 +3,15 @@
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
-  // Ensure user is authenticated
-  const user = await window.Auth.requireAuth();
-  if (!user) return;
-
-  await loadCategories();
+  // Load categories and setup form handlers immediately so the UI is ready
+  loadCategories();
   setupImagePreview();
   setupAiFeatures();
   setupFormSubmission();
+
+  // Ensure user is authenticated
+  const user = await window.Auth.requireAuth();
+  if (!user) return;
 });
 
 async function loadCategories() {

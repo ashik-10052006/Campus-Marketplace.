@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>List an Item for Sale | Campus Marketplace</title>
+  <meta name="description" content="Create a new campus marketplace listing with Claude AI assistance.">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+  <link rel="stylesheet" href="/css/products.css">
+</head>
+<body>
+  <header class="navbar" id="navbar"></header>
+
+  <main class="container" style="max-width: 820px; padding-top: 3rem; padding-bottom: 5rem;">
+    <div style="margin-bottom: 2rem;">
+      <h1 style="font-size: 2.2rem; margin-bottom: 0.4rem;">List an Item for Sale</h1>
+      <p class="text-muted">Post your textbooks, tech, or dorm gear to fellow students in minutes.</p>
+    </div>
+
+    <!-- Claude AI Smart Listing Assistant Banner -->
+    <div class="ai-assistant-card">
+      <div class="ai-assistant-header">
+        <span style="font-size: 1.5rem;">🤖</span>
+        <h3 style="font-size: 1.15rem; margin-bottom: 0;">Claude AI Listing Assistant</h3>
+        <span class="ai-badge">SMART AUTOFILL</span>
+      </div>
+      <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;">
+        Paste quick notes about what you are selling, and Claude will automatically draft your listing title, category, condition, and description:
+      </p>
+      <div style="display: flex; gap: 0.6rem; flex-wrap: wrap;">
+        <input type="text" id="ai-quick-notes" class="form-control" placeholder="e.g. Selling my Casio FX-991EX calculator, lightly used for 1 semester, works perfectly with case" style="flex: 1; min-width: 260px;" />
+        <button type="button" id="ai-assistant-btn" class="btn btn-sell btn-sm">
+          ✨ Autofill Listing
+        </button>
+      </div>
+    </div>
+
+    <!-- Product Creation Form -->
+    <form id="create-product-form" class="card" style="padding: 2.25rem;">
+      <!-- Title -->
+      <div class="form-group">
+        <label class="form-label" for="product-name">Listing Title *</label>
+        <input type="text" id="product-name" name="name" class="form-control" placeholder="e.g. Stewart Calculus 9th Edition Hardcover" required maxlength="150" />
+      </div>
+
+      <!-- Category & Condition -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem;">
+        <div class="form-group">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.45rem;">
+            <label class="form-label" for="product-category" style="margin-bottom: 0;">Category *</label>
+            <button type="button" id="ai-suggest-category-btn" class="btn btn-outline btn-sm" style="padding: 0.15rem 0.5rem; font-size: 0.75rem; border-color: var(--accent); color: var(--accent);">
+              ✨ AI Suggest
+            </button>
+          </div>
+          <select id="product-category" name="category" class="form-select" required>
+            <option value="">Select a category...</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="product-condition">Condition *</label>
+          <select id="product-condition" name="condition" class="form-select" required>
+            <option value="GOOD" selected>Good (Normal gentle student use)</option>
+            <option value="LIKE_NEW">Like New (Barely used, flawless)</option>
+            <option value="NEW">Brand New (Unopened / Tagged)</option>
+            <option value="FAIR">Fair (Noticeable cosmetic wear, fully functional)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Price & Image Upload -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem;">
+        <div class="form-group">
+          <label class="form-label" for="product-price">Price ($ USD) *</label>
+          <input type="number" id="product-price" name="price" class="form-control" placeholder="0.00" min="0.01" step="0.01" required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="product-image">Product Image *</label>
+          <input type="file" id="product-image" name="image" class="form-control" accept="image/jpeg,image/png,image/webp,image/jpg" required />
+          <div class="form-hint">Accepted: JPG, PNG, WEBP (Max 5MB)</div>
+        </div>
+      </div>
+
+      <!-- Image Preview -->
+      <div id="image-preview-container" style="display: none; margin-bottom: 1.5rem;">
+        <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.5rem;">Image Preview:</div>
+        <img id="image-preview" src="#" alt="Preview" style="max-height: 200px; border-radius: var(--radius-md); object-fit: cover; border: 1px solid var(--border-subtle);" />
+      </div>
+
+      <!-- Description with AI Buttons -->
+      <div class="form-group">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.45rem; flex-wrap: wrap; gap: 0.5rem;">
+          <label class="form-label" for="product-description" style="margin-bottom: 0;">Description *</label>
+          <div style="display: flex; gap: 0.4rem;">
+            <button type="button" id="ai-generate-desc-btn" class="btn btn-outline btn-sm" style="padding: 0.2rem 0.6rem; font-size: 0.78rem;">
+              ✨ Generate Description
+            </button>
+            <button type="button" id="ai-improve-desc-btn" class="btn btn-outline btn-sm" style="padding: 0.2rem 0.6rem; font-size: 0.78rem;">
+              🪄 Improve Draft
+            </button>
+          </div>
+        </div>
+        <textarea id="product-description" name="description" class="form-textarea" placeholder="Detail condition, semester used, reason for selling, whether you include accessories, and preferred campus pickup location..." required></textarea>
+        <div class="form-hint">Students appreciate honest details about condition and pickup availability.</div>
+      </div>
+
+      <!-- Submit Button -->
+      <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem;">
+        <a href="/my-listings.html" class="btn btn-outline">Cancel</a>
+        <button type="submit" id="submit-listing-btn" class="btn btn-primary btn-lg">
+          Publish Listing
+        </button>
+      </div>
+    </form>
+  </main>
+
+  <footer class="footer">
+    <div class="container text-center">
+      <p>&copy; 2026 Campus Marketplace for Students. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="/js/utils.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/navbar.js"></script>
+  <script src="/js/create-product.js"></script>
+</body>
+</html>

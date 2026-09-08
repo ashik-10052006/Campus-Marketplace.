@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | Campus Marketplace</title>
+  <meta name="description" content="Campus Marketplace administrative management panel.">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+  <header class="navbar" id="navbar"></header>
+
+  <div class="admin-layout">
+    <!-- Admin Sidebar -->
+    <aside class="admin-sidebar">
+      <div style="margin-bottom: 2rem; padding: 0 0.5rem;">
+        <span class="badge badge-admin" style="font-size: 0.8rem;">Campus Admin</span>
+        <h2 style="font-size: 1.35rem; margin-top: 0.4rem;">Management</h2>
+      </div>
+
+      <nav class="admin-nav">
+        <a href="/admin.html" class="admin-nav-item active">📊 Dashboard</a>
+        <a href="/admin-users.html" class="admin-nav-item">👥 Users</a>
+        <a href="/admin-products.html" class="admin-nav-item">📦 Products</a>
+        <a href="/admin-reports.html" class="admin-nav-item">🚩 Reports</a>
+        <a href="/admin-categories.html" class="admin-nav-item">🏷️ Categories</a>
+      </nav>
+    </aside>
+
+    <!-- Admin Main Content -->
+    <main class="admin-content">
+      <div class="admin-header">
+        <div>
+          <h1 style="font-size: 2rem; margin-bottom: 0.3rem;">Platform Overview</h1>
+          <p class="text-muted">Real-time statistics across the student marketplace.</p>
+        </div>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="dashboard-stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon stat-icon-primary">👥</div>
+          <div>
+            <div id="stat-total-users" class="stat-val">0</div>
+            <div class="stat-label">Registered Students</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon stat-icon-accent">📦</div>
+          <div>
+            <div id="stat-total-products" class="stat-val">0</div>
+            <div class="stat-label">Total Listings</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon stat-icon-success">🟢</div>
+          <div>
+            <div id="stat-avail-products" class="stat-val">0</div>
+            <div class="stat-label">Available Listings</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon stat-icon-warning">🚩</div>
+          <div>
+            <div id="stat-pending-reports" class="stat-val">0</div>
+            <div class="stat-label">Pending Reports</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Platform Actions -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1rem;">
+        <div class="card" style="padding: 1.75rem;">
+          <h3 style="font-size: 1.15rem; margin-bottom: 0.6rem;">Moderation Queue</h3>
+          <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 1.25rem;">Review listings reported by students for spam, scams, or inappropriate content.</p>
+          <a href="/admin-reports.html" class="btn btn-primary btn-sm">Review Reports &rarr;</a>
+        </div>
+
+        <div class="card" style="padding: 1.75rem;">
+          <h3 style="font-size: 1.15rem; margin-bottom: 0.6rem;">Category Management</h3>
+          <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 1.25rem;">Create, rename, or organize catalog categories for students trading on campus.</p>
+          <a href="/admin-categories.html" class="btn btn-primary btn-sm">Manage Categories &rarr;</a>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="/js/utils.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/navbar.js"></script>
+  <script src="/js/admin.js"></script>
+</body>
+</html>

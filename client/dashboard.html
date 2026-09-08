@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Dashboard | Campus Marketplace</title>
+  <meta name="description" content="Manage your campus listings, messages, and student account activity.">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/products.css">
+</head>
+<body>
+  <header class="navbar" id="navbar"></header>
+
+  <main class="container" style="padding-top: 2.5rem; padding-bottom: 5rem;">
+    <!-- Welcome Header -->
+    <div class="dashboard-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+      <div>
+        <h1 id="welcome-title" style="font-size: 2.2rem; margin-bottom: 0.3rem;">Welcome, Student</h1>
+        <p class="text-muted">Here is an overview of your campus trading activity.</p>
+      </div>
+      <a href="/create-product.html" class="btn btn-sell">+ List an Item</a>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="dashboard-stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon stat-icon-primary">📦</div>
+        <div>
+          <div id="stat-total" class="stat-val">0</div>
+          <div class="stat-label">Total Listings</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon stat-icon-success">🟢</div>
+        <div>
+          <div id="stat-available" class="stat-val">0</div>
+          <div class="stat-label">Active Listings</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon stat-icon-warning">🤝</div>
+        <div>
+          <div id="stat-sold" class="stat-val">0</div>
+          <div class="stat-label">Sold Items</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon stat-icon-accent">💬</div>
+        <div>
+          <div id="stat-messages" class="stat-val">0</div>
+          <div class="stat-label">Conversations</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div style="margin-bottom: 3rem;">
+      <h3 style="font-size: 1.25rem; margin-bottom: 1.25rem;">Quick Actions</h3>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem;">
+        <a href="/create-product.html" class="card card-hoverable" style="padding: 1.5rem; display: flex; align-items: center; gap: 1rem; color: inherit; text-decoration: none;">
+          <div style="font-size: 2rem;">✨</div>
+          <div>
+            <div style="font-weight: 700;">Add Product</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">List with AI assistance</div>
+          </div>
+        </a>
+
+        <a href="/my-listings.html" class="card card-hoverable" style="padding: 1.5rem; display: flex; align-items: center; gap: 1rem; color: inherit; text-decoration: none;">
+          <div style="font-size: 2rem;">📋</div>
+          <div>
+            <div style="font-weight: 700;">My Listings</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">Manage or mark sold</div>
+          </div>
+        </a>
+
+        <a href="/messages.html" class="card card-hoverable" style="padding: 1.5rem; display: flex; align-items: center; gap: 1rem; color: inherit; text-decoration: none;">
+          <div style="font-size: 2rem;">💬</div>
+          <div>
+            <div style="font-weight: 700;">Messages</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">Chat with peers</div>
+          </div>
+        </a>
+
+        <a href="/profile.html" class="card card-hoverable" style="padding: 1.5rem; display: flex; align-items: center; gap: 1rem; color: inherit; text-decoration: none;">
+          <div style="font-size: 2rem;">⚙️</div>
+          <div>
+            <div style="font-weight: 700;">Profile Settings</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">Update contact info</div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Recent Listings Snapshot -->
+    <div class="card">
+      <div class="card-header">
+        <h3 style="font-size: 1.15rem; margin-bottom: 0;">Your Recent Listings</h3>
+        <a href="/my-listings.html" class="btn btn-outline btn-sm">View All Listings &rarr;</a>
+      </div>
+      <div id="dashboard-listings-container">
+        <div class="spinner-wrapper">
+          <div class="spinner"></div>
+          <span class="spinner-text">Loading listings...</span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container text-center">
+      <p>&copy; 2026 Campus Marketplace for Students. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="/js/utils.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/navbar.js"></script>
+  <script src="/js/dashboard.js"></script>
+</body>
+</html>

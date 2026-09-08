@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Listing | Campus Marketplace</title>
+  <meta name="description" content="Update your campus marketplace listing details, pricing, and description.">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+  <link rel="stylesheet" href="/css/products.css">
+</head>
+<body>
+  <header class="navbar" id="navbar"></header>
+
+  <main class="container" style="max-width: 820px; padding-top: 3rem; padding-bottom: 5rem;">
+    <div style="margin-bottom: 2rem;">
+      <h1 style="font-size: 2.2rem; margin-bottom: 0.4rem;">Edit Listing</h1>
+      <p class="text-muted">Update your listing information, pricing, or status.</p>
+    </div>
+
+    <form id="edit-product-form" class="card" style="padding: 2.25rem;">
+      <div class="form-group">
+        <label class="form-label" for="edit-name">Listing Title *</label>
+        <input type="text" id="edit-name" name="name" class="form-control" required maxlength="150" />
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem;">
+        <div class="form-group">
+          <label class="form-label" for="edit-category">Category *</label>
+          <select id="edit-category" name="category" class="form-select" required></select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="edit-condition">Condition *</label>
+          <select id="edit-condition" name="condition" class="form-select" required>
+            <option value="NEW">Brand New</option>
+            <option value="LIKE_NEW">Like New</option>
+            <option value="GOOD">Good</option>
+            <option value="FAIR">Fair</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem;">
+        <div class="form-group">
+          <label class="form-label" for="edit-price">Price ($ USD) *</label>
+          <input type="number" id="edit-price" name="price" class="form-control" min="0.01" step="0.01" required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="edit-status">Status *</label>
+          <select id="edit-status" name="status" class="form-select" required>
+            <option value="AVAILABLE">Available</option>
+            <option value="SOLD">Sold</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Image Update -->
+      <div class="form-group">
+        <label class="form-label">Product Image</label>
+        <div style="display: flex; gap: 1.5rem; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap;">
+          <img id="current-image-preview" src="#" alt="Current Product" style="width: 120px; height: 120px; object-fit: cover; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);" />
+          <div style="flex: 1; min-width: 220px;">
+            <label class="form-label" for="edit-image" style="font-weight: 500; font-size: 0.85rem;">Replace Image (Optional)</label>
+            <input type="file" id="edit-image" name="image" class="form-control" accept="image/jpeg,image/png,image/webp,image/jpg" />
+            <div class="form-hint">Leave blank to keep existing image</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Description with Claude Polish -->
+      <div class="form-group">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.45rem;">
+          <label class="form-label" for="edit-description" style="margin-bottom: 0;">Description *</label>
+          <button type="button" id="ai-improve-edit-btn" class="btn btn-outline btn-sm" style="padding: 0.2rem 0.6rem; font-size: 0.78rem;">
+            🪄 Claude AI Polish
+          </button>
+        </div>
+        <textarea id="edit-description" name="description" class="form-textarea" required></textarea>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem;">
+        <a href="/my-listings.html" class="btn btn-outline">Cancel</a>
+        <button type="submit" id="save-changes-btn" class="btn btn-primary btn-lg">
+          Save Changes
+        </button>
+      </div>
+    </form>
+  </main>
+
+  <footer class="footer">
+    <div class="container text-center">
+      <p>&copy; 2026 Campus Marketplace for Students. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="/js/utils.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/navbar.js"></script>
+  <script src="/js/edit-product.js"></script>
+</body>
+</html>

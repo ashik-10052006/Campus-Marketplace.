@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Listings | Campus Marketplace</title>
+  <meta name="description" content="Manage, edit, or mark your active campus listings as sold.">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/products.css">
+</head>
+<body>
+  <header class="navbar" id="navbar"></header>
+
+  <main class="container" style="padding-top: 2.5rem; padding-bottom: 5rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+      <div>
+        <h1 style="font-size: 2.2rem; margin-bottom: 0.3rem;">My Marketplace Listings</h1>
+        <p class="text-muted">Manage your active products, mark items sold, or edit details.</p>
+      </div>
+      <a href="/create-product.html" class="btn btn-sell">+ List Another Item</a>
+    </div>
+
+    <div class="card">
+      <div id="my-listings-container">
+        <div class="spinner-wrapper">
+          <div class="spinner"></div>
+          <span class="spinner-text">Loading your listings...</span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container text-center">
+      <p>&copy; 2026 Campus Marketplace for Students. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="/js/utils.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/navbar.js"></script>
+  <script src="/js/my-listings.js"></script>
+</body>
+</html>

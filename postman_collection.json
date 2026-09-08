@@ -1,0 +1,315 @@
+{
+  "info": {
+    "name": "Campus Marketplace API",
+    "description": "Comprehensive Postman API Collection for Campus Marketplace for Students including Authentication, User Management, Products Catalog, Categories, Messaging, Reports, and Claude AI endpoints.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register Student",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Jane Doe\",\n  \"email\": \"jane@campus.edu\",\n  \"phone\": \"+15551234567\",\n  \"password\": \"password123\",\n  \"confirmPassword\": \"password123\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/auth/register", "host": ["{{baseUrl}}"], "path": ["api", "auth", "register"] }
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"jane@campus.edu\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "auth", "login"] }
+          }
+        },
+        {
+          "name": "Get Current User (Me)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/auth/me", "host": ["{{baseUrl}}"], "path": ["api", "auth", "me"] }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/api/auth/logout", "host": ["{{baseUrl}}"], "path": ["api", "auth", "logout"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/users/profile", "host": ["{{baseUrl}}"], "path": ["api", "users", "profile"] }
+          }
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "multipart/form-data" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "name", "value": "Jane Doe Updated", "type": "text" },
+                { "key": "phone", "value": "+15559876543", "type": "text" }
+              ]
+            },
+            "url": { "raw": "{{baseUrl}}/api/users/profile", "host": ["{{baseUrl}}"], "path": ["api", "users", "profile"] }
+          }
+        },
+        {
+          "name": "Admin - Get All Users",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/users?page=1&limit=20", "host": ["{{baseUrl}}"], "path": ["api", "users"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "20" }] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Categories",
+      "item": [
+        {
+          "name": "Get All Categories",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/categories", "host": ["{{baseUrl}}"], "path": ["api", "categories"] }
+          }
+        },
+        {
+          "name": "Admin - Create Category",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Lab Equipment\",\n  \"description\": \"Safety goggles, lab coats, and dissection kits\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/categories", "host": ["{{baseUrl}}"], "path": ["api", "categories"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "Browse Products (Search & Filter)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/products?search=calculus&category=Books&condition=LIKE_NEW&minPrice=10&maxPrice=100&sort=newest&page=1&limit=12", "host": ["{{baseUrl}}"], "path": ["api", "products"], "query": [{ "key": "search", "value": "calculus" }, { "key": "category", "value": "Books" }] }
+          }
+        },
+        {
+          "name": "Get Product By ID",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/products/:id", "host": ["{{baseUrl}}"], "path": ["api", "products", ":id"] }
+          }
+        },
+        {
+          "name": "Create Product Listing",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "multipart/form-data" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "name", "value": "Casio Scientific Calculator", "type": "text" },
+                { "key": "description", "value": "FX-991EX ClassWiz in like-new condition.", "type": "text" },
+                { "key": "price", "value": "22.50", "type": "text" },
+                { "key": "category", "value": "Calculators", "type": "text" },
+                { "key": "condition", "value": "LIKE_NEW", "type": "text" },
+                { "key": "image", "type": "file" }
+              ]
+            },
+            "url": { "raw": "{{baseUrl}}/api/products", "host": ["{{baseUrl}}"], "path": ["api", "products"] }
+          }
+        },
+        {
+          "name": "Get My Listings",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/products/my-listings", "host": ["{{baseUrl}}"], "path": ["api", "products", "my-listings"] }
+          }
+        },
+        {
+          "name": "Mark Product As Sold",
+          "request": {
+            "method": "PATCH",
+            "url": { "raw": "{{baseUrl}}/api/products/:id/sold", "host": ["{{baseUrl}}"], "path": ["api", "products", ":id", "sold"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Messages",
+      "item": [
+        {
+          "name": "Start Conversation",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"productId\": \"<PRODUCT_ID>\"\n}" },
+            "url": { "raw": "{{baseUrl}}/api/messages/conversations", "host": ["{{baseUrl}}"], "path": ["api", "messages", "conversations"] }
+          }
+        },
+        {
+          "name": "Get All Conversations",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/messages/conversations", "host": ["{{baseUrl}}"], "path": ["api", "messages", "conversations"] }
+          }
+        },
+        {
+          "name": "Get Conversation Messages",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/messages/conversations/:id", "host": ["{{baseUrl}}"], "path": ["api", "messages", "conversations", ":id"] }
+          }
+        },
+        {
+          "name": "Send Message",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"text\": \"Hi! Can we meet outside the campus library tomorrow?\"\n}" },
+            "url": { "raw": "{{baseUrl}}/api/messages/conversations/:id/messages", "host": ["{{baseUrl}}"], "path": ["api", "messages", "conversations", ":id", "messages"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reports",
+      "item": [
+        {
+          "name": "Submit Report",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productId\": \"<PRODUCT_ID>\",\n  \"reason\": \"Duplicate Listing\",\n  \"description\": \"This exact item was posted twice with different prices.\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/reports", "host": ["{{baseUrl}}"], "path": ["api", "reports"] }
+          }
+        },
+        {
+          "name": "Admin - Get Reports",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/reports?status=PENDING", "host": ["{{baseUrl}}"], "path": ["api", "reports"] }
+          }
+        },
+        {
+          "name": "Admin - Resolve Report",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"RESOLVED\",\n  \"removeProduct\": false\n}" },
+            "url": { "raw": "{{baseUrl}}/api/reports/:id/status", "host": ["{{baseUrl}}"], "path": ["api", "reports", ":id", "status"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Claude AI",
+      "item": [
+        {
+          "name": "Generate Description",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Dorm Desk Lamp\",\n  \"category\": \"Furniture\",\n  \"condition\": \"LIKE_NEW\",\n  \"price\": 15\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/ai/generate-description", "host": ["{{baseUrl}}"], "path": ["api", "ai", "generate-description"] }
+          }
+        },
+        {
+          "name": "Improve Description",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentDescription\": \"Used lamp works fine good bulb\",\n  \"name\": \"Desk Lamp\",\n  \"category\": \"Furniture\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/ai/improve-description", "host": ["{{baseUrl}}"], "path": ["api", "ai", "improve-description"] }
+          }
+        },
+        {
+          "name": "Suggest Category",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"TI-84 Plus CE Color Graphing Calculator\",\n  \"description\": \"Includes charger and case\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/ai/suggest-category", "host": ["{{baseUrl}}"], "path": ["api", "ai", "suggest-category"] }
+          }
+        },
+        {
+          "name": "Smart Listing Assistant",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rawNotes\": \"Selling my TI 84 plus CE color graphing calculator, battery lasts forever, used for calc 1 and 2, asking about $60\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/ai/listing-assistant", "host": ["{{baseUrl}}"], "path": ["api", "ai", "listing-assistant"] }
+          }
+        },
+        {
+          "name": "Message Suggestions",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productName\": \"Calculus Textbook\",\n  \"productPrice\": 45,\n  \"conversationContext\": \"Is this still available?\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/ai/message-suggestions", "host": ["{{baseUrl}}"], "path": ["api", "ai", "message-suggestions"] }
+          }
+        },
+        {
+          "name": "Classify Report",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Scam\",\n  \"description\": \"Seller is asking to transfer money via gift cards outside campus.\",\n  \"productName\": \"Cheap iPad\",\n  \"productDescription\": \"Brand new iPad for $50\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/ai/classify-report", "host": ["{{baseUrl}}"], "path": ["api", "ai", "classify-report"] }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000"
+    }
+  ]
+}

@@ -1,0 +1,177 @@
+/* ==========================================================================
+   Campus Marketplace - Global Responsive CSS
+   Targets: 320px, 375px, 480px, 768px, 1024px, 1440px
+   ========================================================================== */
+
+/* Large Desktop (>= 1440px) */
+@media (min-width: 1440px) {
+  .container {
+    max-width: 1360px;
+  }
+}
+
+/* Medium Desktop & Tablet Landscape (<= 1024px) */
+@media (max-width: 1024px) {
+  .footer-top {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  .marketplace-layout {
+    grid-template-columns: 240px 1fr !important;
+    gap: 1.5rem !important;
+  }
+}
+
+/* Tablet Portrait (<= 768px) */
+@media (max-width: 768px) {
+  .nav-hamburger {
+    display: flex;
+  }
+
+  .nav-menu {
+    position: absolute;
+    top: 72px;
+    left: 0;
+    width: 100%;
+    background: var(--bg-surface);
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1.5rem;
+    gap: 1rem;
+    box-shadow: var(--shadow-lg);
+    border-bottom: 1px solid var(--border-subtle);
+    display: none;
+  }
+
+  .nav-menu.nav-menu-open {
+    display: flex;
+  }
+
+  .nav-auth-buttons, .nav-user-dropdown {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-left: 0;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .nav-auth-buttons .btn, .nav-user-dropdown .btn {
+    width: 100%;
+  }
+
+  .marketplace-layout {
+    grid-template-columns: 1fr !important;
+  }
+
+  .filters-sidebar {
+    display: none; /* toggleable drawer on mobile */
+  }
+
+  .filters-sidebar.is-open {
+    display: block;
+    margin-bottom: 1.5rem;
+  }
+
+  .messages-layout {
+    grid-template-columns: 1fr !important;
+    height: auto !important;
+  }
+
+  .conversations-sidebar.hidden-mobile {
+    display: none !important;
+  }
+
+  .chat-panel.hidden-mobile {
+    display: none !important;
+  }
+
+  .product-details-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .admin-layout {
+    grid-template-columns: 1fr !important;
+  }
+
+  .admin-sidebar {
+    border-right: none !important;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .footer-top {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    gap: 0.75rem;
+    text-align: center;
+  }
+
+  .hero-content {
+    text-align: center;
+    padding: 3rem 0 !important;
+  }
+
+  .hero-cta {
+    justify-content: center !important;
+  }
+}
+
+/* Mobile Devices (<= 480px) */
+@media (max-width: 480px) {
+  html {
+    font-size: 15px;
+  }
+
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .btn-lg {
+    width: 100%;
+    padding: 0.85rem 1.25rem;
+  }
+
+  .hero-title {
+    font-size: 2.2rem !important;
+  }
+
+  .product-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .dashboard-stats-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .modal-content {
+    margin: 0.5rem;
+  }
+
+  .toast-container {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+  }
+
+  .toast {
+    min-width: unset;
+    max-width: 100%;
+  }
+}
+
+/* Extra small screens (<= 375px & 320px) */
+@media (max-width: 375px) {
+  .nav-logo {
+    font-size: 1.25rem;
+  }
+
+  .hero-title {
+    font-size: 1.9rem !important;
+  }
+}

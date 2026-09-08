@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Users | Campus Marketplace Admin</title>
+  <meta name="description" content="Manage registered campus student users and administrator accounts.">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+  <header class="navbar" id="navbar"></header>
+
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div style="margin-bottom: 2rem; padding: 0 0.5rem;">
+        <span class="badge badge-admin" style="font-size: 0.8rem;">Campus Admin</span>
+        <h2 style="font-size: 1.35rem; margin-top: 0.4rem;">Management</h2>
+      </div>
+
+      <nav class="admin-nav">
+        <a href="/admin.html" class="admin-nav-item">📊 Dashboard</a>
+        <a href="/admin-users.html" class="admin-nav-item active">👥 Users</a>
+        <a href="/admin-products.html" class="admin-nav-item">📦 Products</a>
+        <a href="/admin-reports.html" class="admin-nav-item">🚩 Reports</a>
+        <a href="/admin-categories.html" class="admin-nav-item">🏷️ Categories</a>
+      </nav>
+    </aside>
+
+    <main class="admin-content">
+      <div class="admin-header">
+        <div>
+          <h1 style="font-size: 2rem; margin-bottom: 0.3rem;">Registered Users</h1>
+          <p class="text-muted">Review student profiles and handle user accounts.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div id="users-table-container">
+          <div class="spinner-wrapper">
+            <div class="spinner"></div>
+            <span class="spinner-text">Loading student accounts...</span>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="/js/utils.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/navbar.js"></script>
+  <script src="/js/admin-users.js"></script>
+</body>
+</html>

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campus Marketplace | Buy, Sell & Connect on Campus</title>
+  <meta name="description" content="A student-focused campus marketplace to buy and sell textbooks, electronics, dorm furniture, and gear safely and affordably.">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+  <link rel="stylesheet" href="/css/products.css">
+</head>
+<body>
+
+  <!-- Dynamic Header Navigation -->
+  <header class="navbar" id="navbar"></header>
+
+  <main>
+    <!-- Hero Section -->
+    <section class="hero-section" style="background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%); color: #fff; padding: 5rem 0 6rem; position: relative; overflow: hidden;">
+      <div class="container hero-content" style="position: relative; z-index: 2;">
+        <div style="max-width: 760px; margin: 0 auto; text-align: center;">
+          <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(255, 255, 255, 0.12); padding: 0.4rem 1rem; border-radius: 9999px; margin-bottom: 1.5rem; font-size: 0.85rem; font-weight: 600;">
+            <span>✨ Powered by Claude AI</span>
+          </div>
+          <h1 class="hero-title" style="font-size: 3.4rem; font-weight: 800; line-height: 1.15; margin-bottom: 1.25rem; color: #ffffff; letter-spacing: -1px;">
+            Buy. Sell. Connect.<br>
+            <span style="background: linear-gradient(135deg, #67e8f9, #a5b4fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Your Campus Marketplace</span>
+          </h1>
+          <p style="font-size: 1.2rem; color: #e0e7ff; margin-bottom: 2.25rem; font-weight: 400; line-height: 1.6;">
+            Buy and sell textbooks, electronics, bicycles, dorm essentials, and calculators directly within your trusted college community.
+          </p>
+
+          <!-- Quick Search Bar in Hero -->
+          <form id="hero-search-form" style="display: flex; gap: 0.5rem; max-width: 580px; margin: 0 auto 2.5rem; background: #fff; padding: 0.4rem; border-radius: 9999px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+            <input type="text" id="hero-search-input" placeholder="Search textbooks, calculators, dorm furniture..." style="flex: 1; border: none; padding: 0.85rem 1.4rem; outline: none; border-radius: 9999px; font-size: 1rem;" />
+            <button type="submit" class="btn btn-primary" style="border-radius: 9999px; padding: 0.85rem 1.8rem;">Search</button>
+          </form>
+
+          <div class="hero-cta" style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+            <a href="/products.html" class="btn btn-primary btn-lg" style="background: #ffffff; color: #4338ca; box-shadow: 0 4px 14px rgba(0,0,0,0.15);">Browse Marketplace</a>
+            <a href="/create-product.html" class="btn btn-sell btn-lg">+ Start Selling</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Popular Categories Section -->
+    <section class="container" style="padding: 4.5rem 1.5rem 3rem;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem;">
+        <div>
+          <h2 style="font-size: 2rem; margin-bottom: 0.4rem;">Popular Categories</h2>
+          <p class="text-muted">Explore items students are trading most frequently on campus</p>
+        </div>
+        <a href="/products.html" class="font-semibold" style="display: flex; align-items: center; gap: 0.3rem;">View All &rarr;</a>
+      </div>
+      <div id="home-categories-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 1.25rem;">
+        <!-- Dynamically rendered categories -->
+      </div>
+    </section>
+
+    <!-- Latest Products Section -->
+    <section class="container" style="padding: 2rem 1.5rem 5rem;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem;">
+        <div>
+          <h2 style="font-size: 2rem; margin-bottom: 0.4rem;">Latest Listings</h2>
+          <p class="text-muted">Fresh deals posted by fellow students today</p>
+        </div>
+        <a href="/products.html" class="font-semibold" style="display: flex; align-items: center; gap: 0.3rem;">Explore All &rarr;</a>
+      </div>
+      <div id="latest-products-grid" class="product-grid">
+        <div class="spinner-wrapper" style="grid-column: 1 / -1;">
+          <div class="spinner"></div>
+          <span class="spinner-text">Loading campus listings...</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section style="background-color: var(--bg-surface); border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle); padding: 5rem 0;">
+      <div class="container">
+        <div style="text-align: center; max-width: 600px; margin: 0 auto 3.5rem;">
+          <h2 style="font-size: 2.2rem; margin-bottom: 0.6rem;">How Campus Marketplace Works</h2>
+          <p class="text-muted">Simple, direct, and zero-fee transactions built specifically for students.</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 2rem;">
+          <div class="card" style="text-align: center; padding: 2.5rem 1.5rem;">
+            <div style="font-size: 2.75rem; margin-bottom: 1rem;">📸</div>
+            <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;">1. Snap & List with AI</h3>
+            <p class="text-muted" style="font-size: 0.92rem;">Take a photo and let our Claude AI generate clear descriptions, specs, and price suggestions automatically.</p>
+          </div>
+          <div class="card" style="text-align: center; padding: 2.5rem 1.5rem;">
+            <div style="font-size: 2.75rem; margin-bottom: 1rem;">💬</div>
+            <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;">2. Chat & Connect</h3>
+            <p class="text-muted" style="font-size: 0.92rem;">Directly message interested buyers or sellers with smart conversation suggestions to agree on price.</p>
+          </div>
+          <div class="card" style="text-align: center; padding: 2.5rem 1.5rem;">
+            <div style="font-size: 2.75rem; margin-bottom: 1rem;">🤝</div>
+            <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;">3. Meet on Campus</h3>
+            <p class="text-muted" style="font-size: 0.92rem;">Hand off items safely at familiar campus spots like the student union, library, or dorm lounges. No shipping fees!</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Why Campus Marketplace -->
+    <section class="container" style="padding: 5rem 1.5rem;">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 3rem; align-items: center;">
+        <div>
+          <span class="badge badge-new" style="margin-bottom: 1rem;">Built For Students</span>
+          <h2 style="font-size: 2.3rem; margin-bottom: 1rem;">Why choose Campus Marketplace?</h2>
+          <p class="text-muted" style="margin-bottom: 1.5rem;">Unlike generic classifieds or high-fee platforms, Campus Marketplace is curated exclusively for college campuses:</p>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: 1rem;">
+            <li style="display: flex; gap: 0.75rem; align-items: flex-start;">
+              <span style="color: var(--success); font-weight: 800;">✓</span>
+              <div><strong>0% Platform Fees:</strong> Students keep 100% of their earnings with no hidden cuts.</div>
+            </li>
+            <li style="display: flex; gap: 0.75rem; align-items: flex-start;">
+              <span style="color: var(--success); font-weight: 800;">✓</span>
+              <div><strong>Verified Community:</strong> Connect with authentic students and verified campus peers.</div>
+            </li>
+            <li style="display: flex; gap: 0.75rem; align-items: flex-start;">
+              <span style="color: var(--success); font-weight: 800;">✓</span>
+              <div><strong>Claude AI Powered:</strong> Instant listing drafting, description polish, and smart messaging.</div>
+            </li>
+            <li style="display: flex; gap: 0.75rem; align-items: flex-start;">
+              <span style="color: var(--success); font-weight: 800;">✓</span>
+              <div><strong>Instant Local Pickup:</strong> Avoid packing, postal delays, and shipping damages.</div>
+            </li>
+          </ul>
+        </div>
+        <div class="card" style="background: linear-gradient(135deg, rgba(79, 70, 229, 0.05), rgba(6, 182, 212, 0.05)); border: 1px solid rgba(79,70,229,0.2); padding: 2.5rem; text-align: center;">
+          <div style="font-size: 3.5rem; margin-bottom: 1rem;">🚀</div>
+          <h3 style="font-size: 1.5rem; margin-bottom: 0.75rem;">Ready to declutter your dorm?</h3>
+          <p class="text-muted" style="margin-bottom: 1.75rem;">Sell your old textbooks, electronics, and supplies to incoming freshmen in minutes.</p>
+          <a href="/create-product.html" class="btn btn-primary btn-block">List an Item Now</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Call to Action Banner -->
+    <section style="background: linear-gradient(135deg, var(--primary), #4338ca); color: #fff; padding: 4.5rem 0; text-align: center;">
+      <div class="container" style="max-width: 680px;">
+        <h2 style="font-size: 2.4rem; color: #fff; margin-bottom: 1rem;">Join Your Campus Community Today</h2>
+        <p style="color: #e0e7ff; font-size: 1.1rem; margin-bottom: 2rem;">Create your free student account now and discover hundreds of affordable college essentials.</p>
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+          <a href="/register.html" class="btn btn-lg" style="background: #ffffff; color: var(--primary);">Create Free Account</a>
+          <a href="/products.html" class="btn btn-outline btn-lg" style="color: #ffffff; border-color: rgba(255,255,255,0.4);">Browse Products</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <h4>🎓 CampusMarket</h4>
+          <p>The centralized, secure marketplace designed by and for university students.</p>
+        </div>
+        <div>
+          <div class="footer-title">Marketplace</div>
+          <ul class="footer-links">
+            <li><a href="/products.html">All Products</a></li>
+            <li><a href="/products.html?category=Books">Textbooks</a></li>
+            <li><a href="/products.html?category=Electronics">Electronics</a></li>
+            <li><a href="/products.html?category=Furniture">Dorm Furniture</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-title">Account</div>
+          <ul class="footer-links">
+            <li><a href="/login.html">Login</a></li>
+            <li><a href="/register.html">Sign Up</a></li>
+            <li><a href="/dashboard.html">Dashboard</a></li>
+            <li><a href="/my-listings.html">My Listings</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-title">Platform</div>
+          <ul class="footer-links">
+            <li><a href="/products.html">Browse</a></li>
+            <li><a href="/create-product.html">Sell Item</a></li>
+            <li><a href="/messages.html">Messages</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div>&copy; 2026 Campus Marketplace for Students. All rights reserved.</div>
+        <div class="text-muted">Built with Vanilla JS, Express, MongoDB & Claude AI</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/utils.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/navbar.js"></script>
+  <script src="/js/home.js"></script>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Student Account | Campus Marketplace</title>
+  <meta name="description" content="Register for a free Campus Marketplace student account to buy and sell textbooks and gear.">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+  <link rel="stylesheet" href="/css/auth.css">
+</head>
+<body>
+  <header class="navbar" id="navbar"></header>
+
+  <main class="auth-wrapper">
+    <div class="auth-card" style="max-width: 520px;">
+      <div class="auth-header">
+        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🎒</div>
+        <h1>Create Student Account</h1>
+        <p>Join fellow students buying and selling on campus</p>
+      </div>
+
+      <form id="register-form">
+        <div class="form-group">
+          <label class="form-label" for="name">Full Name</label>
+          <input type="text" id="name" class="form-control" placeholder="e.g. Jordan Miller" required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="email">Campus / Student Email</label>
+          <input type="email" id="email" class="form-control" placeholder="jordan@campus.edu" required autocomplete="email" />
+          <div class="form-hint">Used for login and direct inquiries</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="phone">Phone Number</label>
+          <input type="tel" id="phone" class="form-control" placeholder="+1 (555) 000-0000" required autocomplete="tel" />
+          <div class="form-hint">For easy campus meetup coordination</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <input type="password" id="password" class="form-control" placeholder="Minimum 6 characters" required minlength="6" autocomplete="new-password" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="confirmPassword">Confirm Password</label>
+          <input type="password" id="confirmPassword" class="form-control" placeholder="Re-enter password" required minlength="6" autocomplete="new-password" />
+        </div>
+
+        <button type="submit" id="register-btn" class="btn btn-primary btn-block btn-lg mt-4">
+          Create Account
+        </button>
+      </form>
+
+      <div class="auth-footer">
+        Already have an account? <a href="/login.html">Log in here</a>
+      </div>
+    </div>
+  </main>
+
+  <script src="/js/utils.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/navbar.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('register-form');
+      const submitBtn = document.getElementById('register-btn');
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const name = document.getElementById('name').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+
+        if (!name || !email || !phone || !password) {
+          window.Utils.showToast('Please fill out all required fields', 'warning');
+          return;
+        }
+
+        if (password.length < 6) {
+          window.Utils.showToast('Password must be at least 6 characters long', 'warning');
+          return;
+        }
+
+        if (password !== confirmPassword) {
+          window.Utils.showToast('Passwords do not match', 'warning');
+          return;
+        }
+
+        try {
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Creating account...';
+
+          const response = await window.API.registerUser({
+            name,
+            email,
+            phone,
+            password,
+            confirmPassword,
+          });
+
+          if (response.success) {
+            window.Utils.showToast('Account registered successfully! Welcome to Campus Marketplace.', 'success');
+            setTimeout(() => {
+              window.location.href = '/dashboard.html';
+            }, 800);
+          }
+        } catch (error) {
+          window.Utils.showToast(error.message || 'Registration failed', 'error');
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Create Account';
+        }
+      });
+    });
+  </script>
+</body>
+</html>

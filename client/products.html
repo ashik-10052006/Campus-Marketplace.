@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Marketplace Catalog | Campus Marketplace</title>
+  <meta name="description" content="Browse textbooks, calculators, dorm furniture, bikes and electronics listed by fellow college students.">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+  <link rel="stylesheet" href="/css/products.css">
+</head>
+<body>
+  <header class="navbar" id="navbar"></header>
+
+  <main>
+    <!-- Catalog Header & Search Bar -->
+    <section class="catalog-header">
+      <div class="container text-center">
+        <h1 style="font-size: 2.6rem; margin-bottom: 0.5rem;">Campus Marketplace</h1>
+        <p class="text-muted">Find everything you need for coursework and dorm life at student-friendly prices.</p>
+
+        <div class="search-bar-wrapper">
+          <div class="search-input-group">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="search-input" class="form-control search-input" placeholder="Search by item title or description..." />
+          </div>
+          <button id="search-btn" class="btn btn-primary">Search</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Marketplace Layout -->
+    <div class="container">
+      <div class="marketplace-layout">
+        <!-- Sidebar Filters -->
+        <aside class="filters-sidebar" id="filters-sidebar">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+            <h3 style="font-size: 1.15rem;">Filters</h3>
+            <button id="clear-filters-btn" class="btn btn-outline btn-sm" style="padding: 0.25rem 0.6rem; font-size: 0.8rem;">Reset</button>
+          </div>
+
+          <!-- Category Filter -->
+          <div class="filter-section">
+            <div class="filter-title">Category</div>
+            <select id="filter-category" class="form-select">
+              <option value="">All Categories</option>
+              <!-- Dynamic options -->
+            </select>
+          </div>
+
+          <!-- Condition Filter -->
+          <div class="filter-section">
+            <div class="filter-title">Condition</div>
+            <select id="filter-condition" class="form-select">
+              <option value="">Any Condition</option>
+              <option value="NEW">Brand New</option>
+              <option value="LIKE_NEW">Like New</option>
+              <option value="GOOD">Good</option>
+              <option value="FAIR">Fair</option>
+            </select>
+          </div>
+
+          <!-- Price Range Filter -->
+          <div class="filter-section">
+            <div class="filter-title">Price Range ($)</div>
+            <div class="filter-price-inputs">
+              <input type="number" id="filter-min-price" class="form-control" placeholder="Min" min="0" />
+              <span>—</span>
+              <input type="number" id="filter-max-price" class="form-control" placeholder="Max" min="0" />
+            </div>
+          </div>
+
+          <!-- Status Filter -->
+          <div class="filter-section">
+            <div class="filter-title">Listing Status</div>
+            <select id="filter-status" class="form-select">
+              <option value="AVAILABLE">Available</option>
+              <option value="SOLD">Sold</option>
+            </select>
+          </div>
+
+          <button id="apply-filters-btn" class="btn btn-primary btn-block mt-3">Apply Filters</button>
+        </aside>
+
+        <!-- Catalog Main Area -->
+        <div class="catalog-main">
+          <!-- Toolbar -->
+          <div class="catalog-toolbar">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <button id="toggle-filters-btn" class="btn btn-outline btn-sm d-md-none" style="display: none;">
+                ⚙️ Filters
+              </button>
+              <span id="results-count" class="results-count">Loading listings...</span>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 0.6rem;">
+              <label for="sort-select" style="font-size: 0.88rem; color: var(--text-muted); font-weight: 600;">Sort By:</label>
+              <select id="sort-select" class="form-select sort-select">
+                <option value="newest">Newest First</option>
+                <option value="oldest">Oldest First</option>
+                <option value="price_asc">Price: Low to High</option>
+                <option value="price_desc">Price: High to Low</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Product Grid -->
+          <div id="products-grid" class="product-grid">
+            <div class="spinner-wrapper" style="grid-column: 1 / -1;">
+              <div class="spinner"></div>
+              <span class="spinner-text">Fetching campus items...</span>
+            </div>
+          </div>
+
+          <!-- Pagination -->
+          <div id="pagination-wrapper" class="pagination-wrapper"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container text-center">
+      <p>&copy; 2026 Campus Marketplace for Students. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="/js/utils.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/navbar.js"></script>
+  <script src="/js/products.js"></script>
+</body>
+</html>

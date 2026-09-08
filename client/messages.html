@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Messages | Campus Marketplace</title>
+  <meta name="description" content="In-app messaging to negotiate and arrange on-campus meetups with buyers and sellers.">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+  <link rel="stylesheet" href="/css/messages.css">
+</head>
+<body>
+  <header class="navbar" id="navbar"></header>
+
+  <main class="container">
+    <div class="messages-layout" id="messages-container">
+      <!-- Conversation Threads Sidebar -->
+      <aside class="conversations-sidebar" id="conversations-sidebar">
+        <div class="conversations-header">
+          <h2 style="font-size: 1.25rem; font-weight: 700;">Messages</h2>
+        </div>
+        <div class="conversations-list" id="conversations-list">
+          <div class="spinner-wrapper">
+            <div class="spinner"></div>
+            <span class="spinner-text">Loading chats...</span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Active Chat Area -->
+      <section class="chat-panel" id="chat-panel">
+        <div id="chat-empty-view" class="empty-state" style="margin: auto;">
+          <div class="empty-state-icon">💬</div>
+          <h3 class="empty-state-title">Select a Conversation</h3>
+          <p class="empty-state-subtitle">Choose a chat from the left panel to message the buyer or seller.</p>
+        </div>
+
+        <div id="chat-active-view" style="display: none; height: 100%; flex-direction: column;">
+          <!-- Chat Header -->
+          <div class="chat-header">
+            <div class="chat-product-preview">
+              <button id="back-to-convs-btn" class="btn btn-outline btn-sm d-md-none" style="display: none; padding: 0.3rem 0.6rem;">&larr;</button>
+              <img src="#" id="chat-product-img" class="chat-product-thumb" alt="Product thumbnail" />
+              <div>
+                <a href="#" id="chat-product-link" style="font-weight: 700; color: var(--text-main); font-size: 0.95rem; text-decoration: none;">Product Name</a>
+                <div style="font-size: 0.8rem; color: var(--primary); font-weight: 700;" id="chat-product-price">$0.00</div>
+              </div>
+            </div>
+            <div style="font-size: 0.85rem; color: var(--text-muted);" id="chat-participant-info"></div>
+          </div>
+
+          <!-- Message Bubbles Stream -->
+          <div class="chat-messages" id="chat-messages"></div>
+
+          <!-- Claude AI Quick Replies Suggestion Bar -->
+          <div class="ai-suggestions-bar" id="ai-suggestions-bar">
+            <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 0.3rem;">
+              ✨ AI Replies:
+            </span>
+            <div id="ai-chips-list" style="display: flex; gap: 0.5rem; overflow-x: auto;">
+              <!-- Dynamic chips -->
+            </div>
+          </div>
+
+          <!-- Input Bar -->
+          <form id="message-send-form" class="chat-input-bar">
+            <input type="text" id="message-input" class="chat-input" placeholder="Type a friendly message to arrange pickup..." autocomplete="off" required />
+            <button type="submit" id="send-msg-btn" class="btn btn-primary" style="border-radius: var(--radius-full); padding: 0.75rem 1.4rem;">
+              Send
+            </button>
+          </form>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container text-center">
+      <p>&copy; 2026 Campus Marketplace for Students. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="/js/utils.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/navbar.js"></script>
+  <script src="/js/messages.js"></script>
+</body>
+</html>

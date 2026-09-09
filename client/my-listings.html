@@ -29,6 +29,29 @@
           <span class="spinner-text">Loading your listings...</span>
         </div>
       </div>
+    <!-- Confirmation Modal -->
+    <div class="modal" id="confirm-modal" aria-hidden="true" role="dialog">
+      <div class="modal-backdrop" id="confirm-modal-backdrop"></div>
+      <div class="modal-content" style="max-width: 460px;">
+        <div class="modal-header">
+          <h3 class="modal-title" id="confirm-modal-title">Confirm Action</h3>
+          <button type="button" class="modal-close" id="confirm-modal-close" aria-label="Close modal">&times;</button>
+        </div>
+        <div class="modal-body" style="padding: 1.25rem 0;">
+          <div style="display: flex; gap: 1rem; align-items: flex-start;">
+            <div id="confirm-modal-icon" style="font-size: 2rem; line-height: 1; flex-shrink: 0;">⚠️</div>
+            <div>
+              <p id="confirm-modal-text" style="color: var(--text-dark); font-size: 0.95rem; margin: 0; line-height: 1.5;">
+                Are you sure you want to perform this action?
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+          <button type="button" class="btn btn-outline" id="confirm-modal-cancel">Cancel</button>
+          <button type="button" class="btn btn-primary" id="confirm-modal-proceed">Confirm</button>
+        </div>
+      </div>
     </div>
   </main>
 

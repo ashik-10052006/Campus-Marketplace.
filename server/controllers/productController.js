@@ -275,13 +275,7 @@ const deleteProduct = async (req, res, next) => {
       });
     }
 
-    if (isAdmin) {
-      // Admins soft-remove to preserve audit history or can hard delete
-      product.status = 'REMOVED';
-      await product.save();
-    } else {
-      await Product.findByIdAndDelete(req.params.id);
-    }
+    await Product.findByIdAndDelete(req.params.id);
 
     res.status(200).json({
       success: true,
@@ -294,7 +288,7 @@ const deleteProduct = async (req, res, next) => {
 
 // @desc    Mark product as sold
 // @route   PATCH /api/products/:id/sold
-// @access  Private (Owner only)
+// @access  Private (Owner or Admin)
 const markProductSold = async (req, res, next) => {
   try {
     const product = await Product.findById(req.params.id);
@@ -303,10 +297,13 @@ const markProductSold = async (req, res, next) => {
       return res.status(404).json({ success: false, message: 'Product not found' });
     }
 
-    if (product.seller.toString() !== req.user._id.toString()) {
+    const isOwner = product.seller.toString() === req.user._id.toString();
+    const isAdmin = req.user.role === 'admin';
+
+    if (!isOwner && !isAdmin) {
       return res.status(403).json({
         success: false,
-        message: 'Only the product seller can mark this item as sold',
+        message: 'Only the product seller or an admin can mark this item as sold',
       });
     }
 
@@ -323,12 +320,49 @@ const markProductSold = async (req, res, next) => {
   }
 };
 
+// @desc    Mark product as available (re-list)
+// @route   PATCH /api/products/:id/available
+// @access  Private (Owner or Admin)
+const markProductAvailable = async (req, res, next) => {
+  try {
+    const product = await Product.findById(req.params.id);
+
+    if (!product) {
+      return res.status(404).json({ success: false, message: 'Product not found' });
+    }
+
+    const isOwner = product.seller.toString() === req.user._id.toString();
+    const isAdmin = req.user.role === 'admin';
+
+    if (!isOwner && !isAdmin) {
+      return res.status(403).json({
+        success: false,
+        message: 'Only the product seller or an admin can re-list this item',
+      });
+    }
+
+    product.status = 'AVAILABLE';
+    await product.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Product re-listed as available',
+      data: { product },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // @desc    Get logged in user's listings
 // @route   GET /api/products/my-listings
 // @access  Private
 const getMyListings = async (req, res, next) => {
   try {
-    const products = await Product.find({ seller: req.user._id })
+    const products = await Product.find({
+      seller: req.user._id,
+      status: { $ne: 'REMOVED' },
+    })
       .populate('category', 'name')
       .sort({ createdAt: -1 });
 
@@ -348,5 +382,6 @@ module.exports = {
   updateProduct,
   deleteProduct,
   markProductSold,
+  markProductAvailable,
   getMyListings,
 };

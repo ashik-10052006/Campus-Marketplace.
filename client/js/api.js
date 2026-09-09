@@ -188,6 +188,12 @@ async function markProductSold(id) {
   });
 }
 
+async function markProductAvailable(id) {
+  return apiRequest(`/products/${id}/available`, {
+    method: 'PATCH',
+  });
+}
+
 // ---------------- MESSAGING APIS ----------------
 async function getConversations() {
   return apiRequest('/messages/conversations', {
@@ -316,6 +322,7 @@ window.API = {
   deleteProduct,
   getMyListings,
   markProductSold,
+  markProductAvailable,
   getConversations,
   startConversation,
   getConversation,

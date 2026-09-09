@@ -8,8 +8,9 @@ const {
   handleListingAssistant,
   handleMessageSuggestions,
   handleClassifyReport,
+  handleAiAssistant,
 } = require('../controllers/aiController');
-const { protect } = require('../middleware/authMiddleware');
+const { protect, optionalAuth } = require('../middleware/authMiddleware');
 
 // Dedicated rate limiter for AI operations to prevent API abuse
 const aiLimiter = rateLimit({
@@ -23,6 +24,10 @@ const aiLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+// Interactive Campus AI Assistant (accessible to visitors and authenticated students)
+router.post('/assistant', aiLimiter, optionalAuth, handleAiAssistant);
+
+// Protected routes require authenticated user
 router.use(protect);
 router.use(aiLimiter);
 

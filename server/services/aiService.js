@@ -1,11 +1,14 @@
+const https = require('https');
 const Anthropic = require('@anthropic-ai/sdk');
 
 let anthropicClient = null;
 
 const getAnthropicClient = () => {
   if (!anthropicClient && process.env.ANTHROPIC_API_KEY) {
+    const httpAgent = new https.Agent({ keepAlive: false });
     anthropicClient = new Anthropic({
       apiKey: process.env.ANTHROPIC_API_KEY,
+      httpAgent,
     });
   }
   return anthropicClient;
@@ -18,7 +21,7 @@ const callClaudeMessages = async ({ prompt, defaultTokens = 300 }) => {
   const client = getAnthropicClient();
   if (!client) return null;
 
-  const primaryModel = process.env.ANTHROPIC_MODEL || 'claude-3-5-sonnet-20241022';
+  const primaryModel = process.env.ANTHROPIC_MODEL || 'claude-opus-4-6';
   // Respect ANTHROPIC_MAX_TOKENS bounding, keeping completions fast and tailored
   const configuredMax = parseInt(process.env.ANTHROPIC_MAX_TOKENS, 10);
   const maxTokens = Number.isFinite(configuredMax) && configuredMax > 0
@@ -39,11 +42,11 @@ const callClaudeMessages = async ({ prompt, defaultTokens = 300 }) => {
   } catch (error) {
     console.error(`Claude AI error (${primaryModel}):`, error.message);
 
-    // If the configured model is not recognized, attempt fallback to claude-3-5-sonnet
-    if (primaryModel !== 'claude-3-5-sonnet-20241022') {
+    // If the configured model is not recognized, attempt fallback to claude-sonnet-4-6
+    if (primaryModel !== 'claude-sonnet-4-6') {
       try {
         const fallbackRes = await client.messages.create({
-          model: 'claude-3-5-sonnet-20241022',
+          model: 'claude-sonnet-4-6',
           max_tokens: Math.min(maxTokens, 4096),
           messages: [{ role: 'user', content: prompt }],
         });
@@ -300,6 +303,109 @@ Return ONLY raw JSON.`;
   };
 };
 
+/**
+ * AI Feature 7: Campus AI Assistant (Interactive Chatbot)
+ */
+const chatWithAssistant = async ({ message, history = [], user = null, catalogContext = {} }) => {
+  const client = getAnthropicClient();
+
+  const userName = user ? user.name.split(' ')[0] : 'Student';
+  const userRole = user ? user.role : 'visitor';
+  const categoriesList = catalogContext.categories || ['Textbooks', 'Electronics', 'Dorm & Living', 'Transportation', 'Calculators', 'Other'];
+  const sampleProducts = catalogContext.products || [];
+
+  const catalogSummary = sampleProducts.length > 0
+    ? `\nCurrently featured on the marketplace:\n` + sampleProducts.slice(0, 8).map((p) => `- ${p.name} ($${p.price}) in ${p.category ? p.category.name : 'General'}`).join('\n')
+    : '';
+
+  const systemInstructions = `You are the friendly, knowledgeable, and safety-conscious Claude AI Campus Assistant for Campus Marketplace (CampusMarket).
+You help college students buy and sell items safely and affordably on campus.
+
+User Information:
+- Current User: ${userName} (${userRole})
+- Marketplace Categories: ${categoriesList.join(', ')}
+${catalogSummary}
+
+Core Guidelines:
+1. Tone: Friendly, authentic, encouraging, helpful, and student-focused. Keep responses concise (under 150 words unless asked for detailed explanations).
+2. Safety First: Always advocate safe on-campus meetups (e.g. Campus Library, Student Union, Dining Hall, daylight hours, inspect before paying). Warn against wiring money, gift cards, or off-campus remote transfers.
+3. Pricing & Selling Tips: Suggest competitive student pricing, taking clear photos in good lighting, and highlighting course codes or model numbers for textbooks/calculators.
+4. Negotiation Advice: Encourage polite, respectful bargaining (e.g. "Would you consider $X if I can pick it up today?").
+5. Formatting: Use markdown formatting (bullet points, bold text) for readability.
+6. Navigation: Direct students to browse at /products.html, post an item at /create-product.html, or view chats at /messages.html when relevant.`;
+
+  if (!client) {
+    const lower = (message || '').toLowerCase();
+    if (lower.includes('safe') || lower.includes('meet') || lower.includes('pickup')) {
+      return `🛡️ **Campus Safety Tip:** Always arrange pickups in public, well-lit areas on campus during daylight! Great spots include the **Student Union lobby**, **Campus Library entrance**, or outside the **Student Dining Hall**. Inspect the item thoroughly before paying with cash or campus payment apps.`;
+    }
+    if (lower.includes('sell') || lower.includes('price') || lower.includes('how to')) {
+      return `🏷️ **Quick Selling Tips:**\n• Take clear photos in good natural lighting\n• Price competitively (check similar campus listings)\n• Include course numbers for textbooks (e.g., *MATH 101*)\n• You can list your item in under 2 minutes at [+ Sell Item](/create-product.html)!`;
+    }
+    if (lower.includes('textbook') || lower.includes('book') || lower.includes('calculator')) {
+      return `📚 **Finding Study Gear:** You can browse all active textbooks, graphing calculators, and tech on the [Marketplace Catalog](/products.html). Be sure to filter by category or search by course code to find what you need!`;
+    }
+    return `Hi ${userName}! 👋 I'm your **Campus AI Assistant**. I can help you find items on campus, give advice on pricing your listings, suggest safe pickup locations, and guide you through student transactions. What can I help you with today?`;
+  }
+
+  const messages = [];
+  if (Array.isArray(history)) {
+    history.slice(-6).forEach((h) => {
+      if (h.role === 'user' || h.role === 'assistant') {
+        messages.push({
+          role: h.role,
+          content: String(h.content || '').slice(0, 1000),
+        });
+      }
+    });
+  }
+
+  messages.push({
+    role: 'user',
+    content: String(message || '').slice(0, 1500),
+  });
+
+  const primaryModel = process.env.ANTHROPIC_MODEL || 'claude-opus-4-6';
+  const configuredMax = parseInt(process.env.ANTHROPIC_MAX_TOKENS, 10);
+  const maxTokens = Number.isFinite(configuredMax) && configuredMax > 0
+    ? Math.min(500, configuredMax, 4096)
+    : 500;
+
+  try {
+    const response = await client.messages.create({
+      model: primaryModel,
+      max_tokens: maxTokens,
+      system: systemInstructions,
+      messages,
+    });
+
+    if (response && response.content && response.content[0]) {
+      return response.content[0].text.trim();
+    }
+    return `I'm here to help you navigate Campus Marketplace! Ask me about listings, pricing, or safety tips.`;
+  } catch (error) {
+    console.error(`Claude AI assistant error (${primaryModel}):`, error.message);
+
+    if (primaryModel !== 'claude-sonnet-4-6') {
+      try {
+        const fallbackRes = await client.messages.create({
+          model: 'claude-sonnet-4-6',
+          max_tokens: maxTokens,
+          system: systemInstructions,
+          messages,
+        });
+        if (fallbackRes && fallbackRes.content && fallbackRes.content[0]) {
+          return fallbackRes.content[0].text.trim();
+        }
+      } catch (fallbackErr) {
+        console.error('Claude AI assistant fallback error:', fallbackErr.message);
+      }
+    }
+
+    return `Hi ${userName}! I'm having a brief connection issue with Claude AI, but I'm still here to help. You can browse active listings on the [Marketplace](/products.html), create a new post at [+ Sell Item](/create-product.html), or check your active chats in [Messages](/messages.html).`;
+  }
+};
+
 module.exports = {
   generateProductDescription,
   improveProductDescription,
@@ -307,4 +413,5 @@ module.exports = {
   listingAssistant,
   getMessageSuggestions,
   classifyReport,
+  chatWithAssistant,
 };

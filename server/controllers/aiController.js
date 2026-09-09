@@ -1,4 +1,5 @@
 const Category = require('../models/Category');
+const Product = require('../models/Product');
 const {
   generateProductDescription,
   improveProductDescription,
@@ -6,6 +7,7 @@ const {
   listingAssistant,
   getMessageSuggestions,
   classifyReport,
+  chatWithAssistant,
 } = require('../services/aiService');
 
 // @desc    Generate product description using Claude AI
@@ -177,6 +179,58 @@ const handleClassifyReport = async (req, res, next) => {
   }
 };
 
+// @desc    Campus AI Assistant interactive conversation
+// @route   POST /api/ai/assistant
+// @access  Public / Optional Auth
+const handleAiAssistant = async (req, res, next) => {
+  try {
+    const { message, history } = req.body;
+
+    if (!message || !message.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Message is required',
+      });
+    }
+
+    // Retrieve lightweight contextual data from the marketplace
+    let categories = [];
+    let sampleProducts = [];
+    try {
+      [categories, sampleProducts] = await Promise.all([
+        Category.find({}, 'name').lean(),
+        Product.find({ status: 'AVAILABLE' })
+          .populate('category', 'name')
+          .select('name price category condition')
+          .sort({ createdAt: -1 })
+          .limit(8)
+          .lean(),
+      ]);
+    } catch (dbErr) {
+      console.warn('Marketplace context fetch warning:', dbErr.message);
+    }
+
+    const catalogContext = {
+      categories: categories.map((c) => c.name),
+      products: sampleProducts,
+    };
+
+    const reply = await chatWithAssistant({
+      message: message.trim(),
+      history: Array.isArray(history) ? history : [],
+      user: req.user || null,
+      catalogContext,
+    });
+
+    res.status(200).json({
+      success: true,
+      data: { reply },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   handleGenerateDescription,
   handleImproveDescription,
@@ -184,4 +238,5 @@ module.exports = {
   handleListingAssistant,
   handleMessageSuggestions,
   handleClassifyReport,
+  handleAiAssistant,
 };

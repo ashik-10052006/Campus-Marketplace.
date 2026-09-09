@@ -286,6 +286,13 @@ async function classifyReport(data) {
   });
 }
 
+async function askAiAssistant(data) {
+  return apiRequest('/ai/assistant', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
 // Attach globally for vanilla JS modules
 window.API = {
   apiRequest,
@@ -323,4 +330,5 @@ window.API = {
   getListingAssistant,
   getMessageSuggestions,
   classifyReport,
+  askAiAssistant,
 };

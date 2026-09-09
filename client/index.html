@@ -36,7 +36,7 @@
             <button type="submit" class="btn btn-primary" style="border-radius: 9999px; padding: 0.85rem 1.8rem;">Search</button>
           </form>
 
-          <div class="hero-cta" style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+          <div class="hero-cta" id="hero-cta-container" style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
             <a href="/products.html" class="btn btn-primary btn-lg" style="background: #ffffff; color: #4338ca; box-shadow: 0 4px 14px rgba(0,0,0,0.15);">Browse Marketplace</a>
             <a href="/create-product.html" class="btn btn-sell btn-lg">+ Start Selling</a>
           </div>
@@ -138,14 +138,30 @@
       </div>
     </section>
 
-    <!-- Call to Action Banner -->
-    <section style="background: linear-gradient(135deg, var(--primary), #4338ca); color: #fff; padding: 4.5rem 0; text-align: center;">
+    <!-- Call to Action Banner: Guest Visitor (Shown only before login) -->
+    <section id="guest-cta-banner" style="background: linear-gradient(135deg, var(--primary), #4338ca); color: #fff; padding: 4.5rem 0; text-align: center;">
       <div class="container" style="max-width: 680px;">
         <h2 style="font-size: 2.4rem; color: #fff; margin-bottom: 1rem;">Join Your Campus Community Today</h2>
         <p style="color: #e0e7ff; font-size: 1.1rem; margin-bottom: 2rem;">Create your free student account now and discover hundreds of affordable college essentials.</p>
         <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-          <a href="/register.html" class="btn btn-lg" style="background: #ffffff; color: var(--primary);">Create Free Account</a>
+          <a href="/register.html" class="btn btn-lg" style="background: #ffffff; color: var(--primary); font-weight: 700; box-shadow: 0 4px 14px rgba(0,0,0,0.15);">Create Free Account</a>
           <a href="/products.html" class="btn btn-outline btn-lg" style="color: #ffffff; border-color: rgba(255,255,255,0.4);">Browse Products</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Call to Action Banner: Logged-in Student/Admin Dashboard (Shown only after login) -->
+    <section id="user-dashboard-banner" style="background: linear-gradient(135deg, var(--primary), #4338ca); color: #fff; padding: 4.5rem 0; text-align: center; display: none;">
+      <div class="container" style="max-width: 720px;">
+        <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(255, 255, 255, 0.15); padding: 0.35rem 1rem; border-radius: 9999px; margin-bottom: 1.25rem; font-size: 0.85rem; font-weight: 600;">
+          <span>🎓 Student Dashboard</span>
+        </div>
+        <h2 id="logged-dashboard-title" style="font-size: 2.4rem; color: #fff; margin-bottom: 1rem;">Welcome to Your Campus Dashboard</h2>
+        <p id="logged-dashboard-subtitle" style="color: #e0e7ff; font-size: 1.1rem; margin-bottom: 2rem;">Manage your active listings, view incoming messages, and trade safely on campus.</p>
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+          <a href="/dashboard.html" class="btn btn-lg btn-user-dash" style="background: #ffffff; color: var(--primary); font-weight: 700; box-shadow: 0 4px 14px rgba(0,0,0,0.15);">Go to Dashboard</a>
+          <a href="/my-listings.html" class="btn btn-outline btn-lg" style="color: #ffffff; border-color: rgba(255,255,255,0.4);">📋 My Listings</a>
+          <a href="/create-product.html" class="btn btn-sell btn-lg" style="box-shadow: 0 4px 14px rgba(0,0,0,0.15);">+ Sell an Item</a>
         </div>
       </div>
     </section>

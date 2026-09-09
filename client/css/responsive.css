@@ -76,7 +76,8 @@
 
   .messages-layout {
     grid-template-columns: 1fr !important;
-    height: auto !important;
+    height: 100% !important;
+    min-height: 0 !important;
   }
 
   .conversations-sidebar.hidden-mobile {

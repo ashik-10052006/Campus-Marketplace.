@@ -94,6 +94,24 @@ window.selectConversation = async function (conversationId) {
   if (emptyView) emptyView.style.display = 'none';
   if (activeView) activeView.style.display = 'flex';
 
+  // Handle mobile view toggling
+  const sidebar = document.getElementById('conversations-sidebar');
+  const chatPanel = document.getElementById('chat-panel');
+  const backBtn = document.getElementById('back-to-convs-btn');
+
+  if (window.innerWidth <= 768) {
+    if (sidebar) sidebar.classList.add('hidden-mobile');
+    if (chatPanel) chatPanel.classList.remove('hidden-mobile');
+    if (backBtn) {
+      backBtn.style.display = 'inline-flex';
+      backBtn.onclick = () => {
+        if (sidebar) sidebar.classList.remove('hidden-mobile');
+        if (chatPanel) chatPanel.classList.add('hidden-mobile');
+        backBtn.style.display = 'none';
+      };
+    }
+  }
+
   if (messagesBox) {
     messagesBox.innerHTML = `
       <div class="spinner-wrapper" style="margin: auto;">
@@ -152,7 +170,7 @@ function renderMessages(messages) {
 
   if (messages.length === 0) {
     container.innerHTML = `
-      <div style="text-align: center; color: var(--text-muted); margin: auto; padding: 2rem;">
+      <div class="empty-chat-notice" style="text-align: center; color: var(--text-muted); margin: auto; padding: 2rem;">
         <div style="font-size: 2rem; margin-bottom: 0.5rem;">👋</div>
         <p>No messages yet. Send a message or click an AI suggestion below to break the ice!</p>
       </div>
@@ -176,83 +194,181 @@ function renderMessages(messages) {
   container.scrollTop = container.scrollHeight;
 }
 
+const DEFAULT_AI_SUGGESTIONS = [
+  'Is this item still available?',
+  'Can I see the item before buying?',
+  'Is the price negotiable?',
+  'Where can we meet on campus for pickup?',
+];
+
+function renderAiChips(suggestions) {
+  const chipsContainer = document.getElementById('ai-chips-list');
+  if (!chipsContainer) return;
+
+  chipsContainer.innerHTML = '';
+  const list = Array.isArray(suggestions) && suggestions.length > 0 ? suggestions : DEFAULT_AI_SUGGESTIONS;
+
+  list.forEach((text) => {
+    const chip = document.createElement('div');
+    chip.className = 'ai-chip';
+    chip.setAttribute('role', 'button');
+    chip.setAttribute('tabindex', '0');
+    chip.title = 'Click to use this reply, or click ➤ to send immediately';
+
+    const label = document.createElement('span');
+    label.className = 'ai-chip-text';
+    label.textContent = text;
+
+    const sendBtn = document.createElement('button');
+    sendBtn.type = 'button';
+    sendBtn.className = 'ai-chip-send-btn';
+    sendBtn.title = 'Send immediately';
+    sendBtn.innerHTML = '&#10148;'; // ➤ arrow
+
+    // Clicking text or chip body inserts into input, focuses, and highlights
+    label.addEventListener('click', (e) => {
+      e.stopPropagation();
+      applyAiSuggestion(text, false);
+    });
+
+    // Clicking the chip container
+    chip.addEventListener('click', () => {
+      const input = document.getElementById('message-input');
+      // If user clicks the chip while it is already populated in the input, send it
+      if (input && input.value.trim() === text.trim()) {
+        applyAiSuggestion(text, true);
+      } else {
+        applyAiSuggestion(text, false);
+      }
+    });
+
+    // Enter / Space key accessibility
+    chip.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        applyAiSuggestion(text, false);
+      }
+    });
+
+    // Clicking the send icon immediately sends
+    sendBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      applyAiSuggestion(text, true);
+    });
+
+    chip.appendChild(label);
+    chip.appendChild(sendBtn);
+    chipsContainer.appendChild(chip);
+  });
+}
+
 async function loadAiSuggestions(conv, messages) {
   const chipsContainer = document.getElementById('ai-chips-list');
   if (!chipsContainer) return;
 
+  // Render defaults immediately so suggestions are never missing or blank
+  renderAiChips(DEFAULT_AI_SUGGESTIONS);
+
   const lastContext =
-    messages.length > 0 ? messages.slice(-2).map((m) => m.text).join(' | ') : '';
+    messages && messages.length > 0 ? messages.slice(-2).map((m) => m.text).join(' | ') : '';
 
   try {
     const res = await window.API.getMessageSuggestions({
-      productName: conv.product ? conv.product.name : 'Item',
-      productPrice: conv.product ? conv.product.price : 0,
+      productName: conv && conv.product ? conv.product.name : 'Item',
+      productPrice: conv && conv.product ? conv.product.price : 0,
       conversationContext: lastContext,
     });
 
-    if (res.success && res.data && res.data.suggestions) {
-      chipsContainer.innerHTML = res.data.suggestions
-        .map((s) => {
-          return `<button type="button" class="ai-chip" onclick="applyAiSuggestion('${window.Utils.escapeHTML(s)}')">${window.Utils.escapeHTML(s)}</button>`;
-        })
-        .join('');
+    if (res.success && res.data && res.data.suggestions && res.data.suggestions.length > 0) {
+      renderAiChips(res.data.suggestions);
     }
   } catch (err) {
-    console.warn('AI suggestions error:', err);
+    console.warn('AI suggestions error, using defaults:', err);
+    renderAiChips(DEFAULT_AI_SUGGESTIONS);
   }
 }
 
-window.applyAiSuggestion = function (text) {
+window.applyAiSuggestion = function (text, autoSend = false) {
+  if (autoSend) {
+    sendChatMessage(text);
+    return;
+  }
+
   const input = document.getElementById('message-input');
   if (input) {
     input.value = text;
     input.focus();
+    input.classList.remove('input-highlight');
+    // Trigger reflow to restart CSS animation
+    void input.offsetWidth;
+    input.classList.add('input-highlight');
+    input.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 };
+
+async function sendChatMessage(rawText) {
+  const text = (rawText || '').trim();
+  if (!text || !activeConversationId) return;
+
+  const input = document.getElementById('message-input');
+  const sendBtn = document.getElementById('send-msg-btn');
+  const container = document.getElementById('chat-messages');
+
+  try {
+    if (sendBtn) sendBtn.disabled = true;
+    if (input) input.value = '';
+
+    const res = await window.API.sendMessage(activeConversationId, text);
+    if (res.success && res.data && res.data.message) {
+      if (container) {
+        // Remove empty placeholder notice if it exists
+        const emptyNotice = container.querySelector('.empty-chat-notice');
+        if (emptyNotice) emptyNotice.remove();
+
+        // Append sent message bubble
+        const bubble = document.createElement('div');
+        bubble.className = 'message-bubble message-sent';
+        bubble.innerHTML = `
+          <div class="message-text">${window.Utils.escapeHTML(res.data.message.text)}</div>
+          <div class="message-meta">just now</div>
+        `;
+        container.appendChild(bubble);
+        container.scrollTop = container.scrollHeight;
+      }
+
+      // Update snippet in sidebar
+      const convItem = document.getElementById(`conv-item-${activeConversationId}`);
+      if (convItem) {
+        const lastMsgEl = convItem.querySelector('.conv-last-msg');
+        if (lastMsgEl) lastMsgEl.textContent = text;
+        const timeEl = convItem.querySelector('.conv-time');
+        if (timeEl) timeEl.textContent = 'just now';
+      }
+
+      // Refresh AI suggestions based on the updated conversation context
+      if (currentConversation) {
+        loadAiSuggestions(currentConversation, [
+          { text, sender: { _id: window.Auth.getUser()._id } },
+        ]);
+      }
+    }
+  } catch (err) {
+    window.Utils.showToast(err.message || 'Failed to send message', 'error');
+  } finally {
+    if (sendBtn) sendBtn.disabled = false;
+    if (input) input.focus();
+  }
+}
 
 function setupSendForm() {
   const form = document.getElementById('message-send-form');
   const input = document.getElementById('message-input');
-  const sendBtn = document.getElementById('send-msg-btn');
 
   if (form) {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const text = input.value.trim();
-
-      if (!text || !activeConversationId) return;
-
-      try {
-        sendBtn.disabled = true;
-        input.value = '';
-
-        const res = await window.API.sendMessage(activeConversationId, text);
-        if (res.success && res.data && res.data.message) {
-          const container = document.getElementById('chat-messages');
-
-          // Append message bubble
-          const bubble = document.createElement('div');
-          bubble.className = 'message-bubble message-sent';
-          bubble.innerHTML = `
-            <div class="message-text">${window.Utils.escapeHTML(res.data.message.text)}</div>
-            <div class="message-meta">just now</div>
-          `;
-          container.appendChild(bubble);
-          container.scrollTop = container.scrollHeight;
-
-          // Update snippet in sidebar
-          const convItem = document.getElementById(`conv-item-${activeConversationId}`);
-          if (convItem) {
-            const lastMsgEl = convItem.querySelector('.conv-last-msg');
-            if (lastMsgEl) lastMsgEl.textContent = text;
-          }
-        }
-      } catch (err) {
-        window.Utils.showToast(err.message || 'Failed to send message', 'error');
-      } finally {
-        sendBtn.disabled = false;
-        input.focus();
-      }
+      const text = input ? input.value : '';
+      await sendChatMessage(text);
     });
   }
 }

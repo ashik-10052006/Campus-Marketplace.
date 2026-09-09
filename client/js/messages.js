@@ -36,19 +36,20 @@ async function loadConversations(autoSelectId = null) {
       }
 
       const currentUser = window.Auth.getUser();
+      const currentUserId = currentUser ? (currentUser._id || currentUser.id)?.toString() : '';
 
       listContainer.innerHTML = convs
         .map((conv) => {
-          // Identify the other participant
-          const otherUser =
-            conv.buyer && conv.buyer._id === currentUser._id ? conv.seller : conv.buyer;
-          const otherName = otherUser ? otherUser.name : 'Student';
-          const avatar = otherUser ? otherUser.profileImage : '';
-          const productName = conv.product ? conv.product.name : 'Marketplace Item';
+          // Identify the other participant safely using string ID comparison
+          const buyerId = conv.buyer ? (conv.buyer._id || conv.buyer)?.toString() : '';
+          const otherUser = buyerId === currentUserId ? conv.seller : conv.buyer;
+          const otherName = otherUser ? (otherUser.name || 'Student') : 'Student';
+          const avatar = otherUser ? (otherUser.profileImage || '') : '';
+          const productName = conv.product ? (conv.product.name || 'Marketplace Item') : 'Marketplace Item';
           const isActive = conv._id === autoSelectId;
 
           return `
-            <div class="conversation-item ${isActive ? 'is-active' : ''}" id="conv-item-${conv._id}" onclick="selectConversation('${conv._id}')">
+            <div class="conversation-item ${isActive ? 'is-active' : ''}" id="conv-item-${conv._id}" data-conv-id="${conv._id}" role="button" tabindex="0">
               ${
                 avatar
                   ? `<img src="${avatar}" class="conv-avatar" alt="${window.Utils.escapeHTML(otherName)}" />`
@@ -67,6 +68,29 @@ async function loadConversations(autoSelectId = null) {
         })
         .join('');
 
+      // Event delegation for reliable clicking on any child element
+      listContainer.onclick = (e) => {
+        const item = e.target.closest('.conversation-item');
+        if (!item) return;
+        const convId = item.getAttribute('data-conv-id');
+        if (convId) {
+          selectConversation(convId);
+        }
+      };
+
+      // Keyboard accessibility (Enter / Space)
+      listContainer.onkeydown = (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          const item = e.target.closest('.conversation-item');
+          if (!item) return;
+          e.preventDefault();
+          const convId = item.getAttribute('data-conv-id');
+          if (convId) {
+            selectConversation(convId);
+          }
+        }
+      };
+
       // Auto-select if requested or pick the first
       const idToSelect = autoSelectId || (convs.length > 0 ? convs[0]._id : null);
       if (idToSelect) {
@@ -79,12 +103,15 @@ async function loadConversations(autoSelectId = null) {
   }
 }
 
-window.selectConversation = async function (conversationId) {
+async function selectConversation(conversationId) {
+  if (!conversationId) return;
   activeConversationId = conversationId;
 
   // Highlight active item in sidebar
   document.querySelectorAll('.conversation-item').forEach((el) => el.classList.remove('is-active'));
-  const activeItem = document.getElementById(`conv-item-${conversationId}`);
+  const activeItem =
+    document.getElementById(`conv-item-${conversationId}`) ||
+    document.querySelector(`[data-conv-id="${conversationId}"]`);
   if (activeItem) activeItem.classList.add('is-active');
 
   const emptyView = document.getElementById('chat-empty-view');
@@ -93,6 +120,15 @@ window.selectConversation = async function (conversationId) {
 
   if (emptyView) emptyView.style.display = 'none';
   if (activeView) activeView.style.display = 'flex';
+
+  // Seamlessly update browser URL so refreshing keeps the current conversation
+  try {
+    const url = new URL(window.location);
+    url.searchParams.set('conversationId', conversationId);
+    window.history.replaceState({}, '', url);
+  } catch (e) {
+    // Ignore in non-standard environments
+  }
 
   // Handle mobile view toggling
   const sidebar = document.getElementById('conversations-sidebar');
@@ -137,28 +173,49 @@ window.selectConversation = async function (conversationId) {
       window.Utils.renderError(messagesBox, error.message || 'Could not load chat messages');
     }
   }
-};
+}
+
+window.selectConversation = selectConversation;
 
 function renderChatHeader(conv) {
+  if (!conv) return;
+
   const productImg = document.getElementById('chat-product-img');
   const productLink = document.getElementById('chat-product-link');
   const productPrice = document.getElementById('chat-product-price');
   const participantInfo = document.getElementById('chat-participant-info');
 
   const currentUser = window.Auth.getUser();
-  const otherUser = conv.buyer && conv.buyer._id === currentUser._id ? conv.seller : conv.buyer;
+  const currentUserId = currentUser ? (currentUser._id || currentUser.id)?.toString() : '';
+  const buyerId = conv.buyer ? (conv.buyer._id || conv.buyer)?.toString() : '';
+  const otherUser = buyerId === currentUserId ? conv.seller : conv.buyer;
+  const otherName = otherUser ? (otherUser.name || 'Student') : 'Student';
 
   if (conv.product) {
-    if (productImg) productImg.src = conv.product.imageUrl;
-    if (productLink) {
-      productLink.textContent = conv.product.name;
-      productLink.href = `/product-details.html?id=${conv.product._id}`;
+    if (productImg) {
+      productImg.src = conv.product.imageUrl || 'https://via.placeholder.com/80';
+      productImg.style.display = 'block';
     }
-    if (productPrice) productPrice.textContent = window.Utils.formatCurrency(conv.product.price);
+    if (productLink) {
+      productLink.textContent = conv.product.name || 'Marketplace Item';
+      productLink.href = `/product-details.html?id=${conv.product._id || ''}`;
+    }
+    if (productPrice) {
+      productPrice.textContent = conv.product.price != null
+        ? window.Utils.formatCurrency(conv.product.price)
+        : '';
+    }
+  } else {
+    if (productImg) productImg.style.display = 'none';
+    if (productLink) {
+      productLink.textContent = 'Marketplace Item';
+      productLink.removeAttribute('href');
+    }
+    if (productPrice) productPrice.textContent = '';
   }
 
-  if (participantInfo && otherUser) {
-    participantInfo.innerHTML = `Chatting with: <strong>${window.Utils.escapeHTML(otherUser.name)}</strong>`;
+  if (participantInfo) {
+    participantInfo.innerHTML = `Chatting with: <strong>${window.Utils.escapeHTML(otherName)}</strong>`;
   }
 }
 
@@ -167,8 +224,9 @@ function renderMessages(messages) {
   if (!container) return;
 
   const currentUser = window.Auth.getUser();
+  const currentUserId = currentUser ? (currentUser._id || currentUser.id)?.toString() : '';
 
-  if (messages.length === 0) {
+  if (!messages || messages.length === 0) {
     container.innerHTML = `
       <div class="empty-chat-notice" style="text-align: center; color: var(--text-muted); margin: auto; padding: 2rem;">
         <div style="font-size: 2rem; margin-bottom: 0.5rem;">👋</div>
@@ -180,7 +238,8 @@ function renderMessages(messages) {
 
   container.innerHTML = messages
     .map((msg) => {
-      const isSentByMe = msg.sender && msg.sender._id === currentUser._id;
+      const senderId = msg.sender ? (msg.sender._id || msg.sender)?.toString() : '';
+      const isSentByMe = senderId && senderId === currentUserId;
       return `
         <div class="message-bubble ${isSentByMe ? 'message-sent' : 'message-received'}">
           <div class="message-text">${window.Utils.escapeHTML(msg.text)}</div>

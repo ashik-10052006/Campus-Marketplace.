@@ -95,8 +95,16 @@ const getConversationById = async (req, res, next) => {
     }
 
     // Strict participant authorization: changing URL must NEVER expose another user's chat
-    const isBuyer = conversation.buyer._id.toString() === req.user._id.toString();
-    const isSeller = conversation.seller._id.toString() === req.user._id.toString();
+    const buyerId = conversation.buyer
+      ? (conversation.buyer._id ? conversation.buyer._id.toString() : conversation.buyer.toString())
+      : '';
+    const sellerId = conversation.seller
+      ? (conversation.seller._id ? conversation.seller._id.toString() : conversation.seller.toString())
+      : '';
+    const userId = req.user._id.toString();
+
+    const isBuyer = buyerId === userId;
+    const isSeller = sellerId === userId;
 
     if (!isBuyer && !isSeller && req.user.role !== 'admin') {
       return res.status(403).json({
@@ -147,8 +155,16 @@ const sendMessage = async (req, res, next) => {
       return res.status(404).json({ success: false, message: 'Conversation not found' });
     }
 
-    const isBuyer = conversation.buyer.toString() === req.user._id.toString();
-    const isSeller = conversation.seller.toString() === req.user._id.toString();
+    const buyerId = conversation.buyer
+      ? (conversation.buyer._id ? conversation.buyer._id.toString() : conversation.buyer.toString())
+      : '';
+    const sellerId = conversation.seller
+      ? (conversation.seller._id ? conversation.seller._id.toString() : conversation.seller.toString())
+      : '';
+    const userId = req.user._id.toString();
+
+    const isBuyer = buyerId === userId;
+    const isSeller = sellerId === userId;
 
     if (!isBuyer && !isSeller) {
       return res.status(403).json({

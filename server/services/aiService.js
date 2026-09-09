@@ -70,9 +70,9 @@ Write a clear, concise, appealing, and honest marketplace description for a stud
 - Product Name: ${name}
 - Category: ${category}
 - Condition: ${condition}
-- Price: $${price}
+- Price: ₹${price}
 
-Include key highlights that a fellow student would care about (utility, condition, reason to buy, campus pickup readiness). Keep it friendly, authentic, and under 120 words. Return only the description text without quotation marks or conversational preamble.`;
+Include key highlights that a fellow student would care about (utility, condition, reason to buy, campus pickup readiness). All prices mentioned must be in Indian Rupees (₹). Keep it friendly, authentic, and under 120 words. Return only the description text without quotation marks or conversational preamble.`;
 
   const text = await callClaudeMessages({ prompt, defaultTokens: 300 });
   if (text) {
@@ -80,7 +80,7 @@ Include key highlights that a fellow student would care about (utility, conditio
   }
 
   // Intelligent fallback if API is not available
-  return `Great condition ${name} in ${category || 'General'}. Perfect for student coursework and daily campus life. Asking $${price || 'reasonable price'}. In good working order, ideal for students on campus. Message me to arrange pickup or inspection!`;
+  return `Great condition ${name} in ${category || 'General'}. Perfect for student coursework and daily campus life. Asking ₹${price || 'reasonable price'}. In good working order, ideal for students on campus. Message me to arrange pickup or inspection!`;
 };
 
 /**
@@ -168,7 +168,7 @@ Extract and format this into a structured JSON object with these exact keys:
   "description": "clear, engaging 2-3 sentence marketplace description",
   "category": "must be one of the Allowed Categories exactly",
   "condition": "must be one of the Allowed Conditions exactly",
-  "suggestedPrice": numeric value or estimate (number only, e.g. 25)
+  "suggestedPrice": numeric value or estimate in Indian Rupees (number only, e.g. 500)
 }
 
 Return ONLY valid JSON. No markdown backticks, no other text.`;
@@ -192,7 +192,7 @@ Return ONLY valid JSON. No markdown backticks, no other text.`;
         description: String(parsed.description || ''),
         category: matchedCategory,
         condition: matchedCondition,
-        suggestedPrice: Number(parsed.suggestedPrice) > 0 ? Number(parsed.suggestedPrice) : 10,
+        suggestedPrice: Number(parsed.suggestedPrice) > 0 ? Number(parsed.suggestedPrice) : 250,
       };
     } catch (parseErr) {
       console.warn('Listing assistant JSON parse error:', parseErr.message);
@@ -205,7 +205,7 @@ Return ONLY valid JSON. No markdown backticks, no other text.`;
     description: rawNotes,
     category: categoriesList[0] || 'Other',
     condition: 'GOOD',
-    suggestedPrice: 15,
+    suggestedPrice: 300,
   };
 };
 
@@ -221,11 +221,11 @@ const getMessageSuggestions = async ({ productName, productPrice, conversationCo
   ];
 
   const prompt = `Generate 4 helpful, polite, concise quick-reply suggestions for a college student inquiring about or negotiating for this marketplace item:
-Product: ${productName || 'Item'} (Listed at $${productPrice || 'N/A'})
+Product: ${productName || 'Item'} (Listed at ₹${productPrice || 'N/A'})
 ${conversationContext ? `Recent chat context: "${conversationContext}"` : ''}
 
-Format your response as a JSON array of 4 short strings (max 10 words each). Example:
-["Is this still available?", "Can we meet at the library?", "Would you take $20?", "What condition is it in?"]
+Format your response as a JSON array of 4 short strings (max 10 words each). All price references must use Indian Rupees (₹). Example:
+["Is this still available?", "Can we meet at the library?", "Would you take ₹500?", "What condition is it in?"]
 
 Return ONLY the raw JSON array.`;
 
@@ -315,7 +315,7 @@ const chatWithAssistant = async ({ message, history = [], user = null, catalogCo
   const sampleProducts = catalogContext.products || [];
 
   const catalogSummary = sampleProducts.length > 0
-    ? `\nCurrently featured on the marketplace:\n` + sampleProducts.slice(0, 8).map((p) => `- ${p.name} ($${p.price}) in ${p.category ? p.category.name : 'General'}`).join('\n')
+    ? `\nCurrently featured on the marketplace:\n` + sampleProducts.slice(0, 8).map((p) => `- ${p.name} (₹${p.price}) in ${p.category ? p.category.name : 'General'}`).join('\n')
     : '';
 
   const systemInstructions = `You are the friendly, knowledgeable, and safety-conscious Claude AI Campus Assistant for Campus Marketplace (CampusMarket).
@@ -328,11 +328,12 @@ ${catalogSummary}
 
 Core Guidelines:
 1. Tone: Friendly, authentic, encouraging, helpful, and student-focused. Keep responses concise (under 150 words unless asked for detailed explanations).
-2. Safety First: Always advocate safe on-campus meetups (e.g. Campus Library, Student Union, Dining Hall, daylight hours, inspect before paying). Warn against wiring money, gift cards, or off-campus remote transfers.
-3. Pricing & Selling Tips: Suggest competitive student pricing, taking clear photos in good lighting, and highlighting course codes or model numbers for textbooks/calculators.
-4. Negotiation Advice: Encourage polite, respectful bargaining (e.g. "Would you consider $X if I can pick it up today?").
-5. Formatting: Use markdown formatting (bullet points, bold text) for readability.
-6. Navigation: Direct students to browse at /products.html, post an item at /create-product.html, or view chats at /messages.html when relevant.`;
+2. Currency: ALWAYS quote and discuss prices in Indian Rupees (₹ / Rs.), NEVER in USD ($) or dollars. Example: ₹500, ₹1,200, ₹3,500.
+3. Safety First: Always advocate safe on-campus meetups (e.g. Campus Library, Student Union, Dining Hall, daylight hours, inspect before paying). Warn against wiring money, gift cards, or off-campus remote transfers.
+4. Pricing & Selling Tips: Suggest competitive student pricing in Rupees (₹), taking clear photos in good lighting, and highlighting course codes or model numbers for textbooks/calculators.
+5. Negotiation Advice: Encourage polite, respectful bargaining (e.g. "Would you consider ₹X if I can pick it up today?").
+6. Formatting: Use markdown formatting (bullet points, bold text) for readability.
+7. Navigation: Direct students to browse at /products.html, post an item at /create-product.html, or view chats at /messages.html when relevant.`;
 
   if (!client) {
     const lower = (message || '').toLowerCase();

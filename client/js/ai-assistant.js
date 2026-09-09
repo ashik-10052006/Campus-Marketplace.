@@ -243,8 +243,8 @@
           <button class="ai-prompt-chip" data-prompt="Where are the safest meetup spots on campus to trade?">
             <span class="chip-icon">🛡️</span> Safe campus meetup spots?
           </button>
-          <button class="ai-prompt-chip" data-prompt="How should I price my used college textbooks?">
-            <span class="chip-icon">📚</span> How to price my textbooks?
+          <button class="ai-prompt-chip" data-prompt="How should I price my used college textbooks in Rupees (₹)?">
+            <span class="chip-icon">📚</span> How to price my textbooks (₹)?
           </button>
           <button class="ai-prompt-chip" data-prompt="What are the best tips to sell my items quickly?">
             <span class="chip-icon">⚡</span> Quick selling tips for students

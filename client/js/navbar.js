@@ -15,8 +15,8 @@ function renderNavbar() {
   if (!user) {
     // Visitor navigation
     linksHtml = `
-      <a href="/index.html" class="nav-link ${currentPath === '/' || currentPath.endsWith('index.html') ? 'active' : ''}">🏠 Home</a>
-      <a href="/products.html" class="nav-link ${currentPath.includes('products.html') ? 'active' : ''}">🛍️ Marketplace</a>
+      <a href="/index.html" class="nav-link ${currentPath === '/' || currentPath.endsWith('index.html') ? 'active' : ''}">Home</a>
+      <a href="/products.html" class="nav-link ${currentPath.includes('products.html') ? 'active' : ''}">Marketplace</a>
       <button type="button" class="nav-ai-trigger" id="nav-ai-btn" title="Ask Campus AI Assistant">✨ Ask AI</button>
       <div class="nav-auth-buttons">
         <a href="/login.html" class="btn btn-outline btn-sm">Log In</a>
@@ -26,12 +26,12 @@ function renderNavbar() {
   } else if (user.role === 'admin') {
     // Admin navigation
     linksHtml = `
-      <a href="/index.html" class="nav-link ${currentPath === '/' || currentPath.endsWith('index.html') ? 'active' : ''}">🏠 Home</a>
-      <a href="/products.html" class="nav-link ${currentPath.includes('products.html') ? 'active' : ''}">🛍️ Marketplace</a>
+      <a href="/index.html" class="nav-link ${currentPath === '/' || currentPath.endsWith('index.html') ? 'active' : ''}">Home</a>
+      <a href="/products.html" class="nav-link ${currentPath.includes('products.html') ? 'active' : ''}">Marketplace</a>
       <a href="/admin.html" class="nav-link ${currentPath.includes('admin') ? 'active' : ''}">
-        <span class="badge badge-admin">📊 Admin Panel</span>
+        <span class="badge badge-admin">Admin Panel</span>
       </a>
-      <a href="/messages.html" class="nav-link ${currentPath.includes('messages.html') ? 'active' : ''}">💬 Messages</a>
+      <a href="/messages.html" class="nav-link ${currentPath.includes('messages.html') ? 'active' : ''}">Messages</a>
       <button type="button" class="nav-ai-trigger" id="nav-ai-btn" title="Ask Campus AI Assistant">✨ Ask AI</button>
       <div class="nav-user-dropdown">
         <span class="user-greeting">Admin: <strong>${window.Utils.escapeHTML(user.name.split(' ')[0])}</strong></span>
@@ -41,11 +41,11 @@ function renderNavbar() {
   } else {
     // Student navigation
     linksHtml = `
-      <a href="/index.html" class="nav-link ${currentPath === '/' || currentPath.endsWith('index.html') ? 'active' : ''}">🏠 Home</a>
-      <a href="/products.html" class="nav-link ${currentPath.includes('products.html') && !currentPath.includes('create') && !currentPath.includes('my-listings') ? 'active' : ''}">🛍️ Marketplace</a>
-      <a href="/dashboard.html" class="nav-link ${currentPath.includes('dashboard.html') ? 'active' : ''}">📊 Dashboard</a>
-      <a href="/my-listings.html" class="nav-link ${currentPath.includes('my-listings.html') ? 'active' : ''}">📋 My Listings</a>
-      <a href="/messages.html" class="nav-link ${currentPath.includes('messages.html') ? 'active' : ''}">💬 Messages</a>
+      <a href="/index.html" class="nav-link ${currentPath === '/' || currentPath.endsWith('index.html') ? 'active' : ''}">Home</a>
+      <a href="/products.html" class="nav-link ${currentPath.includes('products.html') && !currentPath.includes('create') && !currentPath.includes('my-listings') ? 'active' : ''}">Marketplace</a>
+      <a href="/dashboard.html" class="nav-link ${currentPath.includes('dashboard.html') ? 'active' : ''}">Dashboard</a>
+      <a href="/my-listings.html" class="nav-link ${currentPath.includes('my-listings.html') ? 'active' : ''}">My Listings</a>
+      <a href="/messages.html" class="nav-link ${currentPath.includes('messages.html') ? 'active' : ''}">Messages</a>
       <button type="button" class="nav-ai-trigger" id="nav-ai-btn" title="Ask Campus AI Assistant">✨ Ask AI</button>
       <a href="/create-product.html" class="btn btn-sell btn-sm">+ Sell Item</a>
       <div class="nav-user-dropdown">

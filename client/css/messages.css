@@ -495,9 +495,13 @@ body.in-active-chat .ai-assistant-launcher {
     bottom: 0 !important;
     width: 100% !important;
     height: 100% !important;
+    height: 100dvh !important;
+    max-height: 100% !important;
     overflow: hidden !important;
     margin: 0 !important;
     padding: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
   }
 
   body.messages-page .navbar {
@@ -513,10 +517,10 @@ body.in-active-chat .ai-assistant-launcher {
   }
 
   body.messages-page main.container {
-    flex: 1 1 auto !important;
+    flex: 1 1 0% !important;
     min-height: 0 !important;
-    height: auto !important;
-    max-height: none !important;
+    height: calc(100% - 56px) !important;
+    max-height: calc(100% - 56px) !important;
     padding: 0 !important;
     margin: 0 !important;
     width: 100% !important;
@@ -532,9 +536,10 @@ body.in-active-chat .ai-assistant-launcher {
     box-shadow: none !important;
     display: flex !important;
     flex-direction: column !important;
-    flex: 1 1 auto !important;
+    flex: 1 1 0% !important;
     min-height: 0 !important;
     height: 100% !important;
+    max-height: 100% !important;
     overflow: hidden !important;
     margin: 0 !important;
   }
@@ -543,9 +548,10 @@ body.in-active-chat .ai-assistant-launcher {
     width: 100% !important;
     max-width: 100% !important;
     border: none !important;
-    flex: 1 1 auto !important;
+    flex: 1 1 0% !important;
     min-height: 0 !important;
     height: 100% !important;
+    max-height: 100% !important;
     display: flex !important;
     flex-direction: column !important;
     overflow: hidden !important;
@@ -558,9 +564,10 @@ body.in-active-chat .ai-assistant-launcher {
   .chat-panel {
     display: flex !important;
     flex-direction: column !important;
-    flex: 1 1 auto !important;
+    flex: 1 1 0% !important;
     min-height: 0 !important;
     height: 100% !important;
+    max-height: 100% !important;
     overflow: hidden !important;
     position: relative !important;
   }
@@ -572,9 +579,10 @@ body.in-active-chat .ai-assistant-launcher {
   .chat-active-view {
     display: flex !important;
     flex-direction: column !important;
-    flex: 1 1 auto !important;
+    flex: 1 1 0% !important;
     min-height: 0 !important;
     height: 100% !important;
+    max-height: 100% !important;
     overflow: hidden !important;
     position: relative !important;
   }
@@ -638,7 +646,7 @@ body.in-active-chat .ai-assistant-launcher {
   .chat-messages {
     flex: 1 1 0% !important;
     min-height: 0 !important;
-    height: auto !important;
+    height: 0 !important;
     padding: 0.65rem 0.65rem 0.85rem 0.65rem !important;
     gap: 0.55rem !important;
     overflow-y: auto !important;

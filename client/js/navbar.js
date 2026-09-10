@@ -181,6 +181,9 @@ function renderMobileBottomNav(user, currentPath) {
 
   // Add body padding helper class
   document.body.classList.add('has-bottom-nav');
+  if (document.querySelector('.footer')) {
+    document.body.classList.add('has-footer');
+  }
 
   const isHome = currentPath === '/' || currentPath.endsWith('index.html');
   const isMarket = currentPath.includes('products.html') && !currentPath.includes('create') && !currentPath.includes('my-listings');

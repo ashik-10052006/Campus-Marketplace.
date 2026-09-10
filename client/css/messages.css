@@ -219,6 +219,32 @@ body.messages-page main.container {
   gap: 0.75rem;
 }
 
+.conv-unread-badge {
+  background: var(--primary);
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-full);
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 0.4rem;
+  flex-shrink: 0;
+}
+
+@keyframes messagePopIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 .message-bubble {
   max-width: 70%;
   padding: 0.75rem 1.1rem;
@@ -227,6 +253,7 @@ body.messages-page main.container {
   line-height: 1.45;
   position: relative;
   word-break: break-word;
+  animation: messagePopIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .message-sent {
@@ -253,40 +280,71 @@ body.messages-page main.container {
 /* AI Quick Replies */
 .ai-suggestions-bar {
   flex-shrink: 0;
-  padding: 0.5rem 1.25rem;
-  background: var(--bg-subtle);
+  padding: 0.65rem 1.25rem;
+  background: var(--bg-subtle, #f8fafc);
   border-top: 1px solid var(--border-subtle);
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
   overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.ai-suggestions-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.ai-suggestions-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--primary);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
   white-space: nowrap;
+}
+
+.ai-chips-list,
+#ai-chips-list {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 2px 0;
+}
+
+.ai-chips-list::-webkit-scrollbar,
+#ai-chips-list::-webkit-scrollbar {
+  display: none;
 }
 
 .ai-chip {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.5rem;
   background: #ffffff;
   border: 1px solid var(--border-subtle);
   color: var(--text-main);
   font-size: 0.82rem;
-  padding: 0.35rem 0.5rem 0.35rem 0.8rem;
+  font-weight: 500;
+  padding: 0.35rem 0.5rem 0.35rem 0.85rem;
   border-radius: var(--radius-full);
   cursor: pointer;
   white-space: nowrap;
-  transition: all var(--transition-fast);
-  box-shadow: var(--shadow-xs);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   flex-shrink: 0;
   user-select: none;
 }
 
 .ai-chip:hover {
-  background: var(--primary-light);
+  background: var(--primary-light, #eff6ff);
   border-color: var(--primary);
   color: var(--primary);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-sm);
+  transform: translateY(-1.5px);
+  box-shadow: 0 4px 10px rgba(79, 70, 229, 0.12);
 }
 
 .ai-chip:active {
@@ -302,15 +360,15 @@ body.messages-page main.container {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   border: none;
-  background: var(--bg-subtle);
+  background: rgba(79, 70, 229, 0.1);
   color: var(--primary);
-  font-size: 0.65rem;
+  font-size: 0.68rem;
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: all 0.15s ease;
   padding: 0;
   line-height: 1;
 }
@@ -331,21 +389,39 @@ body.messages-page main.container {
   align-items: center;
   background: var(--bg-surface);
   z-index: 2;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .chat-input {
-  flex: 1;
+  flex: 1 1 0%;
+  min-width: 0;
+  width: 100%;
   padding: 0.75rem 1.25rem;
-  border: 1px solid var(--border-subtle);
+  border: 1.5px solid var(--border-subtle);
   border-radius: var(--radius-full);
   outline: none;
   font-size: 0.95rem;
+  background: #ffffff;
+  color: var(--text-main);
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  box-sizing: border-box;
 }
 
 .chat-input:focus {
   border-color: var(--primary);
   box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+}
+
+.chat-send-btn {
+  flex-shrink: 0;
+  white-space: nowrap;
+  border-radius: var(--radius-full) !important;
+  padding: 0.75rem 1.5rem !important;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 @keyframes inputPulse {

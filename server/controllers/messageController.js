@@ -69,11 +69,27 @@ const getConversations = async (req, res, next) => {
       .populate('buyer', 'name profileImage')
       .populate('seller', 'name profileImage')
       .populate('product', 'name price imageUrl status')
-      .sort({ lastMessageAt: -1 });
+      .sort({ lastMessageAt: -1 })
+      .lean();
+
+    // Attach unread messages count for current user
+    const conversationsWithUnread = await Promise.all(
+      conversations.map(async (conv) => {
+        const unreadCount = await Message.countDocuments({
+          conversation: conv._id,
+          sender: { $ne: req.user._id },
+          isRead: false,
+        });
+        return {
+          ...conv,
+          unreadCount,
+        };
+      })
+    );
 
     res.status(200).json({
       success: true,
-      data: { conversations },
+      data: { conversations: conversationsWithUnread },
     });
   } catch (error) {
     next(error);

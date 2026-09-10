@@ -107,9 +107,9 @@ async function loadCategories() {
         .map((cat) => {
           const icon = categoryIcons[cat.name] || '🏷️';
           return `
-            <a href="/products.html?category=${encodeURIComponent(cat.name)}" class="card card-hoverable text-center" style="padding: 1.5rem 1rem; text-decoration: none; color: inherit; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-              <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">${icon}</div>
-              <div style="font-weight: 700; font-size: 0.95rem; color: var(--text-main);">${window.Utils.escapeHTML(cat.name)}</div>
+            <a href="/products.html?category=${encodeURIComponent(cat.name)}" class="card home-category-card">
+              <div class="category-icon">${icon}</div>
+              <div class="category-name">${window.Utils.escapeHTML(cat.name)}</div>
             </a>
           `;
         })

@@ -2,6 +2,8 @@
  * Campus Marketplace - Admin Reports & AI Moderation Controller
  */
 
+let currentReports = [];
+
 document.addEventListener('DOMContentLoaded', async () => {
   const user = await window.Auth.requireAdmin();
   if (!user) return;
@@ -11,8 +13,41 @@ document.addEventListener('DOMContentLoaded', async () => {
     filterSelect.addEventListener('change', () => loadReports());
   }
 
+  setupReportsEventListeners();
   await loadReports();
 });
+
+function setupReportsEventListeners() {
+  const container = document.getElementById('reports-list-container');
+  if (!container) return;
+
+  container.addEventListener('click', async (e) => {
+    const btn = e.target.closest('button[data-action]');
+    if (!btn) return;
+
+    e.preventDefault();
+    const action = btn.getAttribute('data-action');
+    const reportId = btn.getAttribute('data-report-id');
+    if (!reportId) return;
+
+    const report = currentReports.find((r) => String(r._id) === String(reportId));
+
+    if (action === 'classify') {
+      const product = report && report.product ? report.product : {};
+      await classifyWithAi(
+        reportId,
+        report ? report.reason : '',
+        report ? report.description : '',
+        product.name || '',
+        product.description || ''
+      );
+    } else if (action === 'status') {
+      const status = btn.getAttribute('data-status');
+      const removeProduct = btn.getAttribute('data-remove') === 'true';
+      await updateStatus(reportId, status, removeProduct);
+    }
+  });
+}
 
 async function loadReports() {
   const container = document.getElementById('reports-list-container');
@@ -31,9 +66,9 @@ async function loadReports() {
   try {
     const res = await window.API.getReports({ status, limit: 30 });
     if (res.success && res.data && res.data.reports) {
-      const reports = res.data.reports;
+      currentReports = res.data.reports;
 
-      if (reports.length === 0) {
+      if (currentReports.length === 0) {
         window.Utils.renderEmptyState(container, {
           title: 'Moderation queue clean!',
           subtitle: `No ${status ? status.toLowerCase() : ''} reports found.`,
@@ -42,7 +77,7 @@ async function loadReports() {
         return;
       }
 
-      container.innerHTML = reports
+      container.innerHTML = currentReports
         .map((r) => {
           const product = r.product || {};
           const reporter = r.reportedBy || {};
@@ -87,17 +122,17 @@ async function loadReports() {
               <div id="ai-classification-${r._id}" style="margin: 0.85rem 0; display: none;"></div>
 
               <div class="report-actions">
-                <button class="btn btn-outline btn-sm" onclick="classifyWithAi('${r._id}', '${window.Utils.escapeHTML(r.reason)}', '${window.Utils.escapeHTML(r.description || '')}', '${window.Utils.escapeHTML(product.name || '')}', '${window.Utils.escapeHTML(product.description || '')}')">
+                <button type="button" class="btn btn-outline btn-sm" data-action="classify" data-report-id="${r._id}">
                   ✨ AI Classify
                 </button>
                 ${
                   r.status !== 'REVIEWED'
-                    ? `<button class="btn btn-outline btn-sm" onclick="updateStatus('${r._id}', 'REVIEWED')">Mark Reviewed</button>`
+                    ? `<button type="button" class="btn btn-outline btn-sm" data-action="status" data-report-id="${r._id}" data-status="REVIEWED">Mark Reviewed</button>`
                     : ''
                 }
-                <button class="btn btn-outline btn-sm" onclick="updateStatus('${r._id}', 'REJECTED')">Reject Report</button>
-                <button class="btn btn-success btn-sm" onclick="updateStatus('${r._id}', 'RESOLVED', false)">Resolve</button>
-                <button class="btn btn-danger btn-sm" onclick="updateStatus('${r._id}', 'RESOLVED', true)">Resolve & Remove Item</button>
+                <button type="button" class="btn btn-outline btn-sm" data-action="status" data-report-id="${r._id}" data-status="REJECTED">Reject Report</button>
+                <button type="button" class="btn btn-success btn-sm" data-action="status" data-report-id="${r._id}" data-status="RESOLVED" data-remove="false">Resolve</button>
+                <button type="button" class="btn btn-danger btn-sm" data-action="status" data-report-id="${r._id}" data-status="RESOLVED" data-remove="true">Resolve & Remove Item</button>
               </div>
             </div>
           `;

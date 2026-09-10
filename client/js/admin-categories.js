@@ -3,14 +3,80 @@
  */
 
 let editingCategoryId = null;
+let currentCategories = [];
 
 document.addEventListener('DOMContentLoaded', async () => {
   const user = await window.Auth.requireAdmin();
   if (!user) return;
 
+  setupCategoryEventListeners();
   await loadCategories();
   setupCategoryForm();
 });
+
+function setupCategoryEventListeners() {
+  const openBtn = document.getElementById('open-category-modal-btn');
+  const closeBtn = document.getElementById('close-category-modal-btn');
+  const cancelBtn = document.getElementById('cancel-category-btn');
+  const backdrop = document.getElementById('category-modal-backdrop');
+  const modal = document.getElementById('category-modal');
+  const tableContainer = document.getElementById('categories-table-container');
+
+  if (openBtn) {
+    openBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      openCategoryModal();
+    });
+  }
+
+  const closeCategoryModal = () => {
+    if (window.Utils && typeof window.Utils.closeModal === 'function') {
+      window.Utils.closeModal('category-modal');
+    } else if (modal) {
+      modal.classList.remove('is-active');
+      modal.style.display = 'none';
+      document.body.classList.remove('modal-open');
+    }
+  };
+
+  if (closeBtn) closeBtn.addEventListener('click', (e) => { e.preventDefault(); closeCategoryModal(); });
+  if (cancelBtn) cancelBtn.addEventListener('click', (e) => { e.preventDefault(); closeCategoryModal(); });
+  if (backdrop) backdrop.addEventListener('click', () => closeCategoryModal());
+
+  if (modal) {
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeCategoryModal();
+    });
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal && (modal.classList.contains('is-active') || modal.style.display === 'flex')) {
+      closeCategoryModal();
+    }
+  });
+
+  // Delegated click handling for Edit & Delete buttons inside categories table
+  if (tableContainer) {
+    tableContainer.addEventListener('click', (e) => {
+      const btn = e.target.closest('button[data-action]');
+      if (!btn) return;
+
+      e.preventDefault();
+      const action = btn.getAttribute('data-action');
+      const catId = btn.getAttribute('data-id');
+      if (!catId) return;
+
+      const cat = currentCategories.find((c) => String(c._id) === String(catId));
+      if (!cat) return;
+
+      if (action === 'edit') {
+        editCategory(cat._id, cat.name || '', cat.description || '');
+      } else if (action === 'delete') {
+        deleteCategory(cat._id, cat.name || 'Category');
+      }
+    });
+  }
+}
 
 async function loadCategories() {
   const container = document.getElementById('categories-table-container');
@@ -19,7 +85,18 @@ async function loadCategories() {
   try {
     const res = await window.API.getCategories();
     if (res.success && res.data && res.data.categories) {
-      const categories = res.data.categories;
+      currentCategories = res.data.categories;
+
+      if (currentCategories.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state" style="padding: 2.5rem; text-align: center;">
+            <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🏷️</div>
+            <h3>No categories created yet</h3>
+            <p class="text-muted">Click the "+ Add Category" button above to create your first marketplace category.</p>
+          </div>
+        `;
+        return;
+      }
 
       container.innerHTML = `
         <div class="table-responsive">
@@ -33,7 +110,7 @@ async function loadCategories() {
               </tr>
             </thead>
             <tbody>
-              ${categories
+              ${currentCategories
                 .map((c) => {
                   return `
                   <tr>
@@ -42,8 +119,8 @@ async function loadCategories() {
                     <td style="color: var(--text-muted); font-size: 0.85rem;">${window.Utils.formatDate(c.createdAt)}</td>
                     <td style="text-align: right;">
                       <div style="display: inline-flex; gap: 0.4rem;">
-                        <button class="btn btn-outline btn-sm" onclick="editCategory('${c._id}', '${window.Utils.escapeHTML(c.name)}', '${window.Utils.escapeHTML(c.description || '')}')">Edit</button>
-                        <button class="btn btn-danger btn-sm" onclick="deleteCategory('${c._id}', '${window.Utils.escapeHTML(c.name)}')">Delete</button>
+                        <button type="button" class="btn btn-outline btn-sm" data-action="edit" data-id="${c._id}">Edit</button>
+                        <button type="button" class="btn btn-danger btn-sm" data-action="delete" data-id="${c._id}">Delete</button>
                       </div>
                     </td>
                   </tr>
@@ -63,19 +140,29 @@ async function loadCategories() {
 
 window.openCategoryModal = function () {
   editingCategoryId = null;
-  document.getElementById('category-modal-title').textContent = 'Add Category';
-  document.getElementById('category-id').value = '';
-  document.getElementById('category-name-input').value = '';
-  document.getElementById('category-desc-input').value = '';
+  const titleEl = document.getElementById('category-modal-title');
+  const idEl = document.getElementById('category-id');
+  const nameEl = document.getElementById('category-name-input');
+  const descEl = document.getElementById('category-desc-input');
+
+  if (titleEl) titleEl.textContent = 'Add Category';
+  if (idEl) idEl.value = '';
+  if (nameEl) nameEl.value = '';
+  if (descEl) descEl.value = '';
   window.Utils.openModal('category-modal');
 };
 
 window.editCategory = function (id, name, desc) {
   editingCategoryId = id;
-  document.getElementById('category-modal-title').textContent = 'Edit Category';
-  document.getElementById('category-id').value = id;
-  document.getElementById('category-name-input').value = name;
-  document.getElementById('category-desc-input').value = desc;
+  const titleEl = document.getElementById('category-modal-title');
+  const idEl = document.getElementById('category-id');
+  const nameEl = document.getElementById('category-name-input');
+  const descEl = document.getElementById('category-desc-input');
+
+  if (titleEl) titleEl.textContent = 'Edit Category';
+  if (idEl) idEl.value = id;
+  if (nameEl) nameEl.value = name;
+  if (descEl) descEl.value = desc;
   window.Utils.openModal('category-modal');
 };
 
@@ -110,6 +197,7 @@ function setupCategoryForm() {
 
       try {
         saveBtn.disabled = true;
+        saveBtn.textContent = 'Saving...';
 
         if (editingCategoryId) {
           await window.API.updateCategory(editingCategoryId, { name, description });
@@ -125,6 +213,7 @@ function setupCategoryForm() {
         window.Utils.showToast(err.message || 'Operation failed', 'error');
       } finally {
         saveBtn.disabled = false;
+        saveBtn.textContent = 'Save Category';
       }
     });
   }

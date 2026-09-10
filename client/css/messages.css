@@ -634,12 +634,12 @@ body.in-active-chat .ai-assistant-launcher {
     margin-right: 0.15rem !important;
   }
 
-  /* Chat Messages - auto scrollable with bottom padding to never clip behind fixed dock */
+  /* Chat Messages - auto scrollable inside flex layout, completely unobstructed by bottom dock */
   .chat-messages {
-    flex: 1 1 auto !important;
+    flex: 1 1 0% !important;
     min-height: 0 !important;
     height: auto !important;
-    padding: 0.65rem 0.65rem 105px 0.65rem !important;
+    padding: 0.65rem 0.65rem 0.85rem 0.65rem !important;
     gap: 0.55rem !important;
     overflow-y: auto !important;
     -webkit-overflow-scrolling: touch !important;
@@ -651,21 +651,20 @@ body.in-active-chat .ai-assistant-launcher {
     padding: 0.6rem 0.9rem !important;
   }
 
-  /* Chat Bottom Dock - Pin firmly to bottom of viewport on mobile */
+  /* Chat Bottom Dock - Flex child naturally positioned below messages so it never covers actual messages */
   .chat-bottom-dock {
-    position: fixed !important;
-    bottom: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
+    flex: 0 0 auto !important;
+    position: relative !important;
     width: 100% !important;
-    z-index: 1000 !important;
+    z-index: 20 !important;
     background: #ffffff !important;
     border-top: 1px solid var(--border-subtle) !important;
     box-shadow: 0 -3px 12px rgba(0, 0, 0, 0.08) !important;
     display: flex !important;
     flex-direction: column !important;
     box-sizing: border-box !important;
-    padding-bottom: max(0px, env(safe-area-inset-bottom, 0px)) !important;
+    padding-bottom: max(0.25rem, env(safe-area-inset-bottom, 0px)) !important;
+    margin-top: auto !important;
   }
 
   body.messages-page:not(.in-active-chat) .chat-bottom-dock {

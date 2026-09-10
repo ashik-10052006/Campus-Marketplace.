@@ -523,8 +523,10 @@ function renderMessages(messages) {
     })
     .join('');
 
-  // Scroll to bottom initially
-  container.scrollTop = container.scrollHeight;
+  // Scroll to bottom initially with requestAnimationFrame
+  requestAnimationFrame(() => {
+    container.scrollTop = container.scrollHeight;
+  });
 }
 
 const DEFAULT_AI_SUGGESTIONS = [
@@ -593,6 +595,18 @@ function renderAiChips(suggestions) {
     chip.appendChild(sendBtn);
     chipsContainer.appendChild(chip);
   });
+
+  // Ensure latest message remains visible when chips update dock height
+  const messagesContainer = document.getElementById('chat-messages');
+  if (messagesContainer) {
+    const isNearBottom =
+      messagesContainer.scrollHeight - messagesContainer.scrollTop - messagesContainer.clientHeight < 180;
+    if (isNearBottom) {
+      requestAnimationFrame(() => {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      });
+    }
+  }
 }
 
 async function loadAiSuggestions(conv, messages) {

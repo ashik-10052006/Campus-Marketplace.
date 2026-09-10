@@ -54,23 +54,26 @@
           <!-- Message Bubbles Stream -->
           <div class="chat-messages" id="chat-messages"></div>
 
-          <!-- AI Quick Replies Suggestion Bar -->
-          <div class="ai-suggestions-bar" id="ai-suggestions-bar">
-            <span class="ai-suggestions-label">
-              ✨ AI Replies:
-            </span>
-            <div id="ai-chips-list" class="ai-chips-list">
-              <!-- Dynamic chips -->
+          <!-- Bottom Dock (AI suggestions + Input Bar) -->
+          <div class="chat-bottom-dock" id="chat-bottom-dock">
+            <!-- AI Quick Replies Suggestion Bar -->
+            <div class="ai-suggestions-bar" id="ai-suggestions-bar">
+              <span class="ai-suggestions-label">
+                ✨ AI Replies:
+              </span>
+              <div id="ai-chips-list" class="ai-chips-list">
+                <!-- Dynamic chips -->
+              </div>
             </div>
-          </div>
 
-          <!-- Input Bar -->
-          <form id="message-send-form" class="chat-input-bar">
-            <input type="text" id="message-input" class="chat-input" placeholder="Type a friendly message to arrange pickup..." autocomplete="off" required />
-            <button type="submit" id="send-msg-btn" class="btn btn-primary chat-send-btn">
-              Send
-            </button>
-          </form>
+            <!-- Input Bar -->
+            <form id="message-send-form" class="chat-input-bar">
+              <input type="text" id="message-input" class="chat-input" placeholder="Type a friendly message to arrange pickup..." autocomplete="off" required />
+              <button type="submit" id="send-msg-btn" class="btn btn-primary chat-send-btn">
+                Send
+              </button>
+            </form>
+          </div>
         </div>
       </section>
     </div>

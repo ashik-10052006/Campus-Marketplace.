@@ -599,23 +599,29 @@
     height: 54px;
   }
 
-  body.messages-page .ai-assistant-launcher {
-    bottom: calc(env(safe-area-inset-bottom, 0px) + 18px);
-  }
-
   .ai-assistant-modal {
     bottom: calc(62px + env(safe-area-inset-bottom, 0px) + 12px);
-    right: 10px;
-    left: 10px;
+    right: 12px;
+    left: 12px;
     width: auto;
     max-width: none;
-    height: 78vh;
-    max-height: 580px;
+    height: 75vh;
+    max-height: 560px;
     border-radius: 20px;
   }
 
-  body.messages-page .ai-assistant-modal {
-    bottom: 12px;
+  body.messages-page .ai-assistant-launcher {
+    display: none !important;
+  }
+
+  body.product-details-page .ai-assistant-launcher {
+    bottom: calc(72px + env(safe-area-inset-bottom, 0px) + 12px) !important;
+    width: 48px !important;
+    height: 48px !important;
+  }
+
+  body.product-details-page .ai-assistant-modal {
+    bottom: calc(72px + env(safe-area-inset-bottom, 0px) + 10px) !important;
   }
 
   .ai-launcher-tooltip {

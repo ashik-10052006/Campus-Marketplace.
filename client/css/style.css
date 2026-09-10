@@ -812,8 +812,13 @@ body.has-bottom-nav {
   padding-bottom: calc(var(--bottom-nav-height) + var(--safe-area-bottom) + 8px);
 }
 
-body.has-bottom-nav.messages-page {
+body.has-bottom-nav.messages-page,
+body.has-bottom-nav.product-details-page {
   padding-bottom: 0 !important;
+}
+
+body.product-details-page .mobile-bottom-nav {
+  display: none !important;
 }
 
 /* Mobile Bottom Navigation Bar */

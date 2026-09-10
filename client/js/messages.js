@@ -91,10 +91,19 @@ async function loadConversations(autoSelectId = null) {
         }
       };
 
-      // Auto-select if requested or pick the first
-      const idToSelect = autoSelectId || (convs.length > 0 ? convs[0]._id : null);
-      if (idToSelect) {
-        selectConversation(idToSelect);
+      // Auto-select if requested, or on desktop pick the first
+      const isMobile = window.innerWidth <= 768;
+      const sidebar = document.getElementById('conversations-sidebar');
+      const chatPanel = document.getElementById('chat-panel');
+
+      if (autoSelectId) {
+        selectConversation(autoSelectId);
+      } else if (!isMobile && convs.length > 0) {
+        selectConversation(convs[0]._id);
+      } else if (isMobile) {
+        // On mobile without an explicit conversation requested, show thread list
+        if (sidebar) sidebar.classList.remove('hidden-mobile');
+        if (chatPanel) chatPanel.classList.add('hidden-mobile');
       }
     }
   } catch (error) {
@@ -144,8 +153,17 @@ async function selectConversation(conversationId) {
         if (sidebar) sidebar.classList.remove('hidden-mobile');
         if (chatPanel) chatPanel.classList.add('hidden-mobile');
         backBtn.style.display = 'none';
+        try {
+          const url = new URL(window.location);
+          url.searchParams.delete('conversationId');
+          window.history.replaceState({}, '', url);
+        } catch (e) {}
       };
     }
+  } else {
+    if (backBtn) backBtn.style.display = 'none';
+    if (sidebar) sidebar.classList.remove('hidden-mobile');
+    if (chatPanel) chatPanel.classList.remove('hidden-mobile');
   }
 
   if (messagesBox) {

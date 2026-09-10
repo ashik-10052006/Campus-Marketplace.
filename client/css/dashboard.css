@@ -128,3 +128,35 @@
   margin: 0 auto 1.25rem;
   box-shadow: var(--shadow-md);
 }
+
+/* Mobile Dashboard & Profile Enhancements */
+@media (max-width: 768px) {
+  .dashboard-quick-actions {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.85rem !important;
+  }
+
+  .dashboard-quick-actions .card {
+    padding: 1.1rem 0.85rem !important;
+    flex-direction: column !important;
+    text-align: center !important;
+    gap: 0.5rem !important;
+  }
+
+  .dashboard-quick-actions .card > div:first-child {
+    font-size: 1.8rem !important;
+  }
+
+  .table-responsive {
+    border-radius: var(--radius-md);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+  }
+
+  .data-table th,
+  .data-table td {
+    padding: 0.75rem 0.85rem;
+    font-size: 0.85rem;
+  }
+}
+

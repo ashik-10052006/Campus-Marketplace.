@@ -33,6 +33,104 @@
   padding-left: 2.75rem !important;
 }
 
+/* Category Quick Filter Pills Bar */
+.category-pills-bar {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding: 1.25rem 0 0.25rem;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  justify-content: flex-start;
+}
+
+.category-pills-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.category-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 1rem;
+  border-radius: var(--radius-full);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-main);
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  box-shadow: var(--shadow-xs);
+}
+
+.category-pill:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--primary-light);
+  transform: translateY(-1px);
+}
+
+.category-pill.active {
+  background: var(--primary);
+  color: #ffffff;
+  border-color: var(--primary);
+  box-shadow: 0 4px 10px rgba(79, 70, 229, 0.35);
+  font-weight: 600;
+}
+
+/* Filters Drawer Backdrop */
+.filters-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 2000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+  pointer-events: none;
+}
+
+.filters-backdrop.is-active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.filters-sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.filters-close-btn {
+  display: none;
+  width: 36px;
+  height: 36px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  font-size: 1.3rem;
+  border-radius: 50%;
+}
+
+@media (max-width: 768px) {
+  .filters-close-btn {
+    display: inline-flex;
+  }
+}
+
 /* Layout */
 .marketplace-layout {
   display: grid;
@@ -167,6 +265,7 @@
   color: var(--text-main);
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }

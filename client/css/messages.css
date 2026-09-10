@@ -5,7 +5,9 @@
 /* Page layout lock for messages */
 body.messages-page {
   height: 100vh;
+  height: 100dvh;
   max-height: 100vh;
+  max-height: 100dvh;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -19,6 +21,27 @@ body.messages-page main.container {
   padding-top: 0.5rem;
   padding-bottom: 0.25rem;
   overflow: hidden;
+}
+
+.back-to-convs-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: var(--radius-full);
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.back-to-convs-btn:hover {
+  background: var(--primary-light);
+  color: var(--primary);
+  border-color: var(--primary);
 }
 
 .messages-layout {

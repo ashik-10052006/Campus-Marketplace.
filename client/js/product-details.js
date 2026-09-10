@@ -152,6 +152,28 @@ function renderProductView(container, product) {
         ${actionButtonsHtml}
       </div>
     </div>
+
+    <!-- Mobile Sticky Action Bar -->
+    <div class="mobile-product-action-bar" id="mobile-product-action-bar" style="display: none;">
+      <div>
+        <div style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">${isOwner ? 'Your Listing' : 'Price'}</div>
+        <div style="font-size: 1.35rem; font-weight: 800; color: var(--primary); font-family: var(--font-heading);">${window.Utils.formatCurrency(product.price)}</div>
+      </div>
+      <div style="display: flex; gap: 0.6rem; align-items: center;">
+        ${
+          isOwner
+            ? `
+              <a href="/edit-product.html?id=${product._id}" class="btn btn-outline btn-sm">✏️ Edit</a>
+              ${product.status === 'AVAILABLE' ? `<button id="mobile-mark-sold-btn" class="btn btn-success btn-sm">✓ Sold</button>` : ''}
+            `
+            : product.status === 'AVAILABLE'
+            ? `<button id="mobile-contact-seller-btn" class="btn btn-primary" style="padding: 0.75rem 1.4rem; font-size: 0.95rem; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);">
+                💬 Contact Seller
+              </button>`
+            : `<span class="badge badge-sold" style="padding: 0.5rem 0.9rem; font-size: 0.85rem;">SOLD</span>`
+        }
+      </div>
+    </div>
   `;
 
   // Attach dynamic button listeners
@@ -161,25 +183,48 @@ function renderProductView(container, product) {
 function attachProductActions(product, isOwner) {
   // Contact seller
   const contactBtn = document.getElementById('contact-seller-btn');
-  if (contactBtn) {
-    contactBtn.addEventListener('click', async () => {
-      const user = await window.Auth.requireAuth();
-      if (!user) return;
+  const mobileContactBtn = document.getElementById('mobile-contact-seller-btn');
 
-      try {
+  const handleContactSeller = async () => {
+    const user = await window.Auth.requireAuth();
+    if (!user) return;
+
+    try {
+      if (contactBtn) {
         contactBtn.disabled = true;
         contactBtn.textContent = 'Opening chat...';
+      }
+      if (mobileContactBtn) {
+        mobileContactBtn.disabled = true;
+        mobileContactBtn.textContent = 'Opening...';
+      }
 
-        const response = await window.API.startConversation(product._id);
-        if (response.success && response.data && response.data.conversation) {
-          window.location.href = `/messages.html?conversationId=${response.data.conversation._id}`;
-        }
-      } catch (error) {
-        window.Utils.showToast(error.message || 'Could not start conversation', 'error');
+      const response = await window.API.startConversation(product._id);
+      if (response.success && response.data && response.data.conversation) {
+        window.location.href = `/messages.html?conversationId=${response.data.conversation._id}`;
+      }
+    } catch (error) {
+      window.Utils.showToast(error.message || 'Could not start conversation', 'error');
+      if (contactBtn) {
         contactBtn.disabled = false;
         contactBtn.textContent = '💬 Contact Student Seller';
       }
-    });
+      if (mobileContactBtn) {
+        mobileContactBtn.disabled = false;
+        mobileContactBtn.textContent = '💬 Contact Seller';
+      }
+    }
+  };
+
+  if (contactBtn) contactBtn.addEventListener('click', handleContactSeller);
+  if (mobileContactBtn) mobileContactBtn.addEventListener('click', handleContactSeller);
+
+  // Mark as sold
+  const markSoldBtn = document.getElementById('mark-sold-btn');
+  const mobileMarkSoldBtn = document.getElementById('mobile-mark-sold-btn');
+
+  if (mobileMarkSoldBtn && markSoldBtn) {
+    mobileMarkSoldBtn.addEventListener('click', () => markSoldBtn.click());
   }
 
   // Open report modal
@@ -193,8 +238,7 @@ function attachProductActions(product, isOwner) {
     });
   }
 
-  // Mark as sold
-  const markSoldBtn = document.getElementById('mark-sold-btn');
+  // Mark as sold handler
   if (markSoldBtn) {
     markSoldBtn.addEventListener('click', async () => {
       if (!confirm('Mark this listing as sold? Fellow students will see that this item is no longer available.')) {

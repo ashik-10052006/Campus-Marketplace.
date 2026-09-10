@@ -591,23 +591,31 @@
 }
 
 /* ----------------- Responsive Breakpoints ----------------- */
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .ai-assistant-launcher {
-    bottom: 20px;
-    right: 20px;
-    width: 56px;
-    height: 56px;
+    bottom: calc(62px + env(safe-area-inset-bottom, 0px) + 16px);
+    right: 16px;
+    width: 54px;
+    height: 54px;
+  }
+
+  body.messages-page .ai-assistant-launcher {
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 18px);
   }
 
   .ai-assistant-modal {
-    bottom: 12px;
-    right: 12px;
-    left: 12px;
+    bottom: calc(62px + env(safe-area-inset-bottom, 0px) + 12px);
+    right: 10px;
+    left: 10px;
     width: auto;
     max-width: none;
-    height: 82vh;
-    max-height: 600px;
-    border-radius: 18px;
+    height: 78vh;
+    max-height: 580px;
+    border-radius: 20px;
+  }
+
+  body.messages-page .ai-assistant-modal {
+    bottom: 12px;
   }
 
   .ai-launcher-tooltip {

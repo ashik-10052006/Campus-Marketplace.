@@ -55,23 +55,78 @@ function syncInputsWithState() {
   if (sortSelect) sortSelect.value = currentParams.sort || 'newest';
 }
 
+const CATEGORY_ICONS = {
+  books: '📚',
+  textbooks: '📚',
+  electronics: '💻',
+  furniture: '🪑',
+  clothing: '👕',
+  bicycles: '🚲',
+  sports: '⚽',
+  calculators: '🧮',
+  appliances: '🍳',
+};
+
+function getCategoryIcon(name) {
+  const lower = (name || '').toLowerCase();
+  for (const [key, icon] of Object.entries(CATEGORY_ICONS)) {
+    if (lower.includes(key)) return icon;
+  }
+  return '📦';
+}
+
 async function populateCategoryDropdown() {
   const categorySelect = document.getElementById('filter-category');
-  if (!categorySelect) return;
+  const pillsBar = document.getElementById('category-pills-bar');
 
   try {
     const response = await window.API.getCategories();
     if (response.success && response.data && response.data.categories) {
       const categories = response.data.categories;
-      categories.forEach((cat) => {
-        const option = document.createElement('option');
-        option.value = cat.name;
-        option.textContent = cat.name;
-        if (currentParams.category.toLowerCase() === cat.name.toLowerCase()) {
-          option.selected = true;
-        }
-        categorySelect.appendChild(option);
-      });
+
+      if (categorySelect) {
+        categories.forEach((cat) => {
+          const option = document.createElement('option');
+          option.value = cat.name;
+          option.textContent = cat.name;
+          if (currentParams.category.toLowerCase() === cat.name.toLowerCase()) {
+            option.selected = true;
+          }
+          categorySelect.appendChild(option);
+        });
+      }
+
+      if (pillsBar) {
+        pillsBar.innerHTML = `
+          <button type="button" class="category-pill ${!currentParams.category ? 'active' : ''}" data-category="">🔥 All Items</button>
+          ${categories
+            .map(
+              (cat) => `
+            <button type="button" class="category-pill ${
+              currentParams.category.toLowerCase() === cat.name.toLowerCase() ? 'active' : ''
+            }" data-category="${window.Utils.escapeHTML(cat.name)}">
+              ${getCategoryIcon(cat.name)} ${window.Utils.escapeHTML(cat.name)}
+            </button>
+          `
+            )
+            .join('')}
+        `;
+
+        pillsBar.querySelectorAll('.category-pill').forEach((pill) => {
+          pill.addEventListener('click', () => {
+            const cat = pill.getAttribute('data-category');
+            currentParams.category = cat;
+            currentParams.page = 1;
+
+            if (categorySelect) categorySelect.value = cat;
+
+            pillsBar.querySelectorAll('.category-pill').forEach((p) => p.classList.remove('active'));
+            pill.classList.add('active');
+
+            fetchAndRenderProducts();
+          });
+        });
+      }
     }
   } catch (error) {
     console.error('Failed to populate categories filter:', error);
@@ -85,7 +140,39 @@ function setupEventListeners() {
   const clearBtn = document.getElementById('clear-filters-btn');
   const sortSelect = document.getElementById('sort-select');
   const toggleFiltersBtn = document.getElementById('toggle-filters-btn');
+  const closeFiltersBtn = document.getElementById('close-filters-btn');
   const filtersSidebar = document.getElementById('filters-sidebar');
+  const filtersBackdrop = document.getElementById('filters-backdrop');
+
+  // Drawer helpers
+  const openFilterDrawer = () => {
+    if (filtersSidebar) filtersSidebar.classList.add('is-open');
+    if (filtersBackdrop) filtersBackdrop.classList.add('is-active');
+    document.body.style.overflow = 'hidden';
+  };
+
+  const closeFilterDrawer = () => {
+    if (filtersSidebar) filtersSidebar.classList.remove('is-open');
+    if (filtersBackdrop) filtersBackdrop.classList.remove('is-active');
+    document.body.style.overflow = '';
+  };
+
+  if (toggleFiltersBtn) {
+    toggleFiltersBtn.addEventListener('click', openFilterDrawer);
+  }
+  if (closeFiltersBtn) {
+    closeFiltersBtn.addEventListener('click', closeFilterDrawer);
+  }
+  if (filtersBackdrop) {
+    filtersBackdrop.addEventListener('click', closeFilterDrawer);
+  }
+
+  // Close drawer on Escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && filtersSidebar && filtersSidebar.classList.contains('is-open')) {
+      closeFilterDrawer();
+    }
+  });
 
   // Search
   const handleSearch = () => {
@@ -117,12 +204,21 @@ function setupEventListeners() {
       currentParams.status = statusSelect ? statusSelect.value : 'AVAILABLE';
       currentParams.page = 1;
 
-      fetchAndRenderProducts();
-
-      // On mobile, close filter drawer after applying
-      if (filtersSidebar && filtersSidebar.classList.contains('is-open')) {
-        filtersSidebar.classList.remove('is-open');
+      // Sync pills bar active state
+      const pillsBar = document.getElementById('category-pills-bar');
+      if (pillsBar) {
+        pillsBar.querySelectorAll('.category-pill').forEach((p) => {
+          const cat = p.getAttribute('data-category');
+          if ((!cat && !currentParams.category) || (cat && cat.toLowerCase() === currentParams.category.toLowerCase())) {
+            p.classList.add('active');
+          } else {
+            p.classList.remove('active');
+          }
+        });
       }
+
+      fetchAndRenderProducts();
+      closeFilterDrawer();
     });
   }
 
@@ -143,7 +239,20 @@ function setupEventListeners() {
       syncInputsWithState();
       const categorySelect = document.getElementById('filter-category');
       if (categorySelect) categorySelect.value = '';
+
+      const pillsBar = document.getElementById('category-pills-bar');
+      if (pillsBar) {
+        pillsBar.querySelectorAll('.category-pill').forEach((p) => {
+          if (!p.getAttribute('data-category')) {
+            p.classList.add('active');
+          } else {
+            p.classList.remove('active');
+          }
+        });
+      }
+
       fetchAndRenderProducts();
+      closeFilterDrawer();
     });
   }
 
@@ -153,14 +262,6 @@ function setupEventListeners() {
       currentParams.sort = sortSelect.value;
       currentParams.page = 1;
       fetchAndRenderProducts();
-    });
-  }
-
-  // Mobile toggle filters
-  if (toggleFiltersBtn && filtersSidebar) {
-    toggleFiltersBtn.style.display = 'inline-flex';
-    toggleFiltersBtn.addEventListener('click', () => {
-      filtersSidebar.classList.toggle('is-open');
     });
   }
 }

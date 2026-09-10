@@ -26,17 +26,32 @@
           </div>
           <button id="search-btn" class="btn btn-primary">Search</button>
         </div>
+
+        <!-- Horizontal Category Pills Bar -->
+        <div class="category-pills-bar" id="category-pills-bar">
+          <button type="button" class="category-pill active" data-category="">🔥 All Items</button>
+          <!-- Dynamic Category Pills Rendered via JS -->
+        </div>
       </div>
     </section>
+
+    <!-- Filter Backdrop Overlay for Mobile -->
+    <div class="filters-backdrop" id="filters-backdrop"></div>
 
     <!-- Marketplace Layout -->
     <div class="container">
       <div class="marketplace-layout">
         <!-- Sidebar Filters -->
         <aside class="filters-sidebar" id="filters-sidebar">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
-            <h3 style="font-size: 1.15rem;">Filters</h3>
-            <button id="clear-filters-btn" class="btn btn-outline btn-sm" style="padding: 0.25rem 0.6rem; font-size: 0.8rem;">Reset</button>
+          <div class="filters-sidebar-header">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <span style="font-size: 1.2rem;">⚙️</span>
+              <h3 style="font-size: 1.15rem; margin: 0;">Filters</h3>
+            </div>
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+              <button id="clear-filters-btn" class="btn btn-outline btn-sm" style="padding: 0.25rem 0.6rem; font-size: 0.8rem;">Reset</button>
+              <button id="close-filters-btn" class="btn btn-outline btn-sm filters-close-btn" aria-label="Close filters">&times;</button>
+            </div>
           </div>
 
           <!-- Category Filter -->

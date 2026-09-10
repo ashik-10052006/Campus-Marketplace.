@@ -488,6 +488,22 @@ function renderChatHeader(conv) {
   }
 }
 
+function updateChatDockOffset() {
+  const dock = document.getElementById('chat-bottom-dock');
+  const messages = document.getElementById('chat-messages');
+  if (dock && messages) {
+    if (window.innerWidth <= 768) {
+      const dockHeight = dock.offsetHeight;
+      if (dockHeight > 0) {
+        messages.style.setProperty('padding-bottom', `${dockHeight + 20}px`, 'important');
+      }
+    } else {
+      messages.style.removeProperty('padding-bottom');
+    }
+  }
+}
+window.addEventListener('resize', updateChatDockOffset);
+
 function renderMessages(messages) {
   const container = document.getElementById('chat-messages');
   if (!container) return;
@@ -504,6 +520,7 @@ function renderMessages(messages) {
         <p>No messages yet. Send a message or click an AI suggestion below to break the ice!</p>
       </div>
     `;
+    updateChatDockOffset();
     return;
   }
 
@@ -523,6 +540,7 @@ function renderMessages(messages) {
     })
     .join('');
 
+  updateChatDockOffset();
   // Scroll to bottom initially with requestAnimationFrame
   requestAnimationFrame(() => {
     container.scrollTop = container.scrollHeight;
@@ -596,11 +614,13 @@ function renderAiChips(suggestions) {
     chipsContainer.appendChild(chip);
   });
 
+  updateChatDockOffset();
+
   // Ensure latest message remains visible when chips update dock height
   const messagesContainer = document.getElementById('chat-messages');
   if (messagesContainer) {
     const isNearBottom =
-      messagesContainer.scrollHeight - messagesContainer.scrollTop - messagesContainer.clientHeight < 180;
+      messagesContainer.scrollHeight - messagesContainer.scrollTop - messagesContainer.clientHeight < 220;
     if (isNearBottom) {
       requestAnimationFrame(() => {
         messagesContainer.scrollTop = messagesContainer.scrollHeight;

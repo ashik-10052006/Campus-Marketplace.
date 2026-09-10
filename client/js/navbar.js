@@ -17,7 +17,7 @@ function renderNavbar() {
     linksHtml = `
       <a href="/index.html" class="nav-link ${currentPath === '/' || currentPath.endsWith('index.html') ? 'active' : ''}">Home</a>
       <a href="/products.html" class="nav-link ${currentPath.includes('products.html') ? 'active' : ''}">Marketplace</a>
-      <button type="button" class="nav-ai-trigger" id="nav-ai-btn" title="Ask Campus AI Assistant">✨ Ask AI</button>
+      <button type="button" class="nav-ai-trigger" id="nav-ai-btn" title="Ask Campus AI Assistant"><span class="nav-ai-icon">✨</span> <span class="nav-ai-text">Ask AI</span></button>
       <div class="nav-auth-buttons">
         <a href="/login.html" class="btn btn-outline btn-sm">Log In</a>
         <a href="/register.html" class="btn btn-primary btn-sm">Sign Up</a>
@@ -32,7 +32,7 @@ function renderNavbar() {
         <span class="badge badge-admin">Admin Panel</span>
       </a>
       <a href="/messages.html" class="nav-link ${currentPath.includes('messages.html') ? 'active' : ''}">Messages</a>
-      <button type="button" class="nav-ai-trigger" id="nav-ai-btn" title="Ask Campus AI Assistant">✨ Ask AI</button>
+      <button type="button" class="nav-ai-trigger" id="nav-ai-btn" title="Ask Campus AI Assistant"><span class="nav-ai-icon">✨</span> <span class="nav-ai-text">Ask AI</span></button>
       <div class="nav-user-dropdown">
         <span class="user-greeting">Admin: <strong>${window.Utils.escapeHTML(user.name.split(' ')[0])}</strong></span>
         <button id="nav-logout-btn" class="btn btn-outline btn-sm">Log Out</button>
@@ -46,10 +46,10 @@ function renderNavbar() {
       <a href="/dashboard.html" class="nav-link ${currentPath.includes('dashboard.html') ? 'active' : ''}">Dashboard</a>
       <a href="/my-listings.html" class="nav-link ${currentPath.includes('my-listings.html') ? 'active' : ''}">My Listings</a>
       <a href="/messages.html" class="nav-link ${currentPath.includes('messages.html') ? 'active' : ''}">Messages</a>
-      <button type="button" class="nav-ai-trigger" id="nav-ai-btn" title="Ask Campus AI Assistant">✨ Ask AI</button>
-      <a href="/create-product.html" class="btn btn-sell btn-sm">+ Sell Item</a>
+      <button type="button" class="nav-ai-trigger" id="nav-ai-btn" title="Ask Campus AI Assistant"><span class="nav-ai-icon">✨</span> <span class="nav-ai-text">Ask AI</span></button>
+      <a href="/create-product.html" class="btn btn-sell btn-sm">+ Sell <span class="btn-sell-extra">Item</span></a>
       <div class="nav-user-dropdown">
-        <a href="/profile.html" class="nav-profile-link" title="My Profile">
+        <a href="/profile.html" class="nav-profile-link" title="${window.Utils.escapeHTML(user.name)}">
           ${
             user.profileImage
               ? `<img src="${user.profileImage}" class="nav-avatar" alt="Avatar" />`
@@ -68,7 +68,7 @@ function renderNavbar() {
         <span class="logo-icon">🎓</span>
         <span class="logo-text">Campus<span class="text-accent">Market</span></span>
       </a>
-      <div style="display: flex; align-items: center; gap: 0.5rem;">
+      <div class="nav-hamburger-wrap">
         <button class="nav-hamburger" id="nav-hamburger-btn" aria-label="Toggle navigation menu" aria-expanded="false">
           <span></span>
           <span></span>

@@ -23,21 +23,112 @@
   }
 }
 
-/* Medium Desktop & Tablet Landscape (769px to 1100px) */
-@media (max-width: 1100px) and (min-width: 769px) {
+/* Medium Desktop, Tablet Landscape & Mobile Desktop Site View (769px to 1180px) */
+@media (max-width: 1180px) and (min-width: 769px) {
+  .container {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  .nav-inner {
+    height: 66px;
+    gap: 0.5rem;
+  }
+
+  .nav-hamburger-wrap {
+    display: none !important;
+  }
+
+  .nav-logo {
+    font-size: 1.25rem;
+    gap: 0.4rem;
+    letter-spacing: -0.3px;
+    flex-shrink: 0;
+  }
+
+  .logo-icon {
+    font-size: 1.45rem;
+  }
+
   .nav-menu {
-    gap: 0.45rem;
+    gap: 0.25rem;
+    flex-wrap: nowrap;
+    margin-left: auto;
   }
 
   .nav-link {
-    padding: 0.4rem 0.55rem;
-    font-size: 0.88rem;
+    padding: 0.35rem 0.48rem;
+    font-size: 0.82rem;
+    font-weight: 500;
   }
 
-  .nav-auth-buttons,
-  .nav-user-dropdown {
-    gap: 0.45rem;
-    margin-left: 0.25rem;
+  .nav-ai-trigger {
+    padding: 5px 9px !important;
+    font-size: 0.8rem !important;
+    gap: 4px !important;
+    border-radius: 6px !important;
+  }
+
+  .btn-sell {
+    padding: 0.38rem 0.75rem !important;
+    font-size: 0.82rem !important;
+    gap: 0.25rem !important;
+  }
+
+  .btn-sell .btn-sell-extra {
+    display: none;
+  }
+
+  .nav-user-dropdown,
+  .nav-auth-buttons {
+    gap: 0.35rem;
+    margin-left: 0.2rem;
+    flex-shrink: 0;
+  }
+
+  .nav-profile-link {
+    gap: 0.35rem;
+    font-size: 0.82rem;
+  }
+
+  .nav-avatar,
+  .nav-avatar-placeholder {
+    width: 32px;
+    height: 32px;
+    font-size: 0.82rem;
+  }
+
+  .nav-profile-link .user-name {
+    max-width: 68px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  #nav-logout-btn,
+  .nav-auth-buttons .btn {
+    padding: 0.38rem 0.65rem !important;
+    font-size: 0.8rem !important;
+  }
+}
+
+/* Narrow Desktop / Tablet Range (769px to 940px) */
+@media (max-width: 940px) and (min-width: 769px) {
+  .nav-link {
+    padding: 0.3rem 0.36rem;
+    font-size: 0.78rem;
+  }
+
+  .nav-profile-link .user-name {
+    display: none;
+  }
+
+  .nav-ai-trigger .nav-ai-text {
+    display: none;
+  }
+
+  .nav-ai-trigger {
+    padding: 5px 8px !important;
   }
 }
 
@@ -60,6 +151,12 @@
 
   .logo-icon {
     font-size: 1.45rem;
+  }
+
+  .nav-hamburger-wrap {
+    display: flex !important;
+    align-items: center;
+    gap: 0.5rem;
   }
 
   .nav-hamburger {

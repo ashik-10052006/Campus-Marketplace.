@@ -213,8 +213,9 @@ async function selectConversation(conversationId) {
   const chatPanel = document.getElementById('chat-panel');
   const backBtn = document.getElementById('back-to-convs-btn');
 
+  document.body.classList.add('in-active-chat');
+
   if (window.innerWidth <= 768) {
-    document.body.classList.add('in-active-chat');
     if (sidebar) sidebar.classList.add('hidden-mobile');
     if (chatPanel) chatPanel.classList.remove('hidden-mobile');
     if (backBtn) {
@@ -234,7 +235,6 @@ async function selectConversation(conversationId) {
       };
     }
   } else {
-    document.body.classList.remove('in-active-chat');
     if (backBtn) backBtn.style.display = 'none';
     if (sidebar) sidebar.classList.remove('hidden-mobile');
     if (chatPanel) chatPanel.classList.remove('hidden-mobile');

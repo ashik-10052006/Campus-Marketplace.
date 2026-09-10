@@ -285,8 +285,61 @@ function attachProductActions(product, isOwner) {
 }
 
 function setupReportForm(productId) {
+  const reportModal = document.getElementById('report-modal');
   const reportForm = document.getElementById('report-form');
   const submitReportBtn = document.getElementById('submit-report-btn');
+  const cancelBtn = document.getElementById('cancel-report-btn');
+  const closeBtn = document.getElementById('close-report-modal-btn');
+  const backdrop = document.getElementById('report-modal-backdrop');
+
+  const closeReportModal = () => {
+    if (window.Utils && typeof window.Utils.closeModal === 'function') {
+      window.Utils.closeModal('report-modal');
+    } else if (reportModal) {
+      reportModal.classList.remove('is-active');
+      reportModal.style.display = 'none';
+      document.body.classList.remove('modal-open');
+    }
+  };
+
+  // Dedicated click handlers for closing modal
+  if (cancelBtn) {
+    cancelBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      closeReportModal();
+    });
+  }
+
+  if (closeBtn) {
+    closeBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      closeReportModal();
+    });
+  }
+
+  if (backdrop) {
+    backdrop.addEventListener('click', () => {
+      closeReportModal();
+    });
+  }
+
+  // Click on modal container background outside content closes modal
+  if (reportModal) {
+    reportModal.addEventListener('click', (e) => {
+      if (e.target === reportModal) {
+        closeReportModal();
+      }
+    });
+  }
+
+  // Escape key closes modal
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      if (reportModal && (reportModal.classList.contains('is-active') || reportModal.style.display === 'flex')) {
+        closeReportModal();
+      }
+    }
+  });
 
   if (reportForm) {
     reportForm.addEventListener('submit', async (e) => {
@@ -311,7 +364,7 @@ function setupReportForm(productId) {
         });
 
         if (res.success) {
-          window.Utils.closeModal('report-modal');
+          closeReportModal();
           window.Utils.showToast('Report submitted. Thank you for keeping our campus safe.', 'success');
           reportForm.reset();
         }

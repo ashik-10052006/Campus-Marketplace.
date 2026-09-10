@@ -29,11 +29,11 @@
 
   <!-- Report Modal -->
   <div class="modal" id="report-modal">
-    <div class="modal-backdrop" onclick="window.Utils.closeModal('report-modal')"></div>
+    <div class="modal-backdrop" id="report-modal-backdrop" onclick="window.Utils && window.Utils.closeModal('report-modal')"></div>
     <div class="modal-content">
       <div class="modal-header">
         <h3 class="modal-title">🚩 Report Listing Violation</h3>
-        <button class="modal-close" onclick="window.Utils.closeModal('report-modal')">&times;</button>
+        <button type="button" class="modal-close" id="close-report-modal-btn" aria-label="Close modal" onclick="window.Utils && window.Utils.closeModal('report-modal')">&times;</button>
       </div>
       <form id="report-form">
         <div class="modal-body">
@@ -60,7 +60,7 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-outline" onclick="window.Utils.closeModal('report-modal')">Cancel</button>
+          <button type="button" class="btn btn-outline" id="cancel-report-btn" onclick="window.Utils && window.Utils.closeModal('report-modal')">Cancel</button>
           <button type="submit" id="submit-report-btn" class="btn btn-danger">Submit Report</button>
         </div>
       </form>

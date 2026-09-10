@@ -173,6 +173,7 @@ function openModal(modalId) {
   const modal = document.getElementById(modalId);
   if (modal) {
     modal.classList.add('is-active');
+    modal.style.display = 'flex';
     document.body.classList.add('modal-open');
   }
 }
@@ -181,6 +182,7 @@ function closeModal(modalId) {
   const modal = document.getElementById(modalId);
   if (modal) {
     modal.classList.remove('is-active');
+    modal.style.display = 'none';
     document.body.classList.remove('modal-open');
   }
 }

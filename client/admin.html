@@ -16,32 +16,64 @@
   <div class="admin-layout">
     <!-- Admin Sidebar -->
     <aside class="admin-sidebar">
-      <div style="margin-bottom: 2rem; padding: 0 0.5rem;">
-        <span class="badge badge-admin" style="font-size: 0.8rem;">Campus Admin</span>
-        <h2 style="font-size: 1.35rem; margin-top: 0.4rem;">Management</h2>
+      <div class="admin-sidebar-header">
+        <span class="admin-sidebar-badge">Campus Admin</span>
+        <div class="admin-sidebar-brand">
+          <span style="font-size: 1.4rem;">🛡️</span>
+          <h2>Management</h2>
+        </div>
       </div>
 
       <nav class="admin-nav">
-        <a href="/admin.html" class="admin-nav-item active">📊 Dashboard</a>
-        <a href="/admin-users.html" class="admin-nav-item">👥 Users</a>
-        <a href="/admin-products.html" class="admin-nav-item">📦 Products</a>
-        <a href="/admin-reports.html" class="admin-nav-item">🚩 Reports</a>
-        <a href="/admin-categories.html" class="admin-nav-item">🏷️ Categories</a>
+        <a href="/admin.html" class="admin-nav-item active">
+          <span class="admin-nav-icon">📊</span>
+          <span>Dashboard</span>
+        </a>
+        <a href="/admin-users.html" class="admin-nav-item">
+          <span class="admin-nav-icon">👥</span>
+          <span>Users</span>
+        </a>
+        <a href="/admin-products.html" class="admin-nav-item">
+          <span class="admin-nav-icon">📦</span>
+          <span>Products</span>
+        </a>
+        <a href="/admin-reports.html" class="admin-nav-item">
+          <span class="admin-nav-icon">🚩</span>
+          <span>Reports</span>
+        </a>
+        <a href="/admin-categories.html" class="admin-nav-item">
+          <span class="admin-nav-icon">🏷️</span>
+          <span>Categories</span>
+        </a>
       </nav>
+
+      <div class="admin-sidebar-footer">
+        <a href="/marketplace.html" class="admin-sidebar-link">
+          <span>&larr;</span> Back to Marketplace
+        </a>
+      </div>
     </aside>
 
     <!-- Admin Main Content -->
     <main class="admin-content">
       <div class="admin-header">
-        <div>
-          <h1 style="font-size: 2rem; margin-bottom: 0.3rem;">Platform Overview</h1>
-          <p class="text-muted">Real-time statistics across the student marketplace.</p>
+        <div class="admin-header-title">
+          <h1>Platform Overview</h1>
+          <p>Real-time statistics and administration controls across the campus marketplace.</p>
+        </div>
+        <div class="admin-header-actions">
+          <a href="/admin-reports.html" class="btn btn-outline btn-sm">
+            <span>🚩</span> Moderation Queue
+          </a>
+          <a href="/admin-categories.html" class="btn btn-primary btn-sm">
+            <span>+</span> Add Category
+          </a>
         </div>
       </div>
 
       <!-- Stats Grid -->
-      <div class="dashboard-stats-grid">
-        <div class="stat-card">
+      <div class="admin-stats-grid">
+        <div class="admin-stat-card">
           <div class="stat-icon stat-icon-primary">👥</div>
           <div>
             <div id="stat-total-users" class="stat-val">0</div>
@@ -49,7 +81,7 @@
           </div>
         </div>
 
-        <div class="stat-card">
+        <div class="admin-stat-card">
           <div class="stat-icon stat-icon-accent">📦</div>
           <div>
             <div id="stat-total-products" class="stat-val">0</div>
@@ -57,7 +89,7 @@
           </div>
         </div>
 
-        <div class="stat-card">
+        <div class="admin-stat-card">
           <div class="stat-icon stat-icon-success">🟢</div>
           <div>
             <div id="stat-avail-products" class="stat-val">0</div>
@@ -65,7 +97,7 @@
           </div>
         </div>
 
-        <div class="stat-card">
+        <div class="admin-stat-card">
           <div class="stat-icon stat-icon-warning">🚩</div>
           <div>
             <div id="stat-pending-reports" class="stat-val">0</div>
@@ -75,17 +107,49 @@
       </div>
 
       <!-- Quick Platform Actions -->
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1rem;">
-        <div class="card" style="padding: 1.75rem;">
-          <h3 style="font-size: 1.15rem; margin-bottom: 0.6rem;">Moderation Queue</h3>
-          <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 1.25rem;">Review listings reported by students for spam, scams, or inappropriate content.</p>
-          <a href="/admin-reports.html" class="btn btn-primary btn-sm">Review Reports &rarr;</a>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; margin-top: 1rem;">
+        <div class="card" style="padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.6rem;">
+              <span style="font-size: 1.4rem;">👥</span>
+              <h3 style="font-size: 1.15rem; margin: 0;">User Accounts</h3>
+            </div>
+            <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 1.25rem;">Inspect student profiles, verify campus emails, and maintain user access controls.</p>
+          </div>
+          <a href="/admin-users.html" class="btn btn-outline btn-sm" style="align-self: flex-start;">Manage Users &rarr;</a>
         </div>
 
-        <div class="card" style="padding: 1.75rem;">
-          <h3 style="font-size: 1.15rem; margin-bottom: 0.6rem;">Category Management</h3>
-          <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 1.25rem;">Create, rename, or organize catalog categories for students trading on campus.</p>
-          <a href="/admin-categories.html" class="btn btn-primary btn-sm">Manage Categories &rarr;</a>
+        <div class="card" style="padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.6rem;">
+              <span style="font-size: 1.4rem;">📦</span>
+              <h3 style="font-size: 1.15rem; margin: 0;">Marketplace Listings</h3>
+            </div>
+            <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 1.25rem;">Monitor student items for sale, review pricing, and moderate inactive or flagged posts.</p>
+          </div>
+          <a href="/admin-products.html" class="btn btn-outline btn-sm" style="align-self: flex-start;">Manage Listings &rarr;</a>
+        </div>
+
+        <div class="card" style="padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.6rem;">
+              <span style="font-size: 1.4rem;">🚩</span>
+              <h3 style="font-size: 1.15rem; margin: 0;">Moderation Queue</h3>
+            </div>
+            <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 1.25rem;">Review reports submitted by students with Claude AI moderation classifications.</p>
+          </div>
+          <a href="/admin-reports.html" class="btn btn-primary btn-sm" style="align-self: flex-start;">Review Reports &rarr;</a>
+        </div>
+
+        <div class="card" style="padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.6rem;">
+              <span style="font-size: 1.4rem;">🏷️</span>
+              <h3 style="font-size: 1.15rem; margin: 0;">Category Catalog</h3>
+            </div>
+            <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 1.25rem;">Create, rename, or organize catalog categories for students trading on campus.</p>
+          </div>
+          <a href="/admin-categories.html" class="btn btn-outline btn-sm" style="align-self: flex-start;">Manage Categories &rarr;</a>
         </div>
       </div>
     </main>

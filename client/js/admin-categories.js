@@ -114,11 +114,11 @@ async function loadCategories() {
                 .map((c) => {
                   return `
                   <tr>
-                    <td style="font-weight: 700; color: var(--text-main);">${window.Utils.escapeHTML(c.name)}</td>
-                    <td style="color: var(--text-muted); max-width: 320px;">${window.Utils.escapeHTML(c.description || '—')}</td>
-                    <td style="color: var(--text-muted); font-size: 0.85rem;">${window.Utils.formatDate(c.createdAt)}</td>
-                    <td style="text-align: right;">
-                      <div style="display: inline-flex; gap: 0.4rem;">
+                    <td data-label="Category Name" style="font-weight: 700; color: var(--text-main);">${window.Utils.escapeHTML(c.name)}</td>
+                    <td data-label="Description" style="color: var(--text-muted); max-width: 320px;">${window.Utils.escapeHTML(c.description || '—')}</td>
+                    <td data-label="Created" style="color: var(--text-muted); font-size: 0.85rem;">${window.Utils.formatDate(c.createdAt)}</td>
+                    <td data-label="Action" style="text-align: right;">
+                      <div style="display: inline-flex; gap: 0.4rem; justify-content: flex-end;">
                         <button type="button" class="btn btn-outline btn-sm" data-action="edit" data-id="${c._id}">Edit</button>
                         <button type="button" class="btn btn-danger btn-sm" data-action="delete" data-id="${c._id}">Delete</button>
                       </div>

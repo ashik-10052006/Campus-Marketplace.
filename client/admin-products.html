@@ -15,31 +15,74 @@
 
   <div class="admin-layout">
     <aside class="admin-sidebar">
-      <div style="margin-bottom: 2rem; padding: 0 0.5rem;">
-        <span class="badge badge-admin" style="font-size: 0.8rem;">Campus Admin</span>
-        <h2 style="font-size: 1.35rem; margin-top: 0.4rem;">Management</h2>
+      <div class="admin-sidebar-header">
+        <span class="admin-sidebar-badge">Campus Admin</span>
+        <div class="admin-sidebar-brand">
+          <span style="font-size: 1.4rem;">🛡️</span>
+          <h2>Management</h2>
+        </div>
       </div>
 
       <nav class="admin-nav">
-        <a href="/admin.html" class="admin-nav-item">📊 Dashboard</a>
-        <a href="/admin-users.html" class="admin-nav-item">👥 Users</a>
-        <a href="/admin-products.html" class="admin-nav-item active">📦 Products</a>
-        <a href="/admin-reports.html" class="admin-nav-item">🚩 Reports</a>
-        <a href="/admin-categories.html" class="admin-nav-item">🏷️ Categories</a>
+        <a href="/admin.html" class="admin-nav-item">
+          <span class="admin-nav-icon">📊</span>
+          <span>Dashboard</span>
+        </a>
+        <a href="/admin-users.html" class="admin-nav-item">
+          <span class="admin-nav-icon">👥</span>
+          <span>Users</span>
+        </a>
+        <a href="/admin-products.html" class="admin-nav-item active">
+          <span class="admin-nav-icon">📦</span>
+          <span>Products</span>
+        </a>
+        <a href="/admin-reports.html" class="admin-nav-item">
+          <span class="admin-nav-icon">🚩</span>
+          <span>Reports</span>
+        </a>
+        <a href="/admin-categories.html" class="admin-nav-item">
+          <span class="admin-nav-icon">🏷️</span>
+          <span>Categories</span>
+        </a>
       </nav>
+
+      <div class="admin-sidebar-footer">
+        <a href="/marketplace.html" class="admin-sidebar-link">
+          <span>&larr;</span> Back to Marketplace
+        </a>
+      </div>
     </aside>
 
     <main class="admin-content">
       <div class="admin-header">
-        <div>
-          <h1 style="font-size: 2rem; margin-bottom: 0.3rem;">All Platform Listings</h1>
-          <p class="text-muted">Review, inspect, or remove marketplace product posts.</p>
+        <div class="admin-header-title">
+          <h1>Marketplace Listings</h1>
+          <p>Inspect, filter, or moderate student items currently listed across campus.</p>
+        </div>
+        <div class="admin-header-actions">
+          <span id="product-count-badge" class="badge badge-admin" style="font-size: 0.85rem; padding: 0.45rem 0.85rem;">0 Total Listings</span>
         </div>
       </div>
 
-      <div class="card">
+      <!-- Search & Filter Toolbar -->
+      <div class="admin-toolbar">
+        <div class="admin-search-box">
+          <span class="admin-search-icon">🔍</span>
+          <input type="text" id="products-search-input" class="admin-search-input" placeholder="Search by item title or seller..." />
+        </div>
+        <div class="admin-filter-group">
+          <select id="product-status-filter" class="form-select" style="min-width: 150px; font-size: 0.9rem; padding: 0.45rem 0.75rem;">
+            <option value="">All Statuses</option>
+            <option value="AVAILABLE">Available</option>
+            <option value="SOLD">Sold</option>
+            <option value="REMOVED">Removed</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="admin-table-card">
         <div id="admin-products-container">
-          <div class="spinner-wrapper">
+          <div class="spinner-wrapper" style="padding: 3rem 1rem;">
             <div class="spinner"></div>
             <span class="spinner-text">Loading marketplace listings...</span>
           </div>

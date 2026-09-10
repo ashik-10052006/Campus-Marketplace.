@@ -15,29 +15,53 @@
 
   <div class="admin-layout">
     <aside class="admin-sidebar">
-      <div style="margin-bottom: 2rem; padding: 0 0.5rem;">
-        <span class="badge badge-admin" style="font-size: 0.8rem;">Campus Admin</span>
-        <h2 style="font-size: 1.35rem; margin-top: 0.4rem;">Management</h2>
+      <div class="admin-sidebar-header">
+        <span class="admin-sidebar-badge">Campus Admin</span>
+        <div class="admin-sidebar-brand">
+          <span style="font-size: 1.4rem;">🛡️</span>
+          <h2>Management</h2>
+        </div>
       </div>
 
       <nav class="admin-nav">
-        <a href="/admin.html" class="admin-nav-item">📊 Dashboard</a>
-        <a href="/admin-users.html" class="admin-nav-item">👥 Users</a>
-        <a href="/admin-products.html" class="admin-nav-item">📦 Products</a>
-        <a href="/admin-reports.html" class="admin-nav-item active">🚩 Reports</a>
-        <a href="/admin-categories.html" class="admin-nav-item">🏷️ Categories</a>
+        <a href="/admin.html" class="admin-nav-item">
+          <span class="admin-nav-icon">📊</span>
+          <span>Dashboard</span>
+        </a>
+        <a href="/admin-users.html" class="admin-nav-item">
+          <span class="admin-nav-icon">👥</span>
+          <span>Users</span>
+        </a>
+        <a href="/admin-products.html" class="admin-nav-item">
+          <span class="admin-nav-icon">📦</span>
+          <span>Products</span>
+        </a>
+        <a href="/admin-reports.html" class="admin-nav-item active">
+          <span class="admin-nav-icon">🚩</span>
+          <span>Reports</span>
+        </a>
+        <a href="/admin-categories.html" class="admin-nav-item">
+          <span class="admin-nav-icon">🏷️</span>
+          <span>Categories</span>
+        </a>
       </nav>
+
+      <div class="admin-sidebar-footer">
+        <a href="/marketplace.html" class="admin-sidebar-link">
+          <span>&larr;</span> Back to Marketplace
+        </a>
+      </div>
     </aside>
 
     <main class="admin-content">
       <div class="admin-header">
-        <div>
-          <h1 style="font-size: 2rem; margin-bottom: 0.3rem;">Listing Violation Reports</h1>
-          <p class="text-muted">Review student reports with Claude AI moderation classification.</p>
+        <div class="admin-header-title">
+          <h1>Listing Violation Reports</h1>
+          <p>Review student reports with Claude AI moderation intelligence and safety classifications.</p>
         </div>
 
-        <div>
-          <select id="report-filter-status" class="form-select" style="min-width: 160px;">
+        <div class="admin-header-actions">
+          <select id="report-filter-status" class="form-select" style="min-width: 170px; font-size: 0.9rem; padding: 0.5rem 0.85rem;">
             <option value="">All Statuses</option>
             <option value="PENDING" selected>Pending Only</option>
             <option value="REVIEWED">Reviewed</option>
@@ -48,7 +72,7 @@
       </div>
 
       <div id="reports-list-container">
-        <div class="spinner-wrapper">
+        <div class="spinner-wrapper" style="padding: 3.5rem 1rem;">
           <div class="spinner"></div>
           <span class="spinner-text">Loading moderation reports...</span>
         </div>

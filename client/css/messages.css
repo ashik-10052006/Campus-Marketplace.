@@ -3,24 +3,39 @@
    ========================================================================== */
 
 /* Page layout lock for messages */
+html,
 body.messages-page {
-  height: 100vh;
+  height: 100%;
   height: 100dvh;
-  max-height: 100vh;
   max-height: 100dvh;
   overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+body.messages-page {
   display: flex;
   flex-direction: column;
+}
+
+body.messages-page .navbar {
+  flex: 0 0 auto;
+  z-index: 1000;
 }
 
 body.messages-page main.container {
   flex: 1 1 0%;
   min-height: 0;
+  height: 0;
   display: flex;
   flex-direction: column;
   padding-top: 0.5rem;
   padding-bottom: 0.25rem;
   overflow: hidden;
+  max-width: 1240px;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
 }
 
 .back-to-convs-btn {
@@ -464,20 +479,40 @@ body.in-active-chat .ai-assistant-launcher {
 @media (max-width: 768px) {
   html,
   body.messages-page {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100% !important;
     height: 100% !important;
     height: 100dvh !important;
     max-height: 100dvh !important;
     overflow: hidden !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  body.messages-page .navbar {
+    flex: 0 0 60px !important;
+    height: 60px !important;
+    min-height: 60px !important;
+    max-height: 60px !important;
+  }
+
+  body.messages-page .nav-inner {
+    height: 60px !important;
   }
 
   body.messages-page main.container {
-    padding: 0 !important;
-    margin: 0 !important;
-    max-width: 100% !important;
-    width: 100% !important;
     flex: 1 1 0% !important;
     min-height: 0 !important;
-    height: auto !important;
+    height: 0 !important;
+    max-height: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
     overflow: hidden !important;
     display: flex !important;
     flex-direction: column !important;
@@ -491,8 +526,9 @@ body.in-active-chat .ai-assistant-launcher {
     flex-direction: column !important;
     flex: 1 1 0% !important;
     min-height: 0 !important;
-    height: 100% !important;
+    height: 0 !important;
     overflow: hidden !important;
+    margin: 0 !important;
   }
 
   .chat-panel {
@@ -514,78 +550,87 @@ body.in-active-chat .ai-assistant-launcher {
   }
 
   .chat-header {
-    flex: 0 0 auto !important;
-    padding: 0.45rem 0.75rem !important;
+    flex: 0 0 46px !important;
+    min-height: 46px !important;
+    max-height: 46px !important;
+    padding: 0.35rem 0.65rem !important;
     gap: 0.4rem !important;
-    min-height: 48px;
-    background: #ffffff;
-    border-bottom: 1px solid var(--border-subtle);
+    background: #ffffff !important;
+    border-bottom: 1px solid var(--border-subtle) !important;
     flex-wrap: nowrap !important;
+    box-sizing: border-box !important;
   }
 
   .chat-product-preview {
-    gap: 0.45rem !important;
-    min-width: 0;
-    flex: 1 1 0%;
-    overflow: hidden;
+    gap: 0.4rem !important;
+    min-width: 0 !important;
+    flex: 1 1 0% !important;
+    overflow: hidden !important;
   }
 
   .chat-product-thumb {
-    width: 36px !important;
-    height: 36px !important;
-    flex-shrink: 0;
+    width: 32px !important;
+    height: 32px !important;
+    flex-shrink: 0 !important;
     border-radius: 6px !important;
   }
 
   #chat-product-link {
-    display: block;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    font-size: 0.82rem !important;
-    line-height: 1.25;
-    max-width: 135px;
+    display: block !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    font-size: 0.8rem !important;
+    line-height: 1.2 !important;
+    max-width: 130px !important;
   }
 
   #chat-product-price {
-    font-size: 0.75rem !important;
-    line-height: 1.2;
+    font-size: 0.72rem !important;
+    line-height: 1.1 !important;
   }
 
   #chat-participant-info {
-    font-size: 0.72rem !important;
-    white-space: nowrap;
-    text-align: right;
-    flex-shrink: 0;
+    font-size: 0.7rem !important;
+    white-space: nowrap !important;
+    text-align: right !important;
+    flex-shrink: 0 !important;
   }
 
   .back-to-convs-btn {
-    padding: 0.35rem 0.55rem !important;
-    font-size: 0.78rem !important;
-    margin-right: 0.2rem;
+    padding: 0.25rem 0.5rem !important;
+    font-size: 0.75rem !important;
+    margin-right: 0.15rem !important;
   }
 
   .chat-messages {
-    padding: 0.75rem !important;
-    gap: 0.6rem !important;
     flex: 1 1 0% !important;
     min-height: 0 !important;
+    height: 0 !important;
+    padding: 0.65rem !important;
+    gap: 0.55rem !important;
     overflow-y: auto !important;
-    -webkit-overflow-scrolling: touch;
+    -webkit-overflow-scrolling: touch !important;
   }
 
   .message-bubble {
     max-width: 86% !important;
     font-size: 0.88rem !important;
-    padding: 0.65rem 0.95rem !important;
+    padding: 0.6rem 0.9rem !important;
   }
 
   .ai-suggestions-bar {
-    flex: 0 0 auto !important;
-    padding: 0.35rem 0.65rem !important;
-    gap: 0.5rem !important;
+    flex: 0 0 38px !important;
+    min-height: 38px !important;
+    max-height: 38px !important;
+    padding: 0.25rem 0.65rem !important;
+    gap: 0.45rem !important;
     background: #f8fafc !important;
     border-top: 1px solid var(--border-subtle) !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    align-items: center !important;
+    overflow-x: auto !important;
   }
 
   .ai-suggestions-label {
@@ -593,14 +638,15 @@ body.in-active-chat .ai-assistant-launcher {
   }
 
   .ai-chip {
-    font-size: 0.75rem !important;
-    padding: 0.28rem 0.45rem 0.28rem 0.7rem !important;
+    font-size: 0.74rem !important;
+    padding: 0.22rem 0.4rem 0.22rem 0.65rem !important;
   }
 
   .chat-input-bar {
     flex: 0 0 auto !important;
-    padding: 0.5rem 0.65rem !important;
-    padding-bottom: max(0.5rem, calc(0.35rem + env(safe-area-inset-bottom, 0px))) !important;
+    min-height: 52px !important;
+    padding: 0.45rem 0.65rem !important;
+    padding-bottom: max(0.45rem, calc(0.3rem + env(safe-area-inset-bottom, 0px))) !important;
     background: #ffffff !important;
     border-top: 1px solid var(--border-subtle) !important;
     width: 100% !important;
@@ -610,6 +656,7 @@ body.in-active-chat .ai-assistant-launcher {
     gap: 0.5rem !important;
     position: relative !important;
     z-index: 10 !important;
+    margin: 0 !important;
   }
 
   .chat-input {
@@ -617,13 +664,20 @@ body.in-active-chat .ai-assistant-launcher {
     min-width: 0 !important;
     width: 100% !important;
     font-size: 16px !important; /* Prevents iOS WebKit zoom */
-    padding: 0.6rem 0.85rem !important;
+    padding: 0.55rem 0.85rem !important;
+    height: 40px !important;
+    box-sizing: border-box !important;
   }
 
   .chat-send-btn {
     flex: 0 0 auto !important;
-    padding: 0.6rem 1.15rem !important;
+    padding: 0 1.25rem !important;
+    height: 40px !important;
     font-size: 0.88rem !important;
+    border-radius: var(--radius-full) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
   }
 
   body.messages-page:not(.in-active-chat) .conversations-list {

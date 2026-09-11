@@ -547,6 +547,21 @@ function renderMessages(messages) {
   });
 }
 
+function getDefaultAiSuggestions(product) {
+  const list = [
+    'Is this item still available?',
+    'Can I see the item before buying?',
+  ];
+  if (product && Number(product.price) > 0) {
+    const offerPrice = Math.round(Number(product.price) * 0.9);
+    list.push(`Would you consider ₹${offerPrice.toLocaleString('en-IN')}?`);
+  } else {
+    list.push('Is the price negotiable?');
+  }
+  list.push('Where can we meet on campus for pickup?');
+  return list;
+}
+
 const DEFAULT_AI_SUGGESTIONS = [
   'Is this item still available?',
   'Can I see the item before buying?',
@@ -561,7 +576,9 @@ function renderAiChips(suggestions) {
   chipsContainer.innerHTML = '';
   const list = Array.isArray(suggestions) && suggestions.length > 0 ? suggestions : DEFAULT_AI_SUGGESTIONS;
 
-  list.forEach((text) => {
+  list.forEach((rawText) => {
+    // Sanitize any rogue dollar mentions into rupees
+    const text = String(rawText || '').replace(/\$([0-9])/g, '₹$1');
     const chip = document.createElement('div');
     chip.className = 'ai-chip';
     chip.setAttribute('role', 'button');
@@ -633,8 +650,9 @@ async function loadAiSuggestions(conv, messages) {
   const chipsContainer = document.getElementById('ai-chips-list');
   if (!chipsContainer) return;
 
+  const initialDefaults = getDefaultAiSuggestions(conv ? conv.product : null);
   // Render defaults immediately so suggestions are never missing or blank
-  renderAiChips(DEFAULT_AI_SUGGESTIONS);
+  renderAiChips(initialDefaults);
 
   const lastContext =
     messages && messages.length > 0 ? messages.slice(-2).map((m) => m.text).join(' | ') : '';
@@ -651,7 +669,7 @@ async function loadAiSuggestions(conv, messages) {
     }
   } catch (err) {
     console.warn('AI suggestions error, using defaults:', err);
-    renderAiChips(DEFAULT_AI_SUGGESTIONS);
+    renderAiChips(initialDefaults);
   }
 }
 

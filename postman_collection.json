@@ -274,7 +274,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"rawNotes\": \"Selling my TI 84 plus CE color graphing calculator, battery lasts forever, used for calc 1 and 2, asking about $60\"\n}"
+              "raw": "{\n  \"rawNotes\": \"Selling my TI 84 plus CE color graphing calculator, battery lasts forever, used for calc 1 and 2, asking about ₹5,500\"\n}"
             },
             "url": { "raw": "{{baseUrl}}/api/ai/listing-assistant", "host": ["{{baseUrl}}"], "path": ["api", "ai", "listing-assistant"] }
           }
@@ -286,7 +286,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"productName\": \"Calculus Textbook\",\n  \"productPrice\": 45,\n  \"conversationContext\": \"Is this still available?\"\n}"
+              "raw": "{\n  \"productName\": \"Calculus Textbook\",\n  \"productPrice\": 1200,\n  \"conversationContext\": \"Is this still available?\"\n}"
             },
             "url": { "raw": "{{baseUrl}}/api/ai/message-suggestions", "host": ["{{baseUrl}}"], "path": ["api", "ai", "message-suggestions"] }
           }
@@ -298,7 +298,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"reason\": \"Scam\",\n  \"description\": \"Seller is asking to transfer money via gift cards outside campus.\",\n  \"productName\": \"Cheap iPad\",\n  \"productDescription\": \"Brand new iPad for $50\"\n}"
+              "raw": "{\n  \"reason\": \"Scam\",\n  \"description\": \"Seller is asking to transfer money via gift cards outside campus.\",\n  \"productName\": \"Cheap iPad\",\n  \"productDescription\": \"Brand new iPad for ₹4,000\"\n}"
             },
             "url": { "raw": "{{baseUrl}}/api/ai/classify-report", "host": ["{{baseUrl}}"], "path": ["api", "ai", "classify-report"] }
           }

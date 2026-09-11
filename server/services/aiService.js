@@ -341,7 +341,7 @@ Core Guidelines:
       return `🛡️ **Campus Safety Tip:** Always arrange pickups in public, well-lit areas on campus during daylight! Great spots include the **Student Union lobby**, **Campus Library entrance**, or outside the **Student Dining Hall**. Inspect the item thoroughly before paying with cash or campus payment apps.`;
     }
     if (lower.includes('sell') || lower.includes('price') || lower.includes('how to')) {
-      return `🏷️ **Quick Selling Tips:**\n• Take clear photos in good natural lighting\n• Price competitively (check similar campus listings)\n• Include course numbers for textbooks (e.g., *MATH 101*)\n• You can list your item in under 2 minutes at [+ Sell Item](/create-product.html)!`;
+      return `🏷️ **Quick Selling Tips:**\n• Take clear photos in good natural lighting\n• Price competitively in Rupees (₹) (check similar campus listings)\n• Include course numbers for textbooks (e.g., *MATH 101*)\n• You can list your item in under 2 minutes at [+ Sell Item](/create-product.html)!`;
     }
     if (lower.includes('textbook') || lower.includes('book') || lower.includes('calculator')) {
       return `📚 **Finding Study Gear:** You can browse all active textbooks, graphing calculators, and tech on the [Marketplace Catalog](/products.html). Be sure to filter by category or search by course code to find what you need!`;

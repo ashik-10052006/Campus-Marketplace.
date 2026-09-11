@@ -27,6 +27,11 @@
   function formatMarkdown(rawText) {
     let text = escapeHTML(rawText);
 
+    // Convert any stray dollar references into Indian Rupees
+    text = text.replace(/\$([0-9])/g, '₹$1');
+    text = text.replace(/\b(\d+)\s*dollars?\b/gi, '₹$1');
+    text = text.replace(/\bUSD\s*([0-9]+)/gi, '₹$1');
+
     // Convert links: [Text](URL) -> <a href="URL" target="_blank" rel="noopener">Text</a>
     text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, linkText, url) => {
       // Basic sanitize URL
@@ -135,7 +140,7 @@
             type="text"
             id="ai-user-input"
             class="ai-input-field"
-            placeholder="Ask about prices, safety, or listing tips..."
+            placeholder="Ask about prices in Rupees (₹), safety, or listing tips..."
             autocomplete="off"
             maxlength="600"
           />

@@ -48,12 +48,21 @@ function showToast(message, type = 'info', duration = 3500) {
 }
 
 function formatCurrency(amount) {
-  const num = Number(amount) || 0;
-  return new Intl.NumberFormat('en-IN', {
-    style: 'currency',
-    currency: 'INR',
-    maximumFractionDigits: num % 1 === 0 ? 0 : 2,
-  }).format(num);
+  let cleanAmount = amount;
+  if (typeof cleanAmount === 'string') {
+    cleanAmount = cleanAmount.replace(/[^0-9.-]/g, '');
+  }
+  const num = Number(cleanAmount) || 0;
+  try {
+    const formatted = new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      maximumFractionDigits: num % 1 === 0 ? 0 : 2,
+    }).format(num);
+    return formatted.replace(/^INR\s*/i, '₹');
+  } catch (e) {
+    return '₹' + num.toLocaleString('en-IN');
+  }
 }
 
 function formatDate(dateString) {

@@ -60,7 +60,7 @@ async function loadDashboardData() {
               <thead>
                 <tr>
                   <th>Item</th>
-                  <th>Price</th>
+                  <th>Price (₹)</th>
                   <th>Condition</th>
                   <th>Status</th>
                   <th>Listed Date</th>

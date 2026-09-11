@@ -129,7 +129,7 @@ function renderFilteredProducts() {
             <th>Product</th>
             <th>Seller</th>
             <th>Category</th>
-            <th>Price</th>
+            <th>Price (₹)</th>
             <th>Condition</th>
             <th>Status</th>
             <th>Created</th>

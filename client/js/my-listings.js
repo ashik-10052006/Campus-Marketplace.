@@ -126,7 +126,7 @@ async function loadMyListings() {
               <tr>
                 <th>Listing</th>
                 <th>Category</th>
-                <th>Price</th>
+                <th>Price (₹)</th>
                 <th>Condition</th>
                 <th>Status</th>
                 <th>Date Listed</th>

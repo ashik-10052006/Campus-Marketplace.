@@ -78,28 +78,30 @@
   transform: rotate(90deg);
 }
 
-/* Tooltip Badge on Launcher Hover */
+/* Tooltip Badge on Launcher Hover & Entrance Pop */
 .ai-launcher-tooltip {
   position: absolute;
   right: calc(100% + 14px);
   top: 50%;
   transform: translateY(-50%) translateX(6px);
-  background: rgba(15, 23, 42, 0.92);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: rgba(15, 23, 42, 0.94);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   color: #ffffff;
-  padding: 8px 14px;
+  padding: 8px 15px;
   border-radius: 12px;
   font-family: var(--font-body, 'Inter', sans-serif);
   font-size: 0.825rem;
-  font-weight: 500;
+  font-weight: 600;
+  letter-spacing: 0.01em;
   white-space: nowrap;
   pointer-events: none;
   opacity: 0;
   visibility: hidden;
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28), 0 0 12px rgba(99, 102, 241, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
+  z-index: 1051;
 }
 
 .ai-launcher-tooltip::after {
@@ -110,13 +112,71 @@
   transform: translateY(-50%);
   border-width: 5px;
   border-style: solid;
-  border-color: transparent transparent transparent rgba(15, 23, 42, 0.92);
+  border-color: transparent transparent transparent rgba(15, 23, 42, 0.94);
 }
 
+/* Hover state */
 .ai-assistant-launcher:hover .ai-launcher-tooltip {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(-50%) translateX(0);
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: translateY(-50%) translateX(0) scale(1) !important;
+  animation: none !important;
+}
+
+/* Pop-in animation keyframes */
+@keyframes aiTooltipPopIn {
+  0% {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-50%) scale(0.55) translateX(14px);
+  }
+  55% {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(-50%) scale(1.1) translateX(-3px);
+  }
+  75% {
+    transform: translateY(-50%) scale(0.96) translateX(1px);
+  }
+  100% {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(-50%) scale(1) translateX(0);
+  }
+}
+
+/* Disappear animation keyframes */
+@keyframes aiTooltipDisappear {
+  0% {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(-50%) scale(1) translateX(0);
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-50%) scale(0.85) translateX(10px);
+  }
+}
+
+/* Active popping state */
+.ai-launcher-tooltip.is-popping {
+  animation: aiTooltipPopIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Active disappearing state */
+.ai-launcher-tooltip.is-disappearing {
+  animation: aiTooltipDisappear 0.45s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* When widget modal is open, force hide tooltip */
+.ai-assistant-launcher.is-open .ai-launcher-tooltip,
+.ai-assistant-launcher.is-open .ai-launcher-tooltip.is-popping,
+.ai-assistant-launcher.is-open .ai-launcher-tooltip.is-disappearing {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  animation: none !important;
 }
 
 /* ----------------- AI Assistant Chat Widget Modal ----------------- */
@@ -626,5 +686,10 @@
 
   .ai-launcher-tooltip {
     display: none;
+  }
+
+  .ai-launcher-tooltip.is-popping,
+  .ai-launcher-tooltip.is-disappearing {
+    display: block;
   }
 }

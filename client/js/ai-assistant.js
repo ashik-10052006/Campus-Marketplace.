@@ -8,6 +8,8 @@
   let isWidgetOpen = false;
   let isRequestPending = false;
   let chatHistory = [];
+  let tooltipTimeout = null;
+  let tooltipHideTimeout = null;
 
   /**
    * Escape raw text to prevent XSS, while preserving safety for markdown conversion.
@@ -189,6 +191,25 @@
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && isWidgetOpen) {
         closeWidget();
+      }
+    });
+
+    // Listen for clicks on Home page navigation links & logo to trigger pop
+    document.addEventListener('click', (e) => {
+      const link = e.target.closest('a');
+      if (!link) return;
+      const href = (link.getAttribute('href') || '').trim().toLowerCase();
+      if (
+        href === '/' ||
+        href === '/index.html' ||
+        href === 'index.html' ||
+        href.endsWith('/index.html')
+      ) {
+        if (isHomePage()) {
+          setTimeout(() => {
+            popTooltip(3500);
+          }, 150);
+        }
       }
     });
   }
@@ -425,6 +446,58 @@
   }
 
   /**
+   * Determine if the current page is the Home Page
+   */
+  function isHomePage() {
+    const path = (window.location.pathname || '').toLowerCase();
+    return (
+      path === '/' ||
+      path === '' ||
+      path.endsWith('/index.html') ||
+      path === '/index.html' ||
+      path.endsWith('/')
+    );
+  }
+
+  /**
+   * Triggers the "Ask Claude AI" tooltip pop animation and auto-disappears after delay
+   */
+  function popTooltip(duration = 3500) {
+    const launcher = document.getElementById('ai-assistant-launcher');
+    if (!launcher || isWidgetOpen) return;
+
+    const tooltip = launcher.querySelector('.ai-launcher-tooltip');
+    if (!tooltip) return;
+
+    // Clear any existing active timeouts
+    if (tooltipTimeout) {
+      clearTimeout(tooltipTimeout);
+      tooltipTimeout = null;
+    }
+    if (tooltipHideTimeout) {
+      clearTimeout(tooltipHideTimeout);
+      tooltipHideTimeout = null;
+    }
+
+    // Reset animations cleanly
+    tooltip.classList.remove('is-popping', 'is-disappearing');
+    void tooltip.offsetWidth; // Force browser reflow to restart animation cleanly
+
+    // Start pop animation
+    tooltip.classList.add('is-popping');
+
+    // Auto-disappear after specified duration
+    tooltipTimeout = setTimeout(() => {
+      tooltip.classList.remove('is-popping');
+      tooltip.classList.add('is-disappearing');
+
+      tooltipHideTimeout = setTimeout(() => {
+        tooltip.classList.remove('is-disappearing');
+      }, 450);
+    }, duration);
+  }
+
+  /**
    * Widget open/close controls
    */
   function openWidget() {
@@ -434,6 +507,20 @@
     if (modal) modal.classList.add('is-open');
     if (launcher) launcher.classList.add('is-open');
     isWidgetOpen = true;
+
+    // Cancel and remove any popping/disappearing tooltip state immediately
+    if (tooltipTimeout) {
+      clearTimeout(tooltipTimeout);
+      tooltipTimeout = null;
+    }
+    if (tooltipHideTimeout) {
+      clearTimeout(tooltipHideTimeout);
+      tooltipHideTimeout = null;
+    }
+    const tooltip = launcher ? launcher.querySelector('.ai-launcher-tooltip') : null;
+    if (tooltip) {
+      tooltip.classList.remove('is-popping', 'is-disappearing');
+    }
 
     const inputField = document.getElementById('ai-user-input');
     if (inputField) {
@@ -465,6 +552,13 @@
     injectWidgetDOM();
     loadHistory();
     renderMessages();
+
+    // If loaded on Home Page, automatically pop the tooltip then disappear
+    if (isHomePage()) {
+      setTimeout(() => {
+        popTooltip(3500);
+      }, 700);
+    }
   }
 
   // Self-init on ready
@@ -482,5 +576,7 @@
     toggle: toggleWidget,
     sendMessage,
     clearHistory,
+    popTooltip,
+    isHomePage,
   };
 })();

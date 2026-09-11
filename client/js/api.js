@@ -242,10 +242,16 @@ async function getReports(params = {}) {
   });
 }
 
-async function updateReportStatus(id, status, removeProduct = false) {
+async function updateReportStatus(id, statusOrData, removeProduct = false) {
+  let status = statusOrData;
+  let remove = removeProduct;
+  if (typeof statusOrData === 'object' && statusOrData !== null) {
+    status = statusOrData.status;
+    remove = statusOrData.removeProduct !== undefined ? statusOrData.removeProduct : removeProduct;
+  }
   return apiRequest(`/reports/${id}/status`, {
     method: 'PATCH',
-    body: JSON.stringify({ status, removeProduct }),
+    body: JSON.stringify({ status, removeProduct: Boolean(remove) }),
   });
 }
 

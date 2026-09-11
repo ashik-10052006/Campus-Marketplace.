@@ -92,7 +92,19 @@ const getReports = async (req, res, next) => {
 // @access  Private/Admin
 const updateReportStatus = async (req, res, next) => {
   try {
-    const { status, removeProduct } = req.body;
+    let { status, removeProduct } = req.body;
+
+    // Handle case if status was passed nested inside an object
+    if (typeof status === 'object' && status !== null) {
+      if (status.removeProduct !== undefined && removeProduct === undefined) {
+        removeProduct = status.removeProduct;
+      }
+      status = status.status;
+    }
+
+    if (typeof status === 'string') {
+      status = status.trim().toUpperCase();
+    }
 
     if (!status || !VALID_REPORT_STATUSES.includes(status)) {
       return res.status(400).json({
@@ -110,7 +122,7 @@ const updateReportStatus = async (req, res, next) => {
     await report.save();
 
     // If admin also elects to remove the offending product
-    if (removeProduct) {
+    if (removeProduct === true || removeProduct === 'true') {
       await Product.findByIdAndUpdate(report.product, { status: 'REMOVED' });
     }
 

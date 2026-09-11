@@ -231,7 +231,7 @@ window.updateStatus = async function (reportId, status, removeProduct = false, t
   }
 
   try {
-    const res = await window.API.updateReportStatus(reportId, { status, removeProduct });
+    const res = await window.API.updateReportStatus(reportId, status, removeProduct);
     if (res.success) {
       window.Utils.showToast(`Report marked as ${status}`, 'success');
       loadReports();

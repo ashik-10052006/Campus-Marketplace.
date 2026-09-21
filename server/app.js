@@ -4,6 +4,8 @@ const cors = require('cors');
 const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
 
+const rateLimit = require('express-rate-limit');
+
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const productRoutes = require('./routes/productRoutes');
@@ -15,6 +17,9 @@ const aiRoutes = require('./routes/aiRoutes');
 const { notFound, errorHandler } = require('./middleware/errorMiddleware');
 
 const app = express();
+
+// Enable trust proxy for Render and reverse proxies (ensures client IP is accurate for rate limiting)
+app.set('trust proxy', 1);
 
 // Security HTTP headers
 app.use(
@@ -34,14 +39,45 @@ app.use(
   })
 );
 
-// CORS configuration with credentials support
-const clientUrl = process.env.CLIENT_URL || 'http://localhost:5000';
+// Hardened CORS configuration with credentials support
+const normalizedClientUrl = process.env.CLIENT_URL
+  ? process.env.CLIENT_URL.trim().replace(/\/+$/, '')
+  : null;
+
+const allowedOrigins = new Set(
+  [
+    normalizedClientUrl,
+    'https://campuscart-xuqs.onrender.com',
+    'http://localhost:5000',
+    'http://localhost:3000',
+  ].filter(Boolean)
+);
+
 app.use(
   cors({
-    origin: clientUrl,
+    origin: (origin, callback) => {
+      // Allow requests with no origin (such as same-origin static frontend, mobile apps, curl)
+      if (!origin || allowedOrigins.has(origin)) {
+        return callback(null, true);
+      }
+      return callback(new Error('Origin not allowed by CORS policy'));
+    },
     credentials: true,
   })
 );
+
+// Baseline API Rate Limiter to guard against scraping and DoS flooding
+const globalApiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 200, // 200 requests per IP per window
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    message: 'Too many requests from this network. Please try again in 15 minutes.',
+  },
+});
+app.use('/api', globalApiLimiter);
 
 // Body parsers & cookie parser
 app.use(express.json({ limit: '10mb' }));

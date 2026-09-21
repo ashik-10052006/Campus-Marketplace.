@@ -7,6 +7,14 @@ dotenv.config({ path: path.join(__dirname, '../.env') });
 const connectDB = require('./config/db');
 const app = require('./app');
 
+// Strict security validation for production
+if (process.env.NODE_ENV === 'production') {
+  if (!process.env.JWT_SECRET || process.env.JWT_SECRET === 'campus_marketplace_jwt_dev_secret_key_2026_secure') {
+    console.error('FATAL SECURITY ERROR: JWT_SECRET must be set to a secure custom value in production.');
+    process.exit(1);
+  }
+}
+
 // Connect to MongoDB
 connectDB();
 

@@ -3,6 +3,12 @@ const Category = require('../models/Category');
 const { uploadImage } = require('../services/storageService');
 const { isValidPrice, VALID_CONDITIONS } = require('../utils/validators');
 
+// Helper to escape user input to prevent ReDoS (Regular Expression Denial of Service)
+const escapeRegex = (string) => {
+  if (typeof string !== 'string') return '';
+  return string.slice(0, 100).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+};
+
 // @desc    Get all products with search, filter, sort, pagination
 // @route   GET /api/products
 // @access  Public
@@ -29,19 +35,21 @@ const getProducts = async (req, res, next) => {
       query.status = 'AVAILABLE';
     }
 
-    // 2. Search query (case-insensitive across name and description)
-    if (search && search.trim()) {
-      const regex = new RegExp(search.trim(), 'i');
+    // 2. Search query (case-insensitive across name and description, protected against ReDoS)
+    if (search && typeof search === 'string' && search.trim()) {
+      const sanitized = escapeRegex(search.trim());
+      const regex = new RegExp(sanitized, 'i');
       query.$or = [{ name: regex }, { description: regex }];
     }
 
     // 3. Category Filter (can be category ID or Category name)
-    if (category && category !== 'all') {
+    if (category && typeof category === 'string' && category !== 'all') {
       if (category.match(/^[0-9a-fA-F]{24}$/)) {
         query.category = category;
       } else {
+        const sanitizedCat = escapeRegex(category.trim());
         const foundCategory = await Category.findOne({
-          name: new RegExp(`^${category.trim()}$`, 'i'),
+          name: new RegExp(`^${sanitizedCat}$`, 'i'),
         });
         if (foundCategory) {
           query.category = foundCategory._id;
@@ -150,8 +158,9 @@ const createProduct = async (req, res, next) => {
     // Resolve Category if passed as name or id
     let categoryId = category;
     if (!category.match(/^[0-9a-fA-F]{24}$/)) {
+      const sanitizedCat = escapeRegex(category.trim());
       const foundCategory = await Category.findOne({
-        name: new RegExp(`^${category.trim()}$`, 'i'),
+        name: new RegExp(`^${sanitizedCat}$`, 'i'),
       });
       if (!foundCategory) {
         return res.status(400).json({
@@ -224,8 +233,9 @@ const updateProduct = async (req, res, next) => {
       if (category.match(/^[0-9a-fA-F]{24}$/)) {
         product.category = category;
       } else {
+        const sanitizedCat = escapeRegex(category.trim());
         const foundCategory = await Category.findOne({
-          name: new RegExp(`^${category.trim()}$`, 'i'),
+          name: new RegExp(`^${sanitizedCat}$`, 'i'),
         });
         if (foundCategory) {
           product.category = foundCategory._id;

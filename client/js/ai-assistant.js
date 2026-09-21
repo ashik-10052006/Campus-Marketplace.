@@ -34,10 +34,14 @@
 
     // Convert links: [Text](URL) -> <a href="URL" target="_blank" rel="noopener">Text</a>
     text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, linkText, url) => {
-      // Basic sanitize URL
-      const cleanUrl = url.replace(/["']/g, '');
+      // Validate safe protocols to prevent XSS (e.g. javascript:, data:, vbscript:)
+      const cleanUrl = url.trim().replace(/["'<>]/g, '');
+      const isSafeProtocol = /^(https?:\/\/|\/|#|mailto:)/i.test(cleanUrl);
+      if (!isSafeProtocol) {
+        return linkText;
+      }
       const isInternal = cleanUrl.startsWith('/') || cleanUrl.startsWith('#');
-      return `<a href="${cleanUrl}" ${isInternal ? '' : 'target="_blank" rel="noopener"'} class="ai-chat-link">${linkText}</a>`;
+      return `<a href="${cleanUrl}" ${isInternal ? '' : 'target="_blank" rel="noopener noreferrer"'} class="ai-chat-link">${linkText}</a>`;
     });
 
     // Convert bold: **text**

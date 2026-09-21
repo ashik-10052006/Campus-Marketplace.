@@ -71,6 +71,27 @@ async function getCurrentUser() {
   });
 }
 
+async function forgotPassword(data) {
+  return apiRequest('/auth/forgot-password', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
+async function resetPassword(data) {
+  return apiRequest('/auth/reset-password', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
+async function resetPasswordByPhone(data) {
+  return apiRequest('/auth/reset-password-phone', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
 // ---------------- USER PROFILE & ADMIN USERS ----------------
 async function getProfile() {
   return apiRequest('/users/profile', {
@@ -312,6 +333,9 @@ window.API = {
   loginUser,
   logoutUser,
   getCurrentUser,
+  forgotPassword,
+  resetPassword,
+  resetPasswordByPhone,
   getProfile,
   updateProfile,
   getUsers,

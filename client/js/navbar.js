@@ -192,7 +192,7 @@ function renderMobileBottomNav(user, currentPath) {
   const isDashboard = currentPath.includes('dashboard') || currentPath.includes('my-listings');
   const isProfile = currentPath.includes('profile');
   const isAdmin = currentPath.includes('admin');
-  const isLogin = currentPath.includes('login') || currentPath.includes('register');
+  const isLogin = currentPath.includes('login') || currentPath.includes('register') || currentPath.includes('forgot-password') || currentPath.includes('reset-password');
 
   if (!user) {
     // Visitor Bottom Navigation

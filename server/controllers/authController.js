@@ -5,6 +5,7 @@ const {
   sendPasswordResetEmail,
   sendPasswordResetSuccessEmail,
   sendWelcomeEmail,
+  sendPhoneOtpEmail,
 } = require('../services/emailService');
 
 // @desc    Register a new student user
@@ -38,6 +39,7 @@ const registerUser = async (req, res, next) => {
     sendWelcomeEmail({
       to: user.email,
       name: user.name,
+      phone: user.phone,
       clientUrl: clientOrigin,
     }).catch((emailErr) => {
       console.warn('[registerUser] Welcome email dispatch error:', emailErr.message);
@@ -259,17 +261,152 @@ const resetPassword = async (req, res, next) => {
   }
 };
 
+// @desc    Generate and send 6-digit OTP for phone verification
+// @route   POST /api/auth/send-phone-otp
+// @access  Public
+const sendPhoneOtp = async (req, res, next) => {
+  try {
+    const { email, phone } = req.body;
+
+    if (!email || !email.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide your registered campus email',
+      });
+    }
+
+    if (!phone || !phone.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide your registered phone number',
+      });
+    }
+
+    const cleanEmail = email.toLowerCase().trim();
+    const cleanPhone = phone.trim();
+
+    const user = await User.findOne({ email: cleanEmail });
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'No student account found matching this email address',
+      });
+    }
+
+    // Verify phone matches account on file
+    const normalizePhone = (p) => String(p || '').replace(/[^0-9]/g, '');
+    const enteredNorm = normalizePhone(cleanPhone);
+    const userNorm = normalizePhone(user.phone);
+
+    if (enteredNorm.length < 6 || (!userNorm.endsWith(enteredNorm) && !enteredNorm.endsWith(userNorm))) {
+      return res.status(401).json({
+        success: false,
+        message: 'Phone number does not match our records for this account',
+      });
+    }
+
+    // Generate and hash 6-digit OTP
+    const otp = user.createPhoneOtp();
+    await user.save({ validateBeforeSave: false });
+
+    console.log(`[PhoneOTP] Verification code for ${user.phone} (${user.email}): ${otp}`);
+
+    // Send real-time OTP alert email as immediate delivery fallback
+    sendPhoneOtpEmail({
+      to: user.email,
+      name: user.name,
+      otp,
+      phone: user.phone,
+    }).catch((err) => {
+      console.warn('[sendPhoneOtp] OTP email backup notification error:', err.message);
+    });
+
+    const maskedPhone = user.phone.length > 4
+      ? `${user.phone.slice(0, 3)}****${user.phone.slice(-3)}`
+      : user.phone;
+
+    return res.status(200).json({
+      success: true,
+      message: `A 6-digit verification code has been dispatched to ${user.email} (verified with phone ${maskedPhone}).`,
+      data: {
+        email: user.email,
+        phone: maskedPhone,
+        expiresInMinutes: 10,
+        // In development mode, provide OTP for immediate local verification
+        otp: process.env.NODE_ENV === 'development' ? otp : undefined,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Verify 6-digit OTP and unlock password reset
+// @route   POST /api/auth/verify-phone-otp
+// @access  Public
+const verifyPhoneOtp = async (req, res, next) => {
+  try {
+    const { email, otp } = req.body;
+
+    if (!email || !otp || !otp.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email and 6-digit verification OTP are required',
+      });
+    }
+
+    const cleanEmail = email.toLowerCase().trim();
+    const cleanOtp = otp.trim();
+
+    const hashedOtp = crypto
+      .createHash('sha256')
+      .update(cleanOtp)
+      .digest('hex');
+
+    const user = await User.findOne({
+      email: cleanEmail,
+      phoneResetOtp: hashedOtp,
+      phoneResetOtpExpires: { $gt: Date.now() },
+    }).select('+phoneResetOtp +phoneResetOtpExpires');
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid or expired verification code. Please request a new code.',
+      });
+    }
+
+    // Generate reset token so student can set a new password
+    const resetToken = user.createPasswordResetToken();
+
+    // Clear the phone OTP so it cannot be used again
+    user.phoneResetOtp = undefined;
+    user.phoneResetOtpExpires = undefined;
+    await user.save({ validateBeforeSave: false });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Phone number verified! You can now choose a new password.',
+      data: {
+        resetToken,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // @desc    Quick password reset using registered phone number verification
 // @route   POST /api/auth/reset-password-phone
 // @access  Public
 const resetPasswordByPhone = async (req, res, next) => {
   try {
-    const { email, phone, password, confirmPassword } = req.body;
+    const { email, phone, otp, password, confirmPassword } = req.body;
 
-    if (!email || !phone || !password) {
+    if (!email || !password) {
       return res.status(400).json({
         success: false,
-        message: 'Please provide email, registered phone number, and new password',
+        message: 'Please provide email and new password',
       });
     }
 
@@ -288,31 +425,59 @@ const resetPasswordByPhone = async (req, res, next) => {
     }
 
     const cleanEmail = email.toLowerCase().trim();
-    const cleanPhone = phone.trim();
+    let user = null;
 
-    const user = await User.findOne({ email: cleanEmail });
+    if (otp) {
+      const hashedOtp = crypto
+        .createHash('sha256')
+        .update(otp.trim())
+        .digest('hex');
 
-    if (!user) {
-      return res.status(404).json({
+      user = await User.findOne({
+        email: cleanEmail,
+        phoneResetOtp: hashedOtp,
+        phoneResetOtpExpires: { $gt: Date.now() },
+      }).select('+phoneResetOtp +phoneResetOtpExpires');
+
+      if (!user) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid or expired OTP code',
+        });
+      }
+    } else if (phone) {
+      const cleanPhone = phone.trim();
+      user = await User.findOne({ email: cleanEmail });
+
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: 'No account found matching this email address',
+        });
+      }
+
+      const normalizePhone = (p) => String(p || '').replace(/[^0-9]/g, '');
+      const enteredNorm = normalizePhone(cleanPhone);
+      const userNorm = normalizePhone(user.phone);
+
+      if (enteredNorm.length < 6 || (!userNorm.endsWith(enteredNorm) && !enteredNorm.endsWith(userNorm))) {
+        return res.status(401).json({
+          success: false,
+          message: 'Phone number does not match our records for this account',
+        });
+      }
+    } else {
+      return res.status(400).json({
         success: false,
-        message: 'No account found matching this email address',
-      });
-    }
-
-    const normalizePhone = (p) => String(p || '').replace(/[^0-9]/g, '');
-    const enteredNorm = normalizePhone(cleanPhone);
-    const userNorm = normalizePhone(user.phone);
-
-    if (enteredNorm.length < 6 || (!userNorm.endsWith(enteredNorm) && !enteredNorm.endsWith(userNorm))) {
-      return res.status(401).json({
-        success: false,
-        message: 'Phone number does not match our records for this account',
+        message: 'Verification OTP or registered phone number is required',
       });
     }
 
     user.password = password;
     user.resetPasswordToken = undefined;
     user.resetPasswordExpires = undefined;
+    user.phoneResetOtp = undefined;
+    user.phoneResetOtpExpires = undefined;
     await user.save();
 
     // Send confirmation alert email in real-time
@@ -336,5 +501,7 @@ module.exports = {
   getMe,
   forgotPassword,
   resetPassword,
+  sendPhoneOtp,
+  verifyPhoneOtp,
   resetPasswordByPhone,
 };

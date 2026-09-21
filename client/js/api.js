@@ -85,6 +85,20 @@ async function resetPassword(data) {
   });
 }
 
+async function sendPhoneOtp(data) {
+  return apiRequest('/auth/send-phone-otp', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
+async function verifyPhoneOtp(data) {
+  return apiRequest('/auth/verify-phone-otp', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
 async function resetPasswordByPhone(data) {
   return apiRequest('/auth/reset-password-phone', {
     method: 'POST',
@@ -335,6 +349,8 @@ window.API = {
   getCurrentUser,
   forgotPassword,
   resetPassword,
+  sendPhoneOtp,
+  verifyPhoneOtp,
   resetPasswordByPhone,
   getProfile,
   updateProfile,

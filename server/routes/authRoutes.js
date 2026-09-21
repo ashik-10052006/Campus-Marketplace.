@@ -8,6 +8,8 @@ const {
   getMe,
   forgotPassword,
   resetPassword,
+  sendPhoneOtp,
+  verifyPhoneOtp,
   resetPasswordByPhone,
 } = require('../controllers/authController');
 const { protect } = require('../middleware/authMiddleware');
@@ -31,6 +33,8 @@ router.post('/logout', logoutUser);
 router.get('/me', protect, getMe);
 router.post('/forgot-password', authLimiter, forgotPassword);
 router.post('/reset-password', authLimiter, resetPassword);
+router.post('/send-phone-otp', authLimiter, sendPhoneOtp);
+router.post('/verify-phone-otp', authLimiter, verifyPhoneOtp);
 router.post('/reset-password-phone', authLimiter, resetPasswordByPhone);
 
 module.exports = router;

@@ -46,6 +46,14 @@ const userSchema = new mongoose.Schema(
       type: Date,
       select: false,
     },
+    phoneResetOtp: {
+      type: String,
+      select: false,
+    },
+    phoneResetOtpExpires: {
+      type: Date,
+      select: false,
+    },
   },
   {
     timestamps: true,
@@ -80,6 +88,22 @@ userSchema.methods.createPasswordResetToken = function () {
   this.resetPasswordExpires = Date.now() + 15 * 60 * 1000;
 
   return resetToken;
+};
+
+// Generate and hash 6-digit phone verification OTP
+userSchema.methods.createPhoneOtp = function () {
+  // Generate 6-digit cryptographic numeric OTP
+  const otp = Math.floor(100000 + crypto.randomInt(900000)).toString();
+
+  this.phoneResetOtp = crypto
+    .createHash('sha256')
+    .update(otp)
+    .digest('hex');
+
+  // Expiration: 10 minutes
+  this.phoneResetOtpExpires = Date.now() + 10 * 60 * 1000;
+
+  return otp;
 };
 
 const User = mongoose.model('User', userSchema);

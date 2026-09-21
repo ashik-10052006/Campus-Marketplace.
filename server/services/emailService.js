@@ -349,14 +349,14 @@ async function sendPasswordResetSuccessEmail({ to, name }) {
  * @param {string} options.name - Student's full name
  * @param {string} [options.clientUrl] - Base URL of the application
  */
-async function sendWelcomeEmail({ to, name, clientUrl }) {
+async function sendWelcomeEmail({ to, name, phone, clientUrl }) {
   try {
     const fromAddress = getFromAddress();
     const studentFirstName = name ? name.split(' ')[0] : 'Student';
     const baseUrl = clientUrl || process.env.CLIENT_URL || 'https://campuscart-xuqs.onrender.com';
     const marketplaceUrl = `${baseUrl.replace(/\/$/, '')}/marketplace`;
 
-    const subject = `🎉 Welcome to Campus Marketplace, ${studentFirstName}!`;
+    const subject = `🎉 Account Created & Logged In - Welcome to Campus Marketplace, ${studentFirstName}!`;
 
     const htmlContent = `
 <!DOCTYPE html>
@@ -372,6 +372,7 @@ async function sendWelcomeEmail({ to, name, clientUrl }) {
     .email-body { padding: 32px 24px; }
     .greeting { font-size: 20px; font-weight: 700; margin-bottom: 12px; color: #0f172a; }
     .intro-text { font-size: 15px; line-height: 1.6; color: #475569; margin-bottom: 24px; }
+    .account-badge { background: #eef2ff; border: 1px solid #c7d2fe; border-radius: 8px; padding: 14px 18px; margin-bottom: 20px; font-size: 14px; color: #3730a3; }
     .features-list { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 20px; margin-bottom: 24px; }
     .feature-item { display: flex; align-items: flex-start; margin-bottom: 14px; }
     .feature-item:last-child { margin-bottom: 0; }
@@ -388,14 +389,20 @@ async function sendWelcomeEmail({ to, name, clientUrl }) {
     <div class="email-header">
       <div style="font-size: 42px; margin-bottom: 8px;">🎓</div>
       <h1>Campus Marketplace</h1>
-      <div style="font-size: 14px; opacity: 0.9; margin-top: 4px;">Student Account Activated</div>
+      <div style="font-size: 14px; opacity: 0.9; margin-top: 4px;">Account Created &amp; Logged In Successfully</div>
     </div>
     <div class="email-body">
       <div class="greeting">Welcome aboard, ${studentFirstName}! 👋</div>
       <p class="intro-text">
-        Your student account with <strong>${to}</strong> has been registered successfully.
-        You are now part of our trusted campus community where students buy, sell, and trade safely.
+        Your student account has been registered successfully and you are now logged in.
       </p>
+
+      <div class="account-badge">
+        <strong>📋 Your Account Details:</strong><br>
+        • Email: <strong>${to}</strong><br>
+        • Registered Mobile: <strong>${phone || 'On file'}</strong><br>
+        • Status: <strong>Active Student Account</strong>
+      </div>
 
       <div class="features-list">
         <div class="feature-item">
@@ -489,8 +496,92 @@ ${marketplaceUrl}
   }
 }
 
+/**
+ * Sends a phone verification OTP notice to student email as real-time backup
+ * @param {Object} options
+ * @param {string} options.to - User email
+ * @param {string} options.name - User name
+ * @param {string} options.otp - 6-digit verification OTP
+ * @param {string} options.phone - Registered phone number
+ */
+async function sendPhoneOtpEmail({ to, name, otp, phone }) {
+  try {
+    const fromAddress = getFromAddress();
+    const studentFirstName = name ? name.split(' ')[0] : 'Student';
+    const maskedPhone = phone ? `${phone.slice(0, 3)}****${phone.slice(-3)}` : 'your mobile';
+    const subject = `📱 ${otp} is your Campus Marketplace verification code`;
+
+    const htmlContent = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Your Verification Code</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; margin: 0; padding: 20px; color: #1e293b; }
+    .container { max-width: 500px; margin: 0 auto; background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .header { background: #4f46e5; padding: 24px; text-align: center; color: #ffffff; }
+    .body { padding: 28px 24px; text-align: center; }
+    .otp-box { font-family: monospace; font-size: 36px; font-weight: 800; letter-spacing: 8px; color: #4f46e5; background: #eef2ff; border: 2px dashed #6366f1; border-radius: 10px; padding: 16px; margin: 24px 0; display: inline-block; width: 80%; }
+    .notice { font-size: 13px; color: #64748b; line-height: 1.5; margin-top: 16px; }
+    .footer { background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 16px; font-size: 12px; color: #94a3b8; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h2 style="margin: 0; font-size: 20px;">Campus Marketplace</h2>
+      <div style="font-size: 13px; opacity: 0.9; margin-top: 4px;">Phone Recovery Verification</div>
+    </div>
+    <div class="body">
+      <h3 style="margin-top: 0; color: #0f172a;">Verification Code</h3>
+      <p style="color: #475569; font-size: 14px;">
+        Use the following one-time code to verify your phone number (<strong>${maskedPhone}</strong>) and reset your password:
+      </p>
+      <div class="otp-box">${otp}</div>
+      <div class="notice">
+        ⏰ This code is valid for <strong>10 minutes</strong>. Never share this code with anyone.
+      </div>
+    </div>
+    <div class="footer">
+      &copy; 2026 Campus Marketplace. If you did not request this code, your account is secure.
+    </div>
+  </div>
+</body>
+</html>
+    `;
+
+    const textContent = `Hello ${studentFirstName},\n\nYour Campus Marketplace phone verification code is: ${otp}\n\nThis code expires in 10 minutes.\n\n— Campus Marketplace Team`;
+
+    if (process.env.RESEND_API_KEY || process.env.BREVO_API_KEY) {
+      try {
+        await sendViaHttpApi({ to, subject, html: htmlContent, text: textContent });
+        return { success: true };
+      } catch (httpErr) {
+        console.warn('[EmailService] HTTPS API failed for OTP email, falling back to SMTP:', httpErr.message);
+      }
+    }
+
+    const transporter = await getTransporter();
+    const sendMailPromise = transporter.sendMail({
+      from: fromAddress,
+      to,
+      subject,
+      text: textContent,
+      html: htmlContent,
+    });
+    const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('SMTP timeout')), 5000));
+    await Promise.race([sendMailPromise, timeoutPromise]);
+    return { success: true };
+  } catch (err) {
+    console.warn('[EmailService] Could not send OTP email notice:', err.message);
+    return { success: false };
+  }
+}
+
 module.exports = {
   sendPasswordResetEmail,
   sendPasswordResetSuccessEmail,
   sendWelcomeEmail,
+  sendPhoneOtpEmail,
 };

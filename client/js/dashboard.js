@@ -50,7 +50,7 @@ async function loadDashboardData() {
           title: "You haven't listed anything yet",
           subtitle: 'Start selling your unused college books and gadgets today!',
           actionText: 'Post Your First Item',
-          actionLink: '/create-product.html',
+          actionLink: '/create-product',
         });
       } else {
         const recent = products.slice(0, 5);
@@ -81,8 +81,8 @@ async function loadDashboardData() {
                       <td>${window.Utils.getStatusBadge(p.status)}</td>
                       <td style="color: var(--text-muted);">${window.Utils.formatDate(p.createdAt)}</td>
                       <td style="text-align: right;">
-                        <a href="/product-details.html?id=${p._id}" class="btn btn-outline btn-sm">View</a>
-                        <a href="/edit-product.html?id=${p._id}" class="btn btn-outline btn-sm">Edit</a>
+                        <a href="/product-details?id=${p._id}" class="btn btn-outline btn-sm">View</a>
+                        <a href="/edit-product?id=${p._id}" class="btn btn-outline btn-sm">Edit</a>
                       </td>
                     </tr>
                   `;

@@ -333,7 +333,7 @@ Core Guidelines:
 4. Pricing & Selling Tips: Suggest competitive student pricing in Rupees (₹), taking clear photos in good lighting, and highlighting course codes or model numbers for textbooks/calculators.
 5. Negotiation Advice: Encourage polite, respectful bargaining (e.g. "Would you consider ₹X if I can pick it up today?").
 6. Formatting: Use markdown formatting (bullet points, bold text) for readability.
-7. Navigation: Direct students to browse at /products.html, post an item at /create-product.html, or view chats at /messages.html when relevant.`;
+7. Navigation: Direct students to browse at /products, post an item at /create-product, or view chats at /messages when relevant.`;
 
   if (!client) {
     const lower = (message || '').toLowerCase();
@@ -341,10 +341,10 @@ Core Guidelines:
       return `🛡️ **Campus Safety Tip:** Always arrange pickups in public, well-lit areas on campus during daylight! Great spots include the **Student Union lobby**, **Campus Library entrance**, or outside the **Student Dining Hall**. Inspect the item thoroughly before paying with cash or campus payment apps.`;
     }
     if (lower.includes('sell') || lower.includes('price') || lower.includes('how to')) {
-      return `🏷️ **Quick Selling Tips:**\n• Take clear photos in good natural lighting\n• Price competitively in Rupees (₹) (check similar campus listings)\n• Include course numbers for textbooks (e.g., *MATH 101*)\n• You can list your item in under 2 minutes at [+ Sell Item](/create-product.html)!`;
+      return `🏷️ **Quick Selling Tips:**\n• Take clear photos in good natural lighting\n• Price competitively in Rupees (₹) (check similar campus listings)\n• Include course numbers for textbooks (e.g., *MATH 101*)\n• You can list your item in under 2 minutes at [+ Sell Item](/create-product)!`;
     }
     if (lower.includes('textbook') || lower.includes('book') || lower.includes('calculator')) {
-      return `📚 **Finding Study Gear:** You can browse all active textbooks, graphing calculators, and tech on the [Marketplace Catalog](/products.html). Be sure to filter by category or search by course code to find what you need!`;
+      return `📚 **Finding Study Gear:** You can browse all active textbooks, graphing calculators, and tech on the [Marketplace Catalog](/products). Be sure to filter by category or search by course code to find what you need!`;
     }
     return `Hi ${userName}! 👋 I'm your **Campus AI Assistant**. I can help you find items on campus, give advice on pricing your listings, suggest safe pickup locations, and guide you through student transactions. What can I help you with today?`;
   }
@@ -403,7 +403,7 @@ Core Guidelines:
       }
     }
 
-    return `Hi ${userName}! I'm having a brief connection issue with Claude AI, but I'm still here to help. You can browse active listings on the [Marketplace](/products.html), create a new post at [+ Sell Item](/create-product.html), or check your active chats in [Messages](/messages.html).`;
+    return `Hi ${userName}! I'm having a brief connection issue with Claude AI, but I'm still here to help. You can browse active listings on the [Marketplace](/products), create a new post at [+ Sell Item](/create-product), or check your active chats in [Messages](/messages).`;
   }
 };
 

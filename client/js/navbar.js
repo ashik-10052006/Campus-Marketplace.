@@ -15,23 +15,23 @@ function renderNavbar() {
   if (!user) {
     // Visitor navigation
     linksHtml = `
-      <a href="/index.html" class="nav-link ${currentPath === '/' || currentPath.endsWith('index.html') ? 'active' : ''}">Home</a>
-      <a href="/products.html" class="nav-link ${currentPath.includes('products.html') ? 'active' : ''}">Marketplace</a>
+      <a href="/" class="nav-link ${currentPath === '/' || currentPath === '/index' || currentPath.endsWith('index.html') ? 'active' : ''}">Home</a>
+      <a href="/products" class="nav-link ${currentPath.includes('products') ? 'active' : ''}">Marketplace</a>
       <button type="button" class="nav-ai-trigger" id="nav-ai-btn" title="Ask Campus AI Assistant"><span class="nav-ai-icon">✨</span> <span class="nav-ai-text">Ask AI</span></button>
       <div class="nav-auth-buttons">
-        <a href="/login.html" class="btn btn-outline btn-sm">Log In</a>
-        <a href="/register.html" class="btn btn-primary btn-sm">Sign Up</a>
+        <a href="/login" class="btn btn-outline btn-sm">Log In</a>
+        <a href="/register" class="btn btn-primary btn-sm">Sign Up</a>
       </div>
     `;
   } else if (user.role === 'admin') {
     // Admin navigation
     linksHtml = `
-      <a href="/index.html" class="nav-link ${currentPath === '/' || currentPath.endsWith('index.html') ? 'active' : ''}">Home</a>
-      <a href="/products.html" class="nav-link ${currentPath.includes('products.html') ? 'active' : ''}">Marketplace</a>
-      <a href="/admin.html" class="nav-link ${currentPath.includes('admin') ? 'active' : ''}">
+      <a href="/" class="nav-link ${currentPath === '/' || currentPath === '/index' || currentPath.endsWith('index.html') ? 'active' : ''}">Home</a>
+      <a href="/products" class="nav-link ${currentPath.includes('products') ? 'active' : ''}">Marketplace</a>
+      <a href="/admin" class="nav-link ${currentPath.includes('admin') ? 'active' : ''}">
         <span class="badge badge-admin">Admin Panel</span>
       </a>
-      <a href="/messages.html" class="nav-link ${currentPath.includes('messages.html') ? 'active' : ''}">Messages</a>
+      <a href="/messages" class="nav-link ${currentPath.includes('messages') ? 'active' : ''}">Messages</a>
       <button type="button" class="nav-ai-trigger" id="nav-ai-btn" title="Ask Campus AI Assistant"><span class="nav-ai-icon">✨</span> <span class="nav-ai-text">Ask AI</span></button>
       <div class="nav-user-dropdown">
         <span class="user-greeting">Admin: <strong>${window.Utils.escapeHTML(user.name.split(' ')[0])}</strong></span>
@@ -41,15 +41,15 @@ function renderNavbar() {
   } else {
     // Student navigation
     linksHtml = `
-      <a href="/index.html" class="nav-link ${currentPath === '/' || currentPath.endsWith('index.html') ? 'active' : ''}">Home</a>
-      <a href="/products.html" class="nav-link ${currentPath.includes('products.html') && !currentPath.includes('create') && !currentPath.includes('my-listings') ? 'active' : ''}">Marketplace</a>
-      <a href="/dashboard.html" class="nav-link ${currentPath.includes('dashboard.html') ? 'active' : ''}">Dashboard</a>
-      <a href="/my-listings.html" class="nav-link ${currentPath.includes('my-listings.html') ? 'active' : ''}">My Listings</a>
-      <a href="/messages.html" class="nav-link ${currentPath.includes('messages.html') ? 'active' : ''}">Messages</a>
+      <a href="/" class="nav-link ${currentPath === '/' || currentPath === '/index' || currentPath.endsWith('index.html') ? 'active' : ''}">Home</a>
+      <a href="/products" class="nav-link ${currentPath.includes('products') && !currentPath.includes('create') && !currentPath.includes('my-listings') ? 'active' : ''}">Marketplace</a>
+      <a href="/dashboard" class="nav-link ${currentPath.includes('dashboard') ? 'active' : ''}">Dashboard</a>
+      <a href="/my-listings" class="nav-link ${currentPath.includes('my-listings') ? 'active' : ''}">My Listings</a>
+      <a href="/messages" class="nav-link ${currentPath.includes('messages') ? 'active' : ''}">Messages</a>
       <button type="button" class="nav-ai-trigger" id="nav-ai-btn" title="Ask Campus AI Assistant"><span class="nav-ai-icon">✨</span> <span class="nav-ai-text">Ask AI</span></button>
-      <a href="/create-product.html" class="btn btn-sell btn-sm">+ Sell <span class="btn-sell-extra">Item</span></a>
+      <a href="/create-product" class="btn btn-sell btn-sm">+ Sell <span class="btn-sell-extra">Item</span></a>
       <div class="nav-user-dropdown">
-        <a href="/profile.html" class="nav-profile-link" title="${window.Utils.escapeHTML(user.name)}">
+        <a href="/profile" class="nav-profile-link" title="${window.Utils.escapeHTML(user.name)}">
           ${
             user.profileImage
               ? `<img src="${user.profileImage}" class="nav-avatar" alt="Avatar" />`
@@ -64,7 +64,7 @@ function renderNavbar() {
 
   navContainer.innerHTML = `
     <div class="nav-inner container">
-      <a href="/index.html" class="nav-logo">
+      <a href="/" class="nav-logo">
         <span class="logo-icon">🎓</span>
         <span class="logo-text">Campus<span class="text-accent">Market</span></span>
       </a>
@@ -185,27 +185,27 @@ function renderMobileBottomNav(user, currentPath) {
     document.body.classList.add('has-footer');
   }
 
-  const isHome = currentPath === '/' || currentPath.endsWith('index.html');
-  const isMarket = currentPath.includes('products.html') && !currentPath.includes('create') && !currentPath.includes('my-listings');
-  const isSell = currentPath.includes('create-product.html');
-  const isMessages = currentPath.includes('messages.html');
-  const isDashboard = currentPath.includes('dashboard.html') || currentPath.includes('my-listings.html');
-  const isProfile = currentPath.includes('profile.html');
+  const isHome = currentPath === '/' || currentPath === '/index' || currentPath.endsWith('index.html');
+  const isMarket = currentPath.includes('products') && !currentPath.includes('create') && !currentPath.includes('my-listings');
+  const isSell = currentPath.includes('create-product');
+  const isMessages = currentPath.includes('messages');
+  const isDashboard = currentPath.includes('dashboard') || currentPath.includes('my-listings');
+  const isProfile = currentPath.includes('profile');
   const isAdmin = currentPath.includes('admin');
-  const isLogin = currentPath.includes('login.html') || currentPath.includes('register.html');
+  const isLogin = currentPath.includes('login') || currentPath.includes('register');
 
   if (!user) {
     // Visitor Bottom Navigation
     bottomNav.innerHTML = `
-      <a href="/index.html" class="bottom-nav-item ${isHome ? 'active' : ''}">
+      <a href="/" class="bottom-nav-item ${isHome ? 'active' : ''}">
         <span class="bottom-nav-icon">🏠</span>
         <span class="bottom-nav-label">Home</span>
       </a>
-      <a href="/products.html" class="bottom-nav-item ${isMarket ? 'active' : ''}">
+      <a href="/products" class="bottom-nav-item ${isMarket ? 'active' : ''}">
         <span class="bottom-nav-icon">🛍️</span>
         <span class="bottom-nav-label">Browse</span>
       </a>
-      <a href="/create-product.html" class="bottom-nav-sell-wrapper" title="Sell Item">
+      <a href="/create-product" class="bottom-nav-sell-wrapper" title="Sell Item">
         <div class="bottom-nav-sell-btn">+</div>
         <span class="bottom-nav-sell-label">Sell</span>
       </a>
@@ -213,7 +213,7 @@ function renderMobileBottomNav(user, currentPath) {
         <span class="bottom-nav-icon">✨</span>
         <span class="bottom-nav-label">AI Assist</span>
       </button>
-      <a href="/login.html" class="bottom-nav-item ${isLogin ? 'active' : ''}">
+      <a href="/login" class="bottom-nav-item ${isLogin ? 'active' : ''}">
         <span class="bottom-nav-icon">👤</span>
         <span class="bottom-nav-label">Account</span>
       </a>
@@ -221,23 +221,23 @@ function renderMobileBottomNav(user, currentPath) {
   } else if (user.role === 'admin') {
     // Admin Bottom Navigation
     bottomNav.innerHTML = `
-      <a href="/index.html" class="bottom-nav-item ${isHome ? 'active' : ''}">
+      <a href="/" class="bottom-nav-item ${isHome ? 'active' : ''}">
         <span class="bottom-nav-icon">🏠</span>
         <span class="bottom-nav-label">Home</span>
       </a>
-      <a href="/products.html" class="bottom-nav-item ${isMarket ? 'active' : ''}">
+      <a href="/products" class="bottom-nav-item ${isMarket ? 'active' : ''}">
         <span class="bottom-nav-icon">🛍️</span>
         <span class="bottom-nav-label">Browse</span>
       </a>
-      <a href="/create-product.html" class="bottom-nav-sell-wrapper" title="Sell Item">
+      <a href="/create-product" class="bottom-nav-sell-wrapper" title="Sell Item">
         <div class="bottom-nav-sell-btn">+</div>
         <span class="bottom-nav-sell-label">Sell</span>
       </a>
-      <a href="/messages.html" class="bottom-nav-item ${isMessages ? 'active' : ''}">
+      <a href="/messages" class="bottom-nav-item ${isMessages ? 'active' : ''}">
         <span class="bottom-nav-icon">💬</span>
         <span class="bottom-nav-label">Messages</span>
       </a>
-      <a href="/admin.html" class="bottom-nav-item ${isAdmin ? 'active' : ''}">
+      <a href="/admin" class="bottom-nav-item ${isAdmin ? 'active' : ''}">
         <span class="bottom-nav-icon">📊</span>
         <span class="bottom-nav-label">Admin</span>
       </a>
@@ -245,23 +245,23 @@ function renderMobileBottomNav(user, currentPath) {
   } else {
     // Student Bottom Navigation
     bottomNav.innerHTML = `
-      <a href="/index.html" class="bottom-nav-item ${isHome ? 'active' : ''}">
+      <a href="/" class="bottom-nav-item ${isHome ? 'active' : ''}">
         <span class="bottom-nav-icon">🏠</span>
         <span class="bottom-nav-label">Home</span>
       </a>
-      <a href="/products.html" class="bottom-nav-item ${isMarket ? 'active' : ''}">
+      <a href="/products" class="bottom-nav-item ${isMarket ? 'active' : ''}">
         <span class="bottom-nav-icon">🛍️</span>
         <span class="bottom-nav-label">Browse</span>
       </a>
-      <a href="/create-product.html" class="bottom-nav-sell-wrapper" title="Sell Item">
+      <a href="/create-product" class="bottom-nav-sell-wrapper" title="Sell Item">
         <div class="bottom-nav-sell-btn">+</div>
         <span class="bottom-nav-sell-label">Sell</span>
       </a>
-      <a href="/messages.html" class="bottom-nav-item ${isMessages ? 'active' : ''}">
+      <a href="/messages" class="bottom-nav-item ${isMessages ? 'active' : ''}">
         <span class="bottom-nav-icon">💬</span>
         <span class="bottom-nav-label">Messages</span>
       </a>
-      <a href="/dashboard.html" class="bottom-nav-item ${isDashboard || isProfile ? 'active' : ''}">
+      <a href="/dashboard" class="bottom-nav-item ${isDashboard || isProfile ? 'active' : ''}">
         <span class="bottom-nav-icon">👤</span>
         <span class="bottom-nav-label">Profile</span>
       </a>

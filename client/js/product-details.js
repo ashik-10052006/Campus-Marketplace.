@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const productId = urlParams.get('id');
 
   if (!productId) {
-    window.location.href = '/products.html';
+    window.location.href = '/products';
     return;
   }
 
@@ -38,7 +38,7 @@ async function loadProductDetails(productId) {
         title: 'Listing Not Found',
         subtitle: 'This item may have been removed by the seller or administrator.',
         actionText: 'Back to Marketplace',
-        actionLink: '/products.html',
+        actionLink: '/products',
       });
     }
   } catch (error) {
@@ -62,7 +62,7 @@ function renderProductView(container, product) {
     // Owner Actions
     actionButtonsHtml = `
       <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1.5rem;">
-        <a href="/edit-product.html?id=${product._id}" class="btn btn-outline" style="flex: 1;">
+        <a href="/edit-product?id=${product._id}" class="btn btn-outline" style="flex: 1;">
           ✏️ Edit Listing
         </a>
         ${
@@ -163,7 +163,7 @@ function renderProductView(container, product) {
         ${
           isOwner
             ? `
-              <a href="/edit-product.html?id=${product._id}" class="btn btn-outline btn-sm">✏️ Edit</a>
+              <a href="/edit-product?id=${product._id}" class="btn btn-outline btn-sm">✏️ Edit</a>
               ${product.status === 'AVAILABLE' ? `<button id="mobile-mark-sold-btn" class="btn btn-success btn-sm">✓ Sold</button>` : ''}
             `
             : product.status === 'AVAILABLE'
@@ -201,7 +201,7 @@ function attachProductActions(product, isOwner) {
 
       const response = await window.API.startConversation(product._id);
       if (response.success && response.data && response.data.conversation) {
-        window.location.href = `/messages.html?conversationId=${response.data.conversation._id}`;
+        window.location.href = `/messages?conversationId=${response.data.conversation._id}`;
       }
     } catch (error) {
       window.Utils.showToast(error.message || 'Could not start conversation', 'error');
@@ -273,7 +273,7 @@ function attachProductActions(product, isOwner) {
         if (res.success) {
           window.Utils.showToast('Listing deleted successfully', 'info');
           setTimeout(() => {
-            window.location.href = '/my-listings.html';
+            window.location.href = '/my-listings';
           }, 800);
         }
       } catch (error) {

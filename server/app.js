@@ -86,8 +86,19 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(cookieParser());
 
-// Serve static uploaded media
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// Clean URLs: permanently redirect any URL ending in .html to its clean version (e.g. /index.html -> /, /products.html -> /products)
+app.use((req, res, next) => {
+  if (req.method === 'GET' && req.path.endsWith('.html')) {
+    if (req.path === '/index.html') {
+      const query = req.url.slice(req.path.length);
+      return res.redirect(301, '/' + (query || ''));
+    }
+    const cleanPath = req.path.slice(0, -5);
+    const query = req.url.slice(req.path.length);
+    return res.redirect(301, cleanPath + (query || ''));
+  }
+  next();
+});
 
 // Serve client frontend static files (supports clean URLs without .html)
 app.use(express.static(path.join(__dirname, '../client'), { extensions: ['html'] }));

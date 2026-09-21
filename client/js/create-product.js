@@ -287,7 +287,7 @@ function setupFormSubmission() {
         if (res.success && res.data && res.data.product) {
           window.Utils.showToast('Listing published successfully!', 'success');
           setTimeout(() => {
-            window.location.href = `/product-details.html?id=${res.data.product._id}`;
+            window.location.href = `/product-details?id=${res.data.product._id}`;
           }, 800);
         }
       } catch (error) {

@@ -110,7 +110,7 @@ async function loadReports() {
               <div class="report-product-preview">
                 <img src="${imgUrl}" class="report-product-thumb" alt="${window.Utils.escapeHTML(product.name || 'Listing')}" onerror="this.src='${defaultImg}'" />
                 <div class="report-product-info">
-                  <a href="/product-details.html?id=${product._id}" class="report-product-title" target="_blank">
+                  <a href="/product-details?id=${product._id}" class="report-product-title" target="_blank">
                     ${window.Utils.escapeHTML(product.name || 'Listing')} &rarr;
                   </a>
                   <div class="report-product-meta">

@@ -298,7 +298,7 @@ async function fetchAndRenderProducts() {
           title: 'No products found',
           subtitle: 'Try adjusting your search terms or clearing your filter selections.',
           actionText: 'Clear All Filters',
-          actionLink: '/products.html',
+          actionLink: '/products',
         });
         if (paginationWrapper) paginationWrapper.innerHTML = '';
         return;
@@ -308,7 +308,7 @@ async function fetchAndRenderProducts() {
       grid.innerHTML = products
         .map((product) => {
           return `
-            <a href="/product-details.html?id=${product._id}" class="product-card">
+            <a href="/product-details?id=${product._id}" class="product-card">
               <div class="product-card-img-wrapper">
                 <img src="${product.imageUrl}" alt="${window.Utils.escapeHTML(product.name)}" class="product-card-img" loading="lazy" />
               </div>

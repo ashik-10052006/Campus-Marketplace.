@@ -423,14 +423,14 @@
         appendMessageBubble('assistant', reply, true);
         saveHistory();
       } else {
-        const errorMsg = "I'm having a brief issue processing that request. Please feel free to ask again or check our [Marketplace catalog](/products.html)!";
+        const errorMsg = "I'm having a brief issue processing that request. Please feel free to ask again or check our [Marketplace catalog](/products)!";
         chatHistory.push({ role: 'assistant', content: errorMsg });
         appendMessageBubble('assistant', errorMsg, true);
       }
     } catch (err) {
       setTypingIndicator(false);
       console.error('Claude AI Assistant client error:', err);
-      const fallbackMsg = `⚠️ **Connection notice**: ${err.message || 'Unable to connect to Claude AI right now.'}\n\nYou can still browse active listings on the [Marketplace](/products.html) or post an item at [+ Sell Item](/create-product.html).`;
+      const fallbackMsg = `⚠️ **Connection notice**: ${err.message || 'Unable to connect to Claude AI right now.'}\n\nYou can still browse active listings on the [Marketplace](/products) or post an item at [+ Sell Item](/create-product).`;
       chatHistory.push({ role: 'assistant', content: fallbackMsg });
       appendMessageBubble('assistant', fallbackMsg, true);
     } finally {

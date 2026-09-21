@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   productId = urlParams.get('id');
 
   if (!productId) {
-    window.location.href = '/my-listings.html';
+    window.location.href = '/my-listings';
     return;
   }
 
@@ -48,7 +48,7 @@ async function loadProductData() {
       const sellerId = p.seller ? (p.seller._id || p.seller) : null;
       if (String(user._id) !== String(sellerId) && user.role !== 'admin') {
         window.Utils.showToast('You do not have permission to edit this listing', 'error');
-        setTimeout(() => (window.location.href = '/my-listings.html'), 1000);
+        setTimeout(() => (window.location.href = '/my-listings'), 1000);
         return;
       }
 
@@ -163,7 +163,7 @@ function setupFormSubmit() {
         if (res.success) {
           window.Utils.showToast('Listing updated successfully!', 'success');
           setTimeout(() => {
-            window.location.href = `/product-details.html?id=${productId}`;
+            window.location.href = `/product-details?id=${productId}`;
           }, 800);
         }
       } catch (err) {

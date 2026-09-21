@@ -83,7 +83,7 @@ async function loadConversations(autoSelectId = null, isBackgroundRefresh = fals
           title: 'No chats yet',
           subtitle: 'Visit any listing to contact the student seller!',
           actionText: 'Browse Catalog',
-          actionLink: '/products.html',
+          actionLink: '/products',
         });
         return;
       }
@@ -467,7 +467,7 @@ function renderChatHeader(conv) {
     }
     if (productLink) {
       productLink.textContent = conv.product.name || 'Marketplace Item';
-      productLink.href = `/product-details.html?id=${conv.product._id || ''}`;
+      productLink.href = `/product-details?id=${conv.product._id || ''}`;
     }
     if (productPrice) {
       productPrice.textContent = conv.product.price != null

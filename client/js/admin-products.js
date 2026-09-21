@@ -147,7 +147,7 @@ function renderFilteredProducts() {
                   <div class="table-product-cell">
                     <img src="${imgUrl}" class="table-product-thumb" alt="${window.Utils.escapeHTML(p.name)}" onerror="this.src='${defaultImg}'" />
                     <div style="min-width: 0;">
-                      <a href="/product-details.html?id=${p._id}" style="font-weight: 700; color: var(--text-main); text-decoration: none; display: block; max-width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                      <a href="/product-details?id=${p._id}" style="font-weight: 700; color: var(--text-main); text-decoration: none; display: block; max-width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                         ${window.Utils.escapeHTML(p.name)}
                       </a>
                       <span style="font-size: 0.8rem; color: var(--text-muted);">${window.Utils.escapeHTML(p.category ? p.category.name : 'General')}</span>
@@ -174,7 +174,7 @@ function renderFilteredProducts() {
                 </td>
                 <td data-label="Action" style="text-align: right;">
                   <div style="display: inline-flex; gap: 0.4rem; justify-content: flex-end;">
-                    <a href="/product-details.html?id=${p._id}" class="btn btn-outline btn-sm">View</a>
+                    <a href="/product-details?id=${p._id}" class="btn btn-outline btn-sm">View</a>
                     ${
                       p.status !== 'REMOVED'
                         ? `<button type="button" class="btn btn-danger btn-sm" data-action="remove" data-id="${p._id}" data-name="${window.Utils.escapeHTML(p.name)}">Remove</button>`

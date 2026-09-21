@@ -31,7 +31,7 @@ async function checkAuth() {
   return authCheckPromise;
 }
 
-async function requireAuth(redirectTo = '/login.html') {
+async function requireAuth(redirectTo = '/login') {
   const user = await checkAuth();
   if (!user) {
     const currentPath = encodeURIComponent(window.location.pathname + window.location.search);
@@ -41,7 +41,7 @@ async function requireAuth(redirectTo = '/login.html') {
   return user;
 }
 
-async function requireAdmin(redirectTo = '/index.html') {
+async function requireAdmin(redirectTo = '/') {
   const user = await checkAuth();
   if (!user || user.role !== 'admin') {
     window.Utils.showToast('Access Denied: Administrator account required', 'error');
@@ -60,7 +60,7 @@ async function logout() {
     window.currentUser = null;
     window.Utils.showToast('Logged out successfully', 'info');
     setTimeout(() => {
-      window.location.href = '/login.html';
+      window.location.href = '/login';
     }, 800);
   } catch (error) {
     window.Utils.showToast(error.message || 'Logout failed', 'error');

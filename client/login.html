@@ -44,7 +44,7 @@
       </form>
 
       <div class="auth-footer">
-        Don't have an account? <a href="/register.html">Sign up for free</a>
+        Don't have an account? <a href="/register">Sign up for free</a>
       </div>
     </div>
   </main>
@@ -107,9 +107,9 @@
               }
 
               if (response.data.user.role === 'admin') {
-                window.location.href = '/admin.html';
+                window.location.href = '/admin';
               } else {
-                window.location.href = '/dashboard.html';
+                window.location.href = '/dashboard';
               }
             }, 800);
           }

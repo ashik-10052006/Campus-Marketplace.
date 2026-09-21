@@ -114,7 +114,7 @@ async function loadMyListings() {
           title: "You haven't listed anything yet",
           subtitle: 'Start selling your unused books, calculators, and gadgets.',
           actionText: 'List Your First Item',
-          actionLink: '/create-product.html',
+          actionLink: '/create-product',
         });
         return;
       }
@@ -157,8 +157,8 @@ async function loadMyListings() {
                     <td style="color: var(--text-muted); font-size: 0.85rem;">${window.Utils.formatDate(p.createdAt)}</td>
                     <td style="text-align: right;">
                       <div style="display: inline-flex; gap: 0.4rem; flex-wrap: nowrap;">
-                        <a href="/product-details.html?id=${p._id}" class="btn btn-outline btn-sm" title="View Listing">View</a>
-                        <a href="/edit-product.html?id=${p._id}" class="btn btn-outline btn-sm" title="Edit Listing">Edit</a>
+                        <a href="/product-details?id=${p._id}" class="btn btn-outline btn-sm" title="View Listing">View</a>
+                        <a href="/edit-product?id=${p._id}" class="btn btn-outline btn-sm" title="Edit Listing">Edit</a>
                         ${
                           isAvailable
                             ? `<button type="button" class="btn btn-success btn-sm btn-mark-sold" data-id="${p._id}" data-name="${safeName}" title="Mark as Sold">✓ Sold</button>`

@@ -64,7 +64,7 @@
       </form>
 
       <div class="auth-footer">
-        Already have an account? <a href="/login.html">Log in here</a>
+        Already have an account? <a href="/login">Log in here</a>
       </div>
     </div>
   </main>
@@ -138,7 +138,7 @@
           if (response.success) {
             window.Utils.showToast('Account registered successfully! Welcome to Campus Marketplace.', 'success');
             setTimeout(() => {
-              window.location.href = '/dashboard.html';
+              window.location.href = '/dashboard';
             }, 800);
           }
         } catch (error) {

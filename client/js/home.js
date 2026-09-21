@@ -27,9 +27,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       e.preventDefault();
       const term = searchInput.value.trim();
       if (term) {
-        window.location.href = `/products.html?search=${encodeURIComponent(term)}`;
+        window.location.href = `/products?search=${encodeURIComponent(term)}`;
       } else {
-        window.location.href = '/products.html';
+        window.location.href = '/products';
       }
     });
   }
@@ -65,7 +65,7 @@ async function setupAuthView() {
           if (subtitleEl) subtitleEl.textContent = 'Manage categories, review student listing reports, or explore the catalog.';
           const dashBtn = userBanner.querySelector('.btn-user-dash');
           if (dashBtn) {
-            dashBtn.href = '/admin.html';
+            dashBtn.href = '/admin';
             dashBtn.innerHTML = '🛡️ Admin Panel';
           }
         } else {
@@ -77,11 +77,11 @@ async function setupAuthView() {
       // Update hero CTA buttons for authenticated user
       if (heroCtaContainer) {
         heroCtaContainer.innerHTML = `
-          <a href="${user.role === 'admin' ? '/admin.html' : '/dashboard.html'}" class="btn btn-primary btn-lg" style="background: #ffffff; color: #4338ca; box-shadow: 0 4px 14px rgba(0,0,0,0.15); font-weight: 700;">
+          <a href="${user.role === 'admin' ? '/admin' : '/dashboard'}" class="btn btn-primary btn-lg" style="background: #ffffff; color: #4338ca; box-shadow: 0 4px 14px rgba(0,0,0,0.15); font-weight: 700;">
             ${user.role === 'admin' ? '🛡️ Admin Panel' : 'Dashboard'}
           </a>
-          <a href="/products.html" class="btn btn-outline btn-lg" style="color: #ffffff; border-color: rgba(255,255,255,0.4);">Browse Marketplace</a>
-          <a href="/create-product.html" class="btn btn-sell btn-lg" style="box-shadow: 0 4px 14px rgba(0,0,0,0.15);">+ Start Selling</a>
+          <a href="/products" class="btn btn-outline btn-lg" style="color: #ffffff; border-color: rgba(255,255,255,0.4);">Browse Marketplace</a>
+          <a href="/create-product" class="btn btn-sell btn-lg" style="box-shadow: 0 4px 14px rgba(0,0,0,0.15);">+ Start Selling</a>
         `;
       }
     } else {
@@ -107,7 +107,7 @@ async function loadCategories() {
         .map((cat) => {
           const icon = categoryIcons[cat.name] || '🏷️';
           return `
-            <a href="/products.html?category=${encodeURIComponent(cat.name)}" class="card home-category-card">
+            <a href="/products?category=${encodeURIComponent(cat.name)}" class="card home-category-card">
               <div class="category-icon">${icon}</div>
               <div class="category-name">${window.Utils.escapeHTML(cat.name)}</div>
             </a>
@@ -133,7 +133,7 @@ async function loadLatestProducts() {
           title: 'No listings posted yet',
           subtitle: 'Be the first student to post a deal on campus!',
           actionText: 'List an Item',
-          actionLink: '/create-product.html',
+          actionLink: '/create-product',
         });
         return;
       }
@@ -141,7 +141,7 @@ async function loadLatestProducts() {
       container.innerHTML = products
         .map((product) => {
           return `
-            <a href="/product-details.html?id=${product._id}" class="product-card">
+            <a href="/product-details?id=${product._id}" class="product-card">
               <div class="product-card-img-wrapper">
                 <img src="${product.imageUrl}" alt="${window.Utils.escapeHTML(product.name)}" class="product-card-img" loading="lazy" />
               </div>

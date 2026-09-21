@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const { generateTokenAndSetCookie } = require('../utils/generateToken');
 const crypto = require('crypto');
+const { sendPasswordResetEmail, sendPasswordResetSuccessEmail } = require('../services/emailService');
 
 // @desc    Register a new student user
 // @route   POST /api/auth/register
@@ -148,17 +149,34 @@ const forgotPassword = async (req, res, next) => {
     const origin = req.get('origin') || `${req.protocol}://${req.get('host')}`;
     const resetUrl = `${origin}/reset-password?token=${resetToken}`;
 
-    const hasSmtp = Boolean(process.env.SMTP_HOST && process.env.SMTP_USER);
+    // Dispatch real-time email
+    let emailResult = null;
+    try {
+      emailResult = await sendPasswordResetEmail({
+        to: user.email,
+        name: user.name,
+        resetUrl,
+        resetToken,
+      });
+    } catch (emailErr) {
+      console.error('[forgotPassword] Real-time email dispatch error:', emailErr.message);
+    }
+
+    const isDelivered = emailResult && emailResult.isRealDelivery;
 
     return res.status(200).json({
       success: true,
-      message: 'Password reset link has been generated successfully.',
+      message: isDelivered
+        ? `Password reset email dispatched in real-time to ${user.email}! Please check your inbox (and spam folder).`
+        : 'Password reset email generated in real-time.',
       data: {
         email: user.email,
         resetUrl,
         resetToken,
         expiresInMinutes: 15,
-        demoNotice: !hasSmtp ? 'Demo Mode: Use the provided reset link or code to proceed directly.' : undefined,
+        emailDelivery: isDelivered ? 'delivered' : 'preview',
+        previewUrl: emailResult?.previewUrl || null,
+        messageId: emailResult?.messageId || null,
       },
     });
   } catch (error) {
@@ -218,6 +236,11 @@ const resetPassword = async (req, res, next) => {
     user.resetPasswordExpires = undefined;
 
     await user.save();
+
+    // Send confirmation alert email in real-time
+    sendPasswordResetSuccessEmail({ to: user.email, name: user.name }).catch((err) => {
+      console.warn('[resetPassword] Confirmation email alert notice:', err.message);
+    });
 
     res.status(200).json({
       success: true,
@@ -283,6 +306,11 @@ const resetPasswordByPhone = async (req, res, next) => {
     user.resetPasswordToken = undefined;
     user.resetPasswordExpires = undefined;
     await user.save();
+
+    // Send confirmation alert email in real-time
+    sendPasswordResetSuccessEmail({ to: user.email, name: user.name }).catch((err) => {
+      console.warn('[resetPasswordByPhone] Confirmation email alert notice:', err.message);
+    });
 
     res.status(200).json({
       success: true,

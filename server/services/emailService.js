@@ -102,9 +102,9 @@ async function getTransporter() {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
       },
-      connectionTimeout: 4000,
-      greetingTimeout: 4000,
-      socketTimeout: 5000,
+      connectionTimeout: 15000,
+      greetingTimeout: 15000,
+      socketTimeout: 20000,
     });
     return cachedTransporter;
   }
@@ -117,9 +117,9 @@ async function getTransporter() {
         user: process.env.EMAIL_USER.trim(),
         pass: process.env.EMAIL_PASS.replace(/\s+/g, ''),
       },
-      connectionTimeout: 4000,
-      greetingTimeout: 4000,
-      socketTimeout: 5000,
+      connectionTimeout: 15000,
+      greetingTimeout: 15000,
+      socketTimeout: 20000,
     });
     return cachedTransporter;
   }
@@ -155,6 +155,98 @@ function getFromAddress() {
 }
 
 /**
+ * Intelligently dispatches an email using the optimal channel:
+ * 1. Resend HTTPS API if recipient is authorized (account owner) or custom verified domain is active.
+ * 2. SMTP (Gmail App Password or custom SMTP) for all other student addresses with generous 15-second timeout.
+ * 3. Resend HTTPS API fallback if SMTP fails (e.g. firewalled cloud hosts).
+ */
+async function dispatchEmail({ to, subject, html, text }) {
+  const cleanTo = String(to || '').trim();
+  const accountOwner = (process.env.EMAIL_USER || 'ashik.unr.123@gmail.com').toLowerCase().trim();
+  const hasCustomDomain = Boolean(
+    process.env.EMAIL_FROM && !process.env.EMAIL_FROM.includes('resend.dev')
+  );
+  const canSendViaResend = Boolean(
+    process.env.RESEND_API_KEY && (hasCustomDomain || cleanTo.toLowerCase() === accountOwner)
+  );
+
+  // 1. If Resend is available and recipient is eligible (no 403 restriction), use HTTPS
+  if (canSendViaResend) {
+    try {
+      const httpResult = await sendViaHttpApi({ to: cleanTo, subject, html, text });
+      if (httpResult) {
+        console.log(`[EmailService] Dispatched via Resend HTTPS API to ${cleanTo}`);
+        return {
+          success: true,
+          messageId: httpResult.id || httpResult.messageId || 'resend-sent',
+          previewUrl: null,
+          isRealDelivery: true,
+        };
+      }
+    } catch (httpErr) {
+      console.warn(`[EmailService] Resend API failed for ${cleanTo}, falling back to SMTP:`, httpErr.message);
+    }
+  }
+
+  // 2. SMTP Delivery (Gmail App Password / Custom SMTP) with 15-second timeout
+  try {
+    const transporter = await getTransporter();
+    const fromAddress = getFromAddress();
+    const mailOptions = {
+      from: fromAddress,
+      to: cleanTo,
+      subject,
+      text,
+      html,
+    };
+
+    const sendMailPromise = transporter.sendMail(mailOptions);
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('SMTP timeout after 15 seconds')), 15000)
+    );
+
+    const info = await Promise.race([sendMailPromise, timeoutPromise]);
+    const previewUrl = nodemailer.getTestMessageUrl(info);
+
+    if (previewUrl) {
+      console.log(`[EmailService] Test email generated! Preview at: ${previewUrl}`);
+    } else {
+      console.log(`[EmailService] Email delivered to ${cleanTo} via SMTP, MessageId: ${info.messageId}`);
+    }
+
+    return {
+      success: true,
+      messageId: info.messageId,
+      previewUrl: previewUrl || null,
+      isRealDelivery: !previewUrl,
+    };
+  } catch (smtpErr) {
+    console.warn(`[EmailService] SMTP delivery failed for ${cleanTo}:`, smtpErr.message);
+
+    // 3. Fallback: try HTTP API even if not pre-approved (in case domain was registered or other gateway available)
+    if ((process.env.RESEND_API_KEY || process.env.BREVO_API_KEY) && !canSendViaResend) {
+      try {
+        console.log(`[EmailService] Attempting HTTP API fallback for ${cleanTo}...`);
+        const fallbackRes = await sendViaHttpApi({ to: cleanTo, subject, html, text });
+        if (fallbackRes) {
+          console.log(`[EmailService] Delivered via HTTP API fallback to ${cleanTo}`);
+          return {
+            success: true,
+            messageId: fallbackRes.id || fallbackRes.messageId || 'http-fallback',
+            previewUrl: null,
+            isRealDelivery: true,
+          };
+        }
+      } catch (fallbackErr) {
+        console.warn(`[EmailService] HTTP API fallback also failed for ${cleanTo}:`, fallbackErr.message);
+      }
+    }
+
+    return { success: false, error: smtpErr.message };
+  }
+}
+
+/**
  * Sends a password reset email in real-time
  * @param {Object} options
  * @param {string} options.to - Recipient email address
@@ -163,9 +255,6 @@ function getFromAddress() {
  * @param {string} options.resetToken - Raw reset token
  */
 async function sendPasswordResetEmail({ to, name, resetUrl, resetToken }) {
-  const transporter = await getTransporter();
-
-  const fromAddress = getFromAddress();
   const studentFirstName = name ? name.split(' ')[0] : 'Student';
 
   const htmlContent = `
@@ -240,59 +329,12 @@ If you did not request this password reset, you can safely ignore this email.
 — Campus Marketplace Team
   `.trim();
 
-  const mailOptions = {
-    from: fromAddress,
+  return dispatchEmail({
     to,
     subject: '🔑 Reset Your Campus Marketplace Password',
-    text: textContent,
     html: htmlContent,
-  };
-
-  // 1. If HTTP API key is configured (Resend or Brevo), use HTTPS (Port 443).
-  // This completely bypasses cloud firewall SMTP port blocking (e.g. Render Free Tier).
-  if (process.env.RESEND_API_KEY || process.env.BREVO_API_KEY) {
-    try {
-      const httpResult = await sendViaHttpApi({
-        to,
-        subject: mailOptions.subject,
-        html: mailOptions.html,
-        text: mailOptions.text,
-      });
-      if (httpResult) {
-        console.log(`[EmailService] Real-time email dispatched via HTTPS API to ${to}`);
-        return {
-          success: true,
-          messageId: httpResult.id || httpResult.messageId || 'https-api-delivery',
-          previewUrl: null,
-          isRealDelivery: true,
-        };
-      }
-    } catch (httpErr) {
-      console.warn('[EmailService] HTTPS API failed, falling back to SMTP:', httpErr.message);
-    }
-  }
-
-  // 2. SMTP Delivery with strict 5-second safety timeout so requests never hang on cloud firewalls
-  const sendMailPromise = transporter.sendMail(mailOptions);
-  const timeoutPromise = new Promise((_, reject) =>
-    setTimeout(() => reject(new Error('SMTP connection timed out. Outbound SMTP ports are blocked by host firewall.')), 5000)
-  );
-
-  const info = await Promise.race([sendMailPromise, timeoutPromise]);
-
-  const previewUrl = nodemailer.getTestMessageUrl(info);
-  if (previewUrl) {
-    console.log(`[EmailService] Real-time email sent! Preview live at: ${previewUrl}`);
-  } else {
-    console.log(`[EmailService] Real-time email delivered to ${to}, MessageId: ${info.messageId}`);
-  }
-
-  return {
-    success: true,
-    messageId: info.messageId,
-    previewUrl: previewUrl || null,
-    isRealDelivery: !previewUrl,
-  };
+    text: textContent,
+  });
 }
 
 /**
@@ -303,40 +345,19 @@ If you did not request this password reset, you can safely ignore this email.
  */
 async function sendPasswordResetSuccessEmail({ to, name }) {
   try {
-    const fromAddress = getFromAddress();
     const studentFirstName = name ? name.split(' ')[0] : 'Student';
     const subject = '✅ Your Campus Marketplace Password Has Been Changed';
     const text = `Hello ${studentFirstName},\n\nThis is a confirmation that your Campus Marketplace password was successfully changed.\n\nIf you did not make this change, please log in immediately and contact campus support.\n\n— Campus Marketplace Team`;
     const html = `
-        <div style="font-family: sans-serif; max-width: 520px; margin: 0 auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 8px;">
-          <h2 style="color: #15803d; margin-top: 0;">✅ Password Changed Successfully</h2>
-          <p>Hello ${studentFirstName},</p>
-          <p>This is a security confirmation that your Campus Marketplace password was just changed.</p>
-          <p style="color: #64748b; font-size: 13px;">If you performed this action, you can safely disregard this message. If you did not change your password, please contact the campus marketplace team immediately.</p>
-        </div>
-      `;
+      <div style="font-family: sans-serif; max-width: 520px; margin: 0 auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 8px;">
+        <h2 style="color: #15803d; margin-top: 0;">✅ Password Changed Successfully</h2>
+        <p>Hello ${studentFirstName},</p>
+        <p>This is a security confirmation that your Campus Marketplace password was just changed.</p>
+        <p style="color: #64748b; font-size: 13px;">If you performed this action, you can safely disregard this message. If you did not change your password, please contact the campus marketplace team immediately.</p>
+      </div>
+    `;
 
-    if (process.env.RESEND_API_KEY || process.env.BREVO_API_KEY) {
-      try {
-        await sendViaHttpApi({ to, subject, html, text });
-        return;
-      } catch (httpErr) {
-        console.warn('[EmailService] HTTPS API confirmation failed, falling back to SMTP:', httpErr.message);
-      }
-    }
-
-    const transporter = await getTransporter();
-    const sendMailPromise = transporter.sendMail({
-      from: fromAddress,
-      to,
-      subject,
-      text,
-      html,
-    });
-    const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('SMTP timeout')), 5000)
-    );
-    await Promise.race([sendMailPromise, timeoutPromise]);
+    return await dispatchEmail({ to, subject, html, text });
   } catch (err) {
     console.warn('[EmailService] Could not send password reset success alert:', err.message);
   }
@@ -347,11 +368,11 @@ async function sendPasswordResetSuccessEmail({ to, name }) {
  * @param {Object} options
  * @param {string} options.to - Recipient email
  * @param {string} options.name - Student's full name
+ * @param {string} [options.phone] - Student's registered mobile number
  * @param {string} [options.clientUrl] - Base URL of the application
  */
 async function sendWelcomeEmail({ to, name, phone, clientUrl }) {
   try {
-    const fromAddress = getFromAddress();
     const studentFirstName = name ? name.split(' ')[0] : 'Student';
     const baseUrl = clientUrl || process.env.CLIENT_URL || 'https://campuscart-xuqs.onrender.com';
     const marketplaceUrl = `${baseUrl.replace(/\/$/, '')}/marketplace`;
@@ -366,9 +387,9 @@ async function sendWelcomeEmail({ to, name, phone, clientUrl }) {
   <title>Welcome to Campus Marketplace</title>
   <style>
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; margin: 0; padding: 20px; color: #1e293b; }
-    .email-container { max-width: 580px; margin: 0 auto; background: #ffffff; border-radius: 14px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 4px 14px rgba(0,0,0,0.06); }
+    .email-container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
     .email-header { background: linear-gradient(135deg, #4f46e5, #4338ca); padding: 36px 24px; text-align: center; color: #ffffff; }
-    .email-header h1 { margin: 0; font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
+    .email-header h1 { margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.5px; }
     .email-body { padding: 32px 24px; }
     .greeting { font-size: 20px; font-weight: 700; margin-bottom: 12px; color: #0f172a; }
     .intro-text { font-size: 15px; line-height: 1.6; color: #475569; margin-bottom: 24px; }
@@ -376,12 +397,13 @@ async function sendWelcomeEmail({ to, name, phone, clientUrl }) {
     .features-list { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 20px; margin-bottom: 24px; }
     .feature-item { display: flex; align-items: flex-start; margin-bottom: 14px; }
     .feature-item:last-child { margin-bottom: 0; }
-    .feature-icon { font-size: 20px; margin-right: 12px; line-height: 1.3; }
-    .feature-text { font-size: 14px; line-height: 1.5; color: #334155; }
-    .feature-title { font-weight: 600; color: #0f172a; }
-    .cta-wrapper { text-align: center; margin: 32px 0 16px 0; }
-    .cta-btn { display: inline-block; background-color: #4f46e5; color: #ffffff !important; text-decoration: none; padding: 14px 34px; border-radius: 8px; font-weight: 700; font-size: 15px; box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35); }
-    .email-footer { background-color: #f8fafc; border-top: 1px solid #e2e8f0; padding: 20px; text-align: center; font-size: 12px; color: #94a3b8; }
+    .feature-icon { font-size: 20px; margin-right: 12px; line-height: 1.2; }
+    .feature-text { font-size: 14px; color: #334155; line-height: 1.5; }
+    .cta-wrapper { text-align: center; margin: 32px 0 24px; }
+    .cta-btn { display: inline-block; background-color: #4f46e5; color: #ffffff !important; text-decoration: none; padding: 15px 36px; border-radius: 8px; font-weight: 700; font-size: 16px; box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35); }
+    .email-footer { background-color: #f8fafc; border-top: 1px solid #e2e8f0; padding: 24px; text-align: center; font-size: 12px; color: #94a3b8; }
+    .footer-links { margin-top: 8px; }
+    .footer-links a { color: #64748b; text-decoration: underline; margin: 0 6px; }
   </style>
 </head>
 <body>
@@ -407,34 +429,29 @@ async function sendWelcomeEmail({ to, name, phone, clientUrl }) {
       <div class="features-list">
         <div class="feature-item">
           <div class="feature-icon">🛍️</div>
-          <div class="feature-text">
-            <div class="feature-title">Explore Campus Listings</div>
-            Find textbooks, electronics, calculators, dorm essentials, and bicycle deals right on campus.
-          </div>
+          <div class="feature-text"><strong>Explore Listings:</strong> Find textbooks, electronics, dorm essentials, and calculators at student-friendly prices.</div>
         </div>
-        <div class="feature-item" style="margin-top: 12px;">
+        <div class="feature-item">
           <div class="feature-icon">🏷️</div>
-          <div class="feature-text">
-            <div class="feature-title">Sell Your Unused Gear</div>
-            Post items with pictures and AI-assisted descriptions in less than a minute.
-          </div>
+          <div class="feature-text"><strong>Sell in Seconds:</strong> Post your unused items, get smart pricing tips with Claude AI, and connect with peers directly.</div>
         </div>
-        <div class="feature-item" style="margin-top: 12px;">
+        <div class="feature-item">
           <div class="feature-icon">💬</div>
-          <div class="feature-text">
-            <div class="feature-title">Chat Directly with Peers</div>
-            Negotiate and arrange convenient, on-campus meetups safely.
-          </div>
+          <div class="feature-text"><strong>Secure Direct Chat:</strong> Communicate safely with verified campus members right inside the application.</div>
         </div>
       </div>
 
       <div class="cta-wrapper">
-        <a href="${marketplaceUrl}" class="cta-btn" target="_blank">Start Exploring Marketplace &rarr;</a>
+        <a href="${marketplaceUrl}" class="cta-btn" target="_blank">Start Exploring Campus Marketplace &rarr;</a>
       </div>
     </div>
     <div class="email-footer">
       &copy; 2026 Campus Marketplace for University Students. All rights reserved.<br>
-      You are receiving this email because you created an account on Campus Marketplace.
+      <div class="footer-links">
+        <a href="${marketplaceUrl}">Marketplace</a> &bull;
+        <a href="${baseUrl}/dashboard">My Dashboard</a> &bull;
+        <a href="mailto:support@campusmarketplace.edu">Help &amp; Support</a>
+      </div>
     </div>
   </div>
 </body>
@@ -446,7 +463,8 @@ Hello ${studentFirstName}!
 
 Welcome to Campus Marketplace!
 
-Your student account with ${to} is now active. You can now buy, sell, and chat with fellow students safely on campus.
+Your student account with ${to} is now active and you are logged in.
+Registered Phone: ${phone || 'On file'}
 
 Start browsing items:
 ${marketplaceUrl}
@@ -454,42 +472,7 @@ ${marketplaceUrl}
 — Campus Marketplace Team
     `.trim();
 
-    // 1. Try HTTPS API first (Resend / Brevo)
-    if (process.env.RESEND_API_KEY || process.env.BREVO_API_KEY) {
-      try {
-        const httpResult = await sendViaHttpApi({
-          to,
-          subject,
-          html: htmlContent,
-          text: textContent,
-        });
-        if (httpResult) {
-          console.log(`[EmailService] Welcome email dispatched via HTTPS API to ${to}`);
-          return { success: true, messageId: httpResult.id || httpResult.messageId || 'https-welcome', isRealDelivery: true };
-        }
-      } catch (httpErr) {
-        console.warn('[EmailService] HTTPS API welcome email failed, falling back to SMTP:', httpErr.message);
-      }
-    }
-
-    // 2. SMTP Delivery with 5-second timeout
-    const transporter = await getTransporter();
-    const mailOptions = {
-      from: fromAddress,
-      to,
-      subject,
-      text: textContent,
-      html: htmlContent,
-    };
-
-    const sendMailPromise = transporter.sendMail(mailOptions);
-    const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('SMTP timeout during welcome email')), 5000)
-    );
-
-    const info = await Promise.race([sendMailPromise, timeoutPromise]);
-    console.log(`[EmailService] Welcome email delivered to ${to}, MessageId: ${info.messageId}`);
-    return { success: true, messageId: info.messageId, isRealDelivery: true };
+    return await dispatchEmail({ to, subject, html: htmlContent, text: textContent });
   } catch (err) {
     console.warn('[EmailService] Could not send welcome email:', err.message);
     return { success: false, error: err.message };
@@ -506,7 +489,6 @@ ${marketplaceUrl}
  */
 async function sendPhoneOtpEmail({ to, name, otp, phone }) {
   try {
-    const fromAddress = getFromAddress();
     const studentFirstName = name ? name.split(' ')[0] : 'Student';
     const maskedPhone = phone ? `${phone.slice(0, 3)}****${phone.slice(-3)}` : 'your mobile';
     const subject = `📱 ${otp} is your Campus Marketplace verification code`;
@@ -553,26 +535,7 @@ async function sendPhoneOtpEmail({ to, name, otp, phone }) {
 
     const textContent = `Hello ${studentFirstName},\n\nYour Campus Marketplace phone verification code is: ${otp}\n\nThis code expires in 10 minutes.\n\n— Campus Marketplace Team`;
 
-    if (process.env.RESEND_API_KEY || process.env.BREVO_API_KEY) {
-      try {
-        await sendViaHttpApi({ to, subject, html: htmlContent, text: textContent });
-        return { success: true };
-      } catch (httpErr) {
-        console.warn('[EmailService] HTTPS API failed for OTP email, falling back to SMTP:', httpErr.message);
-      }
-    }
-
-    const transporter = await getTransporter();
-    const sendMailPromise = transporter.sendMail({
-      from: fromAddress,
-      to,
-      subject,
-      text: textContent,
-      html: htmlContent,
-    });
-    const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('SMTP timeout')), 5000));
-    await Promise.race([sendMailPromise, timeoutPromise]);
-    return { success: true };
+    return await dispatchEmail({ to, subject, html: htmlContent, text: textContent });
   } catch (err) {
     console.warn('[EmailService] Could not send OTP email notice:', err.message);
     return { success: false };

@@ -1,7 +1,11 @@
 const User = require('../models/User');
 const { generateTokenAndSetCookie } = require('../utils/generateToken');
 const crypto = require('crypto');
-const { sendPasswordResetEmail, sendPasswordResetSuccessEmail } = require('../services/emailService');
+const {
+  sendPasswordResetEmail,
+  sendPasswordResetSuccessEmail,
+  sendWelcomeEmail,
+} = require('../services/emailService');
 
 // @desc    Register a new student user
 // @route   POST /api/auth/register
@@ -28,6 +32,16 @@ const registerUser = async (req, res, next) => {
     });
 
     generateTokenAndSetCookie(res, user._id, user.role);
+
+    // Dispatch real-time welcome email asynchronously
+    const clientOrigin = req.get('origin') || `${req.protocol}://${req.get('host')}`;
+    sendWelcomeEmail({
+      to: user.email,
+      name: user.name,
+      clientUrl: clientOrigin,
+    }).catch((emailErr) => {
+      console.warn('[registerUser] Welcome email dispatch error:', emailErr.message);
+    });
 
     res.status(201).json({
       success: true,
@@ -162,21 +176,15 @@ const forgotPassword = async (req, res, next) => {
       console.error('[forgotPassword] Real-time email dispatch error:', emailErr.message);
     }
 
-    const isDelivered = emailResult && emailResult.isRealDelivery;
+    const isDelivered = Boolean(emailResult && emailResult.isRealDelivery);
 
     return res.status(200).json({
       success: true,
-      message: isDelivered
-        ? `Password reset email dispatched in real-time to ${user.email}! Please check your inbox (and spam folder).`
-        : 'Password reset email generated in real-time.',
+      message: `A password reset link has been sent to ${user.email}. Please check your inbox and spam folder.`,
       data: {
         email: user.email,
-        resetUrl,
-        resetToken,
         expiresInMinutes: 15,
-        emailDelivery: isDelivered ? 'delivered' : 'preview',
-        previewUrl: emailResult?.previewUrl || null,
-        messageId: emailResult?.messageId || null,
+        emailDelivery: isDelivered ? 'delivered' : 'queued',
       },
     });
   } catch (error) {

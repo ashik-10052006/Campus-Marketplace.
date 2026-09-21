@@ -32,7 +32,7 @@
           </div>
           <div class="password-input-wrapper">
             <input type="password" id="password" class="form-control" placeholder="Enter your password" required autocomplete="current-password" />
-            <button type="button" class="password-toggle-btn" id="toggle-password" aria-label="Toggle password visibility">👁️</button>
+            <button type="button" class="password-toggle-btn" id="toggle-password" aria-label="Show password" aria-controls="password" aria-pressed="false">👁️</button>
           </div>
         </div>
 
@@ -57,8 +57,11 @@
       const passwordInput = document.getElementById('password');
       if (toggleBtn && passwordInput) {
         toggleBtn.addEventListener('click', () => {
-          const isPassword = passwordInput.getAttribute('type') === 'password';
-          passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+          const isCurrentlyPassword = passwordInput.getAttribute('type') === 'password';
+          passwordInput.setAttribute('type', isCurrentlyPassword ? 'text' : 'password');
+          toggleBtn.setAttribute('aria-label', isCurrentlyPassword ? 'Hide password' : 'Show password');
+          toggleBtn.setAttribute('aria-pressed', isCurrentlyPassword ? 'true' : 'false');
+          toggleBtn.textContent = isCurrentlyPassword ? '🙈' : '👁️';
         });
       }
 

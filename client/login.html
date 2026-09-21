@@ -90,8 +90,15 @@
 
             setTimeout(() => {
               if (redirect) {
-                window.location.href = decodeURIComponent(redirect);
-              } else if (response.data.user.role === 'admin') {
+                const cleanRedirect = decodeURIComponent(redirect).trim();
+                // Strictly allow only internal relative paths to prevent open redirect phishing
+                if (cleanRedirect.startsWith('/') && !cleanRedirect.startsWith('//') && !cleanRedirect.includes('\\')) {
+                  window.location.href = cleanRedirect;
+                  return;
+                }
+              }
+
+              if (response.data.user.role === 'admin') {
                 window.location.href = '/admin.html';
               } else {
                 window.location.href = '/dashboard.html';

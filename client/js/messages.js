@@ -10,8 +10,8 @@ let conversationsListPollTimer = null;
 let isPollingChat = false;
 let isPollingList = false;
 
-const CHAT_POLL_INTERVAL = 2500; // Check for incoming messages every 2.5s
-const LIST_POLL_INTERVAL = 5000; // Refresh sidebar thread list every 5s
+const CHAT_POLL_INTERVAL = 3000; // Check for incoming messages every 3s
+const LIST_POLL_INTERVAL = 8000; // Refresh sidebar thread list every 8s
 
 document.addEventListener('DOMContentLoaded', async () => {
   const user = await window.Auth.requireAuth();

@@ -67,11 +67,13 @@ app.use(
 );
 
 // Baseline API Rate Limiter to guard against scraping and DoS flooding
+// Excludes GET chat polling so active chatting students on shared campus Wi-Fi are never blocked
 const globalApiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 200, // 200 requests per IP per window
+  max: 1500, // 1500 requests per IP per window (handles NAT & active campus usage)
   standardHeaders: true,
   legacyHeaders: false,
+  skip: (req) => req.method === 'GET' && (req.originalUrl || '').startsWith('/api/messages'),
   message: {
     success: false,
     message: 'Too many requests from this network. Please try again in 15 minutes.',
@@ -87,8 +89,8 @@ app.use(cookieParser());
 // Serve static uploaded media
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Serve client frontend static files
-app.use(express.static(path.join(__dirname, '../client')));
+// Serve client frontend static files (supports clean URLs without .html)
+app.use(express.static(path.join(__dirname, '../client'), { extensions: ['html'] }));
 
 // Mount API Routes
 app.use('/api/auth', authRoutes);
@@ -108,8 +110,13 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// For any non-API route that doesn't match a static file, serve 404 or index
+// API routes 404 handler
 app.use('/api', notFound);
+
+// Serve custom 404.html page for unmatched non-API client routes
+app.use((req, res) => {
+  res.status(404).sendFile(path.join(__dirname, '../client/404.html'));
+});
 
 // Error Handling Middleware
 app.use(errorHandler);

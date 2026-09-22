@@ -106,7 +106,7 @@ async function loadConversations(autoSelectId = null, isBackgroundRefresh = fals
             <div class="conversation-item ${isActive ? 'is-active' : ''}" id="conv-item-${conv._id}" data-conv-id="${conv._id}" role="button" tabindex="0">
               ${
                 avatar
-                  ? `<img src="${avatar}" class="conv-avatar" alt="${window.Utils.escapeHTML(otherName)}" />`
+                  ? `<img src="${window.Utils.escapeHTML(avatar)}" class="conv-avatar" alt="${window.Utils.escapeHTML(otherName)}" />`
                   : `<div class="conv-avatar-placeholder">${window.Utils.escapeHTML(otherName.charAt(0).toUpperCase())}</div>`
               }
               <div class="conv-details">

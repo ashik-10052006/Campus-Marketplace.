@@ -60,7 +60,7 @@ app.use(
       if (!origin || allowedOrigins.has(origin)) {
         return callback(null, true);
       }
-      return callback(new Error('Origin not allowed by CORS policy'));
+      return callback(null, false);
     },
     credentials: true,
   })
@@ -102,6 +102,9 @@ app.use((req, res, next) => {
 
 // Serve client frontend static files (supports clean URLs without .html)
 app.use(express.static(path.join(__dirname, '../client'), { extensions: ['html'] }));
+
+// Serve uploaded assets when local storage is used (dotfiles strictly ignored)
+app.use('/uploads', express.static(path.join(__dirname, 'uploads'), { dotfiles: 'ignore', maxAge: '1d' }));
 
 // Mount API Routes
 app.use('/api/auth', authRoutes);

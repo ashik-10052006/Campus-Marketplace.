@@ -73,7 +73,7 @@ async function loadDashboardData() {
                     return `
                     <tr>
                       <td style="display: flex; align-items: center; gap: 0.75rem;">
-                        <img src="${p.imageUrl}" class="table-thumbnail" alt="${window.Utils.escapeHTML(p.name)}" />
+                        <img src="${window.Utils.escapeHTML(p.imageUrl)}" class="table-thumbnail" alt="${window.Utils.escapeHTML(p.name)}" />
                         <span style="font-weight: 600;">${window.Utils.escapeHTML(p.name)}</span>
                       </td>
                       <td style="font-weight: 700; color: var(--primary);">${window.Utils.formatCurrency(p.price)}</td>

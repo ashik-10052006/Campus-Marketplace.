@@ -52,7 +52,7 @@ function renderNavbar() {
         <a href="/profile" class="nav-profile-link" title="${window.Utils.escapeHTML(user.name)}">
           ${
             user.profileImage
-              ? `<img src="${user.profileImage}" class="nav-avatar" alt="Avatar" />`
+              ? `<img src="${window.Utils.escapeHTML(user.profileImage)}" class="nav-avatar" alt="Avatar" />`
               : `<div class="nav-avatar-placeholder">${window.Utils.escapeHTML(user.name.charAt(0).toUpperCase())}</div>`
           }
           <span class="user-name">${window.Utils.escapeHTML(user.name.split(' ')[0])}</span>

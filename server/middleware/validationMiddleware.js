@@ -10,23 +10,23 @@ const {
 const validateRegister = (req, res, next) => {
   const { name, email, password, confirmPassword, phone } = req.body;
 
-  if (!name || !name.trim()) {
-    return res.status(400).json({ success: false, message: 'Name is required' });
+  if (!name || typeof name !== 'string' || !name.trim()) {
+    return res.status(400).json({ success: false, message: 'Name is required and must be text' });
   }
 
-  if (!isValidEmail(email)) {
+  if (!email || typeof email !== 'string' || !isValidEmail(email)) {
     return res.status(400).json({ success: false, message: 'Please provide a valid email address' });
   }
 
-  if (!isValidPhone(phone)) {
+  if (!phone || typeof phone !== 'string' || !isValidPhone(phone)) {
     return res.status(400).json({ success: false, message: 'Please provide a valid phone number (7-15 digits)' });
   }
 
-  if (!isValidPassword(password)) {
+  if (!password || typeof password !== 'string' || !isValidPassword(password)) {
     return res.status(400).json({ success: false, message: 'Password must be at least 6 characters' });
   }
 
-  if (password !== confirmPassword) {
+  if (typeof confirmPassword !== 'string' || password !== confirmPassword) {
     return res.status(400).json({ success: false, message: 'Passwords do not match' });
   }
 
@@ -36,11 +36,11 @@ const validateRegister = (req, res, next) => {
 const validateLogin = (req, res, next) => {
   const { email, password } = req.body;
 
-  if (!email || !isValidEmail(email)) {
+  if (!email || typeof email !== 'string' || !isValidEmail(email)) {
     return res.status(400).json({ success: false, message: 'Please provide a valid email address' });
   }
 
-  if (!password) {
+  if (!password || typeof password !== 'string') {
     return res.status(400).json({ success: false, message: 'Password is required' });
   }
 
@@ -50,11 +50,11 @@ const validateLogin = (req, res, next) => {
 const validateProduct = (req, res, next) => {
   const { name, description, price, category, condition } = req.body;
 
-  if (!name || !name.trim()) {
+  if (!name || typeof name !== 'string' || !name.trim()) {
     return res.status(400).json({ success: false, message: 'Product name is required' });
   }
 
-  if (!description || !description.trim()) {
+  if (!description || typeof description !== 'string' || !description.trim()) {
     return res.status(400).json({ success: false, message: 'Product description is required' });
   }
 
@@ -62,11 +62,11 @@ const validateProduct = (req, res, next) => {
     return res.status(400).json({ success: false, message: 'Price must be a number greater than 0' });
   }
 
-  if (!category) {
+  if (!category || typeof category !== 'string' || !category.trim()) {
     return res.status(400).json({ success: false, message: 'Category is required' });
   }
 
-  if (!condition || !VALID_CONDITIONS.includes(condition)) {
+  if (!condition || typeof condition !== 'string' || !VALID_CONDITIONS.includes(condition)) {
     return res.status(400).json({
       success: false,
       message: `Condition must be one of: ${VALID_CONDITIONS.join(', ')}`,
@@ -77,12 +77,19 @@ const validateProduct = (req, res, next) => {
 };
 
 const validateReport = (req, res, next) => {
-  const { reason } = req.body;
+  const { reason, description } = req.body;
 
-  if (!reason || !VALID_REPORT_REASONS.includes(reason)) {
+  if (!reason || typeof reason !== 'string' || !VALID_REPORT_REASONS.includes(reason)) {
     return res.status(400).json({
       success: false,
       message: `Reason must be one of: ${VALID_REPORT_REASONS.join(', ')}`,
+    });
+  }
+
+  if (description !== undefined && typeof description !== 'string') {
+    return res.status(400).json({
+      success: false,
+      message: 'Description must be text',
     });
   }
 

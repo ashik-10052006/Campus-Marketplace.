@@ -97,7 +97,7 @@ function renderProductView(container, product) {
     <div class="product-details-grid">
       <!-- Product Image -->
       <div class="product-gallery-main">
-        <img src="${product.imageUrl}" alt="${window.Utils.escapeHTML(product.name)}" class="product-gallery-img" />
+        <img src="${window.Utils.escapeHTML(product.imageUrl)}" alt="${window.Utils.escapeHTML(product.name)}" class="product-gallery-img" />
       </div>
 
       <!-- Product Information -->
@@ -132,7 +132,7 @@ function renderProductView(container, product) {
         <div class="seller-profile-card">
           ${
             product.seller && product.seller.profileImage
-              ? `<img src="${product.seller.profileImage}" class="seller-avatar" alt="Seller Avatar" />`
+              ? `<img src="${window.Utils.escapeHTML(product.seller.profileImage)}" class="seller-avatar" alt="Seller Avatar" />`
               : `<div class="nav-avatar-placeholder" style="width: 54px; height: 54px; font-size: 1.4rem;">${window.Utils.escapeHTML((product.seller ? product.seller.name : 'S').charAt(0).toUpperCase())}</div>`
           }
           <div style="flex: 1;">

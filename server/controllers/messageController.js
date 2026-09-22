@@ -215,12 +215,29 @@ const sendMessage = async (req, res, next) => {
 
 // @desc    Mark specific message as read
 // @route   PATCH /api/messages/:id/read
-// @access  Private
+// @access  Private (Conversation participants only)
 const markMessageRead = async (req, res, next) => {
   try {
     const message = await Message.findById(req.params.id);
     if (!message) {
       return res.status(404).json({ success: false, message: 'Message not found' });
+    }
+
+    const conversation = await Conversation.findById(message.conversation);
+    if (!conversation) {
+      return res.status(404).json({ success: false, message: 'Conversation not found' });
+    }
+
+    const userId = req.user._id.toString();
+    const buyerId = conversation.buyer.toString();
+    const sellerId = conversation.seller.toString();
+
+    // Strictly ensure only conversation participants (or admin) can mark messages
+    if (buyerId !== userId && sellerId !== userId && req.user.role !== 'admin') {
+      return res.status(403).json({
+        success: false,
+        message: 'Access denied: You are not a participant in this conversation',
+      });
     }
 
     message.isRead = true;

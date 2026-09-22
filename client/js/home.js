@@ -143,7 +143,7 @@ async function loadLatestProducts() {
           return `
             <a href="/product-details?id=${product._id}" class="product-card">
               <div class="product-card-img-wrapper">
-                <img src="${product.imageUrl}" alt="${window.Utils.escapeHTML(product.name)}" class="product-card-img" loading="lazy" />
+                <img src="${window.Utils.escapeHTML(product.imageUrl)}" alt="${window.Utils.escapeHTML(product.name)}" class="product-card-img" loading="lazy" />
               </div>
               <div class="product-card-body">
                 <div class="product-card-badges">

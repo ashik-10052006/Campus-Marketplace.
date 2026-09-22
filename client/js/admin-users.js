@@ -139,7 +139,7 @@ function renderFilteredUsers() {
                   <div class="table-user-cell">
                     ${
                       u.profileImage
-                        ? `<img src="${u.profileImage}" class="nav-avatar" alt="Avatar" />`
+                        ? `<img src="${window.Utils.escapeHTML(u.profileImage)}" class="nav-avatar" alt="Avatar" />`
                         : `<div class="nav-avatar-placeholder" style="width: 34px; height: 34px; font-size: 0.85rem; font-weight: 700;">${window.Utils.escapeHTML(
                             (u.name || 'U').charAt(0).toUpperCase()
                           )}</div>`

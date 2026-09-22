@@ -139,7 +139,7 @@ const forgotPassword = async (req, res, next) => {
   try {
     const { email } = req.body;
 
-    if (!email || !email.trim()) {
+    if (!email || typeof email !== 'string' || !email.trim()) {
       return res.status(400).json({
         success: false,
         message: 'Please provide a valid campus email address',
@@ -201,21 +201,21 @@ const resetPassword = async (req, res, next) => {
   try {
     const { token, password, confirmPassword } = req.body;
 
-    if (!token || !token.trim()) {
+    if (!token || typeof token !== 'string' || !token.trim()) {
       return res.status(400).json({
         success: false,
         message: 'Password reset token is required',
       });
     }
 
-    if (!password || password.length < 6) {
+    if (!password || typeof password !== 'string' || password.length < 6) {
       return res.status(400).json({
         success: false,
         message: 'New password must be at least 6 characters long',
       });
     }
 
-    if (confirmPassword && password !== confirmPassword) {
+    if (confirmPassword && (typeof confirmPassword !== 'string' || password !== confirmPassword)) {
       return res.status(400).json({
         success: false,
         message: 'Passwords do not match',
@@ -268,14 +268,14 @@ const sendPhoneOtp = async (req, res, next) => {
   try {
     const { email, phone } = req.body;
 
-    if (!email || !email.trim()) {
+    if (!email || typeof email !== 'string' || !email.trim()) {
       return res.status(400).json({
         success: false,
         message: 'Please provide your registered campus email',
       });
     }
 
-    if (!phone || !phone.trim()) {
+    if (!phone || typeof phone !== 'string' || !phone.trim()) {
       return res.status(400).json({
         success: false,
         message: 'Please provide your registered phone number',
@@ -293,12 +293,12 @@ const sendPhoneOtp = async (req, res, next) => {
       });
     }
 
-    // Verify phone matches account on file
+    // Verify phone matches account on file (compare last 10 digits to handle prefixes like +91)
     const normalizePhone = (p) => String(p || '').replace(/[^0-9]/g, '');
-    const enteredNorm = normalizePhone(cleanPhone);
-    const userNorm = normalizePhone(user.phone);
+    const enteredDigits = normalizePhone(cleanPhone).slice(-10);
+    const userDigits = normalizePhone(user.phone).slice(-10);
 
-    if (enteredNorm.length < 6 || (!userNorm.endsWith(enteredNorm) && !enteredNorm.endsWith(userNorm))) {
+    if (enteredDigits.length < 10 || enteredDigits !== userDigits) {
       return res.status(401).json({
         success: false,
         message: 'Phone number does not match our records for this account',
@@ -308,8 +308,6 @@ const sendPhoneOtp = async (req, res, next) => {
     // Generate and hash 6-digit OTP
     const otp = user.createPhoneOtp();
     await user.save({ validateBeforeSave: false });
-
-    console.log(`[PhoneOTP] Verification code for ${user.phone} (${user.email}): ${otp}`);
 
     // Send real-time OTP alert email as immediate delivery fallback
     sendPhoneOtpEmail({
@@ -332,8 +330,6 @@ const sendPhoneOtp = async (req, res, next) => {
         email: user.email,
         phone: maskedPhone,
         expiresInMinutes: 10,
-        // In development mode, provide OTP for immediate local verification
-        otp: process.env.NODE_ENV === 'development' ? otp : undefined,
       },
     });
   } catch (error) {
@@ -348,7 +344,7 @@ const verifyPhoneOtp = async (req, res, next) => {
   try {
     const { email, otp } = req.body;
 
-    if (!email || !otp || !otp.trim()) {
+    if (!email || typeof email !== 'string' || !otp || typeof otp !== 'string' || !otp.trim()) {
       return res.status(400).json({
         success: false,
         message: 'Email and 6-digit verification OTP are required',
@@ -403,10 +399,17 @@ const resetPasswordByPhone = async (req, res, next) => {
   try {
     const { email, phone, otp, password, confirmPassword } = req.body;
 
-    if (!email || !password) {
+    if (!email || typeof email !== 'string' || !password || typeof password !== 'string') {
       return res.status(400).json({
         success: false,
         message: 'Please provide email and new password',
+      });
+    }
+
+    if (!otp || typeof otp !== 'string' || !otp.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: 'A valid 6-digit verification OTP code is required to reset password',
       });
     }
 
@@ -417,7 +420,7 @@ const resetPasswordByPhone = async (req, res, next) => {
       });
     }
 
-    if (confirmPassword && password !== confirmPassword) {
+    if (confirmPassword && (typeof confirmPassword !== 'string' || password !== confirmPassword)) {
       return res.status(400).json({
         success: false,
         message: 'Passwords do not match',
@@ -425,52 +428,37 @@ const resetPasswordByPhone = async (req, res, next) => {
     }
 
     const cleanEmail = email.toLowerCase().trim();
-    let user = null;
+    const cleanOtp = otp.trim();
 
-    if (otp) {
-      const hashedOtp = crypto
-        .createHash('sha256')
-        .update(otp.trim())
-        .digest('hex');
+    const hashedOtp = crypto
+      .createHash('sha256')
+      .update(cleanOtp)
+      .digest('hex');
 
-      user = await User.findOne({
-        email: cleanEmail,
-        phoneResetOtp: hashedOtp,
-        phoneResetOtpExpires: { $gt: Date.now() },
-      }).select('+phoneResetOtp +phoneResetOtpExpires');
+    const user = await User.findOne({
+      email: cleanEmail,
+      phoneResetOtp: hashedOtp,
+      phoneResetOtpExpires: { $gt: Date.now() },
+    }).select('+phoneResetOtp +phoneResetOtpExpires');
 
-      if (!user) {
-        return res.status(400).json({
-          success: false,
-          message: 'Invalid or expired OTP code',
-        });
-      }
-    } else if (phone) {
-      const cleanPhone = phone.trim();
-      user = await User.findOne({ email: cleanEmail });
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid or expired OTP code. Please request a new code.',
+      });
+    }
 
-      if (!user) {
-        return res.status(404).json({
-          success: false,
-          message: 'No account found matching this email address',
-        });
-      }
-
+    // If phone is optionally supplied, verify it matches the account
+    if (phone && typeof phone === 'string') {
       const normalizePhone = (p) => String(p || '').replace(/[^0-9]/g, '');
-      const enteredNorm = normalizePhone(cleanPhone);
-      const userNorm = normalizePhone(user.phone);
-
-      if (enteredNorm.length < 6 || (!userNorm.endsWith(enteredNorm) && !enteredNorm.endsWith(userNorm))) {
+      const enteredDigits = normalizePhone(phone).slice(-10);
+      const userDigits = normalizePhone(user.phone).slice(-10);
+      if (enteredDigits.length >= 10 && enteredDigits !== userDigits) {
         return res.status(401).json({
           success: false,
           message: 'Phone number does not match our records for this account',
         });
       }
-    } else {
-      return res.status(400).json({
-        success: false,
-        message: 'Verification OTP or registered phone number is required',
-      });
     }
 
     user.password = password;
@@ -487,12 +475,13 @@ const resetPasswordByPhone = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      message: 'Password successfully reset with phone verification. You can now log in.',
+      message: 'Password successfully reset with verification. You can now log in.',
     });
   } catch (error) {
     next(error);
   }
 };
+
 
 module.exports = {
   registerUser,

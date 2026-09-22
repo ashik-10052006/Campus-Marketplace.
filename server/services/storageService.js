@@ -7,6 +7,10 @@ const uploadImage = async (file, folder = 'products') => {
     throw new Error('No file provided for upload');
   }
 
+  // Strictly sanitize upload target folder to prevent path manipulation
+  const allowedFolders = ['products', 'profiles'];
+  const safeFolder = allowedFolders.includes(folder) ? folder : 'products';
+
   const provider = process.env.STORAGE_PROVIDER || 'local';
 
   // 1. Database Storage (stores image directly in MongoDB as Base64 Data URI)
@@ -22,7 +26,7 @@ const uploadImage = async (file, folder = 'products') => {
     return new Promise((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
         {
-          folder: `campus_marketplace/${folder}`,
+          folder: `campus_marketplace/${safeFolder}`,
           resource_type: 'image',
           allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
         },
@@ -37,21 +41,21 @@ const uploadImage = async (file, folder = 'products') => {
     });
   }
 
-  // 2. Local Filesystem Storage
-  const targetDir = path.join(__dirname, '..', 'uploads', folder);
+  // 3. Local Filesystem Storage
+  const targetDir = path.join(__dirname, '..', 'uploads', safeFolder);
   if (!fs.existsSync(targetDir)) {
     fs.mkdirSync(targetDir, { recursive: true });
   }
 
   const ext = path.extname(file.originalname).toLowerCase() || '.jpg';
   const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-  const filename = `${folder.replace(/s$/, '')}-${uniqueSuffix}${ext}`;
+  const filename = `${safeFolder.replace(/s$/, '')}-${uniqueSuffix}${ext}`;
   const filePath = path.join(targetDir, filename);
 
   fs.writeFileSync(filePath, file.buffer);
 
   // Return relative URL served via Express static middleware
-  return `/uploads/${folder}/${filename}`;
+  return `/uploads/${safeFolder}/${filename}`;
 };
 
 module.exports = {

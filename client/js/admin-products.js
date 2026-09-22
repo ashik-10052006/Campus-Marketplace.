@@ -145,7 +145,7 @@ function renderFilteredProducts() {
               <tr>
                 <td data-label="Product">
                   <div class="table-product-cell">
-                    <img src="${imgUrl}" class="table-product-thumb" alt="${window.Utils.escapeHTML(p.name)}" onerror="this.src='${defaultImg}'" />
+                    <img src="${window.Utils.escapeHTML(imgUrl)}" class="table-product-thumb" alt="${window.Utils.escapeHTML(p.name)}" onerror="this.src='${defaultImg}'" />
                     <div style="min-width: 0;">
                       <a href="/product-details?id=${p._id}" style="font-weight: 700; color: var(--text-main); text-decoration: none; display: block; max-width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                         ${window.Utils.escapeHTML(p.name)}

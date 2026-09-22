@@ -144,7 +144,7 @@ async function loadMyListings() {
                   <tr>
                     <td>
                       <div style="display: flex; align-items: center; gap: 0.85rem;">
-                        <img src="${p.imageUrl}" class="table-thumbnail" alt="${safeName}" />
+                        <img src="${window.Utils.escapeHTML(p.imageUrl)}" class="table-thumbnail" alt="${safeName}" />
                         <span style="font-weight: 600; max-width: 220px; display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                           ${safeName}
                         </span>

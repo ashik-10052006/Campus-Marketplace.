@@ -77,11 +77,11 @@ async function setupAuthView() {
       // Update hero CTA buttons for authenticated user
       if (heroCtaContainer) {
         heroCtaContainer.innerHTML = `
-          <a href="${user.role === 'admin' ? '/admin' : '/dashboard'}" class="btn btn-primary btn-lg" style="background: #ffffff; color: #4338ca; box-shadow: 0 4px 14px rgba(0,0,0,0.15); font-weight: 700;">
+          <a href="${user.role === 'admin' ? '/admin' : '/dashboard'}" class="btn btn-hero-solid btn-lg">
             ${user.role === 'admin' ? '🛡️ Admin Panel' : 'Dashboard'}
           </a>
-          <a href="/products" class="btn btn-outline btn-lg" style="color: #ffffff; border-color: rgba(255,255,255,0.4);">Browse Marketplace</a>
-          <a href="/create-product" class="btn btn-sell btn-lg" style="box-shadow: 0 4px 14px rgba(0,0,0,0.15);">+ Start Selling</a>
+          <a href="/products" class="btn btn-hero-outline btn-lg">Browse Marketplace</a>
+          <a href="/create-product" class="btn btn-hero-sell btn-lg">+ Start Selling</a>
         `;
       }
     } else {

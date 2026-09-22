@@ -30,7 +30,7 @@ async function loadProductDetails(productId) {
       if (breadcrumbName) {
         breadcrumbName.textContent = currentProduct.name;
       }
-      document.title = `${currentProduct.name} | Campus Marketplace`;
+      document.title = `${currentProduct.name} | CampusCart`;
 
       renderProductView(container, currentProduct);
     } else {

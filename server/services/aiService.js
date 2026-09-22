@@ -318,7 +318,7 @@ const chatWithAssistant = async ({ message, history = [], user = null, catalogCo
     ? `\nCurrently featured on the marketplace:\n` + sampleProducts.slice(0, 8).map((p) => `- ${p.name} (₹${p.price}) in ${p.category ? p.category.name : 'General'}`).join('\n')
     : '';
 
-  const systemInstructions = `You are the friendly, knowledgeable, and safety-conscious Claude AI Campus Assistant for Campus Marketplace (CampusMarket).
+  const systemInstructions = `You are the friendly, knowledgeable, and safety-conscious Claude AI Campus Assistant for Campus Marketplace (CampusCart).
 You help college students buy and sell items safely and affordably on campus.
 
 User Information:

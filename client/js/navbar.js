@@ -66,7 +66,7 @@ function renderNavbar() {
     <div class="nav-inner container">
       <a href="/" class="nav-logo">
         <span class="logo-icon">🎓</span>
-        <span class="logo-text">Campus<span class="text-accent">Market</span></span>
+        <span class="logo-text">Campus<span class="text-accent">Cart</span></span>
       </a>
       <div class="nav-hamburger-wrap">
         <button class="nav-hamburger" id="nav-hamburger-btn" aria-label="Toggle navigation menu" aria-expanded="false">

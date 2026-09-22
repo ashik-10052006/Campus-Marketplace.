@@ -24,12 +24,49 @@
 
 .auth-header {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1.75rem;
+}
+
+.auth-brand {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  margin-bottom: 1rem;
+  text-decoration: none;
+  transition: transform var(--transition-fast);
+}
+
+.auth-brand:hover {
+  transform: translateY(-2px);
+}
+
+.auth-brand-logo {
+  height: 48px;
+  width: auto;
+  max-width: 56px;
+  object-fit: contain;
+  filter: drop-shadow(0 3px 6px rgba(79, 70, 229, 0.22));
+  transition: transform var(--transition-fast);
+}
+
+.auth-brand:hover .auth-brand-logo {
+  transform: scale(1.05);
+}
+
+.auth-brand-text {
+  font-family: var(--font-heading);
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: var(--text-main);
+  letter-spacing: -0.5px;
+  line-height: 1;
 }
 
 .auth-header h1 {
-  font-size: 1.85rem;
-  margin-bottom: 0.5rem;
+  font-size: 1.65rem;
+  margin-bottom: 0.4rem;
+  font-weight: 700;
 }
 
 .auth-header p {
@@ -95,8 +132,16 @@
     margin-bottom: 1.5rem;
   }
 
-  .auth-header h1 {
+  .auth-brand-logo {
+    height: 40px;
+  }
+
+  .auth-brand-text {
     font-size: 1.55rem;
+  }
+
+  .auth-header h1 {
+    font-size: 1.45rem;
   }
 }
 

@@ -50,6 +50,11 @@
     font-size: 1.45rem;
   }
 
+  .nav-logo-img {
+    width: 30px;
+    height: 30px;
+  }
+
   .nav-menu {
     gap: 0.25rem;
     flex-wrap: nowrap;

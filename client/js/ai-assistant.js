@@ -111,7 +111,7 @@
       <div class="ai-modal-header">
         <div class="ai-modal-brand">
           <div class="ai-modal-avatar">
-            🎓
+            <img src="/images/logo.png" alt="CampusCart" style="width: 24px; height: 24px; object-fit: contain;" />
             <span class="ai-status-dot" title="Online & Ready"></span>
           </div>
           <div class="ai-modal-title-group">
@@ -324,7 +324,7 @@
 
     if (role === 'assistant') {
       row.innerHTML = `
-        <div class="ai-msg-avatar">🎓</div>
+        <div class="ai-msg-avatar"><img src="/images/logo.png" alt="CampusCart" style="width: 20px; height: 20px; object-fit: contain;" /></div>
         <div class="ai-message-bubble">
           ${formattedContent}
           <div class="ai-message-time">${timeStr}</div>
@@ -360,7 +360,7 @@
       row.id = 'ai-typing-indicator-row';
       row.className = 'ai-message-row assistant';
       row.innerHTML = `
-        <div class="ai-msg-avatar">🎓</div>
+        <div class="ai-msg-avatar"><img src="/images/logo.png" alt="CampusCart" style="width: 20px; height: 20px; object-fit: contain;" /></div>
         <div class="ai-typing-indicator">
           <span class="ai-typing-dot"></span>
           <span class="ai-typing-dot"></span>

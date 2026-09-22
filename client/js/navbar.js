@@ -65,7 +65,7 @@ function renderNavbar() {
   navContainer.innerHTML = `
     <div class="nav-inner container">
       <a href="/" class="nav-logo">
-        <span class="logo-icon">🎓</span>
+        <img src="/images/logo.png" alt="CampusCart Logo" class="nav-logo-img" />
         <span class="logo-text">Campus<span class="text-accent">Cart</span></span>
       </a>
       <div class="nav-hamburger-wrap">
@@ -299,8 +299,19 @@ function loadAiAssistantAssets() {
   }
 }
 
+function ensureFavicon() {
+  if (!document.querySelector('link[rel="icon"]')) {
+    const favicon = document.createElement('link');
+    favicon.rel = 'icon';
+    favicon.type = 'image/png';
+    favicon.href = '/images/logo.png';
+    document.head.appendChild(favicon);
+  }
+}
+
 // Auto-run on DOMContentLoaded
 document.addEventListener('DOMContentLoaded', async () => {
+  ensureFavicon();
   loadAiAssistantAssets();
   if (window.Auth) {
     await window.Auth.checkAuth();
